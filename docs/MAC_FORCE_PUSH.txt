@@ -1,0 +1,33 @@
+NFG Word Games — force push (replace old GitHub repo with Mac version)
+======================================================================
+
+Use ONLY when GitHub has the wrong old project (381c1c6 TikTok overlay)
+and your Mac has the correct standalone project (2b1e8ff).
+
+This replaces GitHub history with your Mac copy. Safe here because:
+- Remote is only the old TikTok overlay (28 files)
+- Mac has the full correct NFG Word Games project
+
+## Commands (copy exactly — no comments on same line)
+
+cd ~/Documents/nfg-word-games
+git log -1 --oneline
+git push --force origin main
+git log -1 --oneline
+
+## Then on Windows
+
+cd C:\Users\Yusef\Documents\nfg-word-games
+git fetch origin main
+git reset --hard origin/main
+git log -1 --oneline
+dir server.py
+dir windows\run-server.bat
+
+Then start server:
+.\windows\run-server.bat
+
+Verify:
+curl http://127.0.0.1:19877/api/word-games/health
+
+Must show: "app":"nfg-word-games"

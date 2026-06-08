@@ -81,16 +81,24 @@ py -m uvicorn server:app --host 0.0.0.0 --port 19877
 
 Keep the window open while the iPhone app or browser connects.
 
-### F) Verify server is running
-
-New PowerShell window:
+### F) Verify you started the CORRECT server (important)
 
 ```powershell
 curl http://127.0.0.1:19877/api/word-games/health
+```
+
+Must include: `"app":"nfg-word-games"`
+
+If you see logs about **monitoring @y666.suf** or need **hangman-tiktok-live**, you started the
+**wrong** server (`run_web.bat`). Stop it and use `windows\run-server.bat` instead.
+
+```powershell
 curl http://127.0.0.1:19877/api/word-games/leaderboard
 ```
 
-Health should return `"ok":true`. Leaderboard should return `"entries":[]` or a list of players.
+Should return `"entries":[]` or a player list — not 404.
+
+See `docs\WINDOWS_VERIFY_CORRECT_SERVER.txt` if unsure.
 
 Test login API:
 

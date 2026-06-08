@@ -1,0 +1,96 @@
+NFG WORD GAMES — Windows: make sure you run the RIGHT server
+=============================================================
+
+You should be running the **standalone** NFG Word Games FastAPI server (`server.py`).
+You should **NOT** need `hangman-tiktok-live` as a sibling folder.
+
+## Wrong server (do not use for iPhone leaderboards)
+
+If you see log lines like:
+  monitoring @y666.suf
+  [Wordwheel] Round 1: 15 words
+
+…you started the **old** `run_web.bat` / hangman-tiktok-live stack, not `server.py`.
+
+That server does NOT expose:
+  /api/word-games/players/login
+  /api/word-games/leaderboard
+
+## Correct server check
+
+With the server running:
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/health
+```
+
+**Correct** response includes:
+```json
+{"ok":true,"app":"nfg-word-games","port":19877,"standalone":true,"crash_linked":false}
+```
+
+**Wrong** — HTML page only, 404, or JSON without `"app":"nfg-word-games"`.
+
+Also test:
+```powershell
+curl http://127.0.0.1:19877/api/word-games/leaderboard
+```
+
+Should return `"entries":[...]` not 404.
+
+## Correct start command
+
+```powershell
+cd C:\Users\Yusef\Documents\nfg-word-games
+git pull origin main
+git log -1 --oneline
+```
+
+You should see commit message containing **leaderboard server** and files:
+- server.py
+- profanity.py
+- windows\run-server.bat
+
+Then:
+
+```powershell
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+.\windows\run-server.bat
+```
+
+Or manually:
+```powershell
+py -m uvicorn server:app --host 0.0.0.0 --port 19877
+```
+
+## If git pull says "Already up to date" but files are missing
+
+Your GitHub may be behind the Mac. On **Mac Terminal**:
+
+```bash
+cd ~/Documents/nfg-word-games
+git log -1 --oneline
+git push origin main
+```
+
+Mac should show: `2b1e8ff Add leaderboard server...` (or newer).
+
+Then on Windows:
+```powershell
+git pull origin main
+```
+
+## Do NOT commit the hangman junction wrapper
+
+Do not push a `run-server.bat` that depends on `hangman-tiktok-live`.
+Use the Mac version from GitHub after pull.
+
+## iPhone API URL
+
+Set `NFG_API_BASE` in iOS Info.plist to:
+```
+http://YOUR_WINDOWS_LAN_IP:19877
+```
+
+Find IP: `ipconfig` → Wi-Fi IPv4 Address.

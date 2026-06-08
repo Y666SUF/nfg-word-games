@@ -1,0 +1,80 @@
+NFG Word Games — fix "push rejected (fetch first)"
+==================================================
+
+Your Mac has the correct standalone server (2b1e8ff).
+GitHub also has older commits (e.g. 381c1c6 from Windows / first push).
+You must merge before pushing.
+
+## Option A — automatic (recommended)
+
+```bash
+cd ~/Documents/nfg-word-games
+bash docs/MAC_MERGE_AND_PUSH.sh
+```
+
+## Option B — manual steps
+
+```bash
+cd ~/Documents/nfg-word-games
+
+git fetch origin main
+git log --oneline HEAD..origin/main
+git log --oneline origin/main..HEAD
+
+git pull origin main --no-rebase --allow-unrelated-histories -m "Merge GitHub main with standalone NFG Word Games"
+```
+
+If you see `refusing to merge unrelated histories`, you forgot `--allow-unrelated-histories`.
+Or use force push: `docs/MAC_FORCE_PUSH.txt`
+
+If Git opens an editor for a merge message, save and close (`:wq` in vim).
+
+If you get **merge conflicts**, keep the Mac standalone files:
+
+```bash
+git status
+```
+
+For these files, keep **your Mac version** (ours):
+- server.py
+- profanity.py
+- windows/run-server.bat
+- requirements.txt
+- data/wordwheel-levels.json
+
+```bash
+git checkout --ours server.py profanity.py windows/run-server.bat
+git add server.py profanity.py windows/run-server.bat
+git add -A
+git commit -m "Merge remote main; keep standalone NFG Word Games server"
+git push origin main
+```
+
+## Verify push worked
+
+```bash
+git log -1 --oneline
+```
+
+Should show merge commit or 2b1e8ff+ on GitHub.
+
+## Then on Windows
+
+```powershell
+cd C:\Users\Yusef\Documents\nfg-word-games
+git pull origin main
+git log -1 --oneline
+dir server.py
+curl http://127.0.0.1:19877/api/word-games/health
+```
+
+Health must include: "app":"nfg-word-games"
+
+## Common mistakes
+
+1. Do NOT paste comments into git commit:
+   WRONG:  git commit -m "message"  # if there are changes
+   RIGHT:  git commit -m "message"
+
+2. Do NOT force push unless you intend to wipe GitHub history:
+   git push --force origin main   ← only if you know you want this

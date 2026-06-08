@@ -2,6 +2,17 @@
 setlocal
 cd /d "%~dp0\.."
 
+if not exist "server.py" (
+  echo ERROR: server.py not found in %CD%
+  echo.
+  echo You may have an old clone. Run: git pull origin main
+  echo Expected commit message: "Add leaderboard server, username login..."
+  echo.
+  echo Do NOT use run_web.bat — that is a different hangman-tiktok-live server.
+  pause
+  exit /b 1
+)
+
 if not exist ".venv\Scripts\activate.bat" (
   echo Creating Python virtual environment...
   py -3 -m venv .venv
