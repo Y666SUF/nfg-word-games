@@ -1,0 +1,35 @@
+NFG Word Games — Mac manual push (if MAC_PUSH_SERVER_UPDATE.sh fails)
+======================================================================
+
+Run these in Terminal.app, one block at a time:
+
+# 1) Remove broken git folder (safe — only git metadata, not your project files)
+cd ~/Documents/nfg-word-games
+rm -rf .git
+
+# 2) Initialize git
+git init --initial-branch=main
+
+# 3) Add GitHub remote
+git remote add origin git@github.com:Y666SUF/nfg-word-games.git
+
+# 4) Commit everything
+git add -A
+git commit -m "Add leaderboard server, username login, and crossword level fixes"
+
+# 5) Push (create empty repo first at https://github.com/new if needed)
+git push -u origin main
+
+# 6) On Windows PC after push:
+#    git clone https://github.com/Y666SUF/nfg-word-games.git
+#    or: git pull origin main
+#    then: windows\run-server.bat
+
+If push says "repository not found":
+  → Create https://github.com/Y666SUF/nfg-word-games (empty, no README)
+  → Run step 5 again
+
+If push says "Permission denied (publickey)":
+  → Use HTTPS instead:
+     git remote set-url origin https://github.com/Y666SUF/nfg-word-games.git
+     git push -u origin main

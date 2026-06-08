@@ -1,0 +1,13 @@
+{
+  "name": "nfg-word-games-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node word-games-server.js",
+    "dev": "node --watch word-games-server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

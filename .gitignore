@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+.env
+*.local
+.venv/
+__pycache__/
+*.pyc
+data/scores.json
+windows-bridge/data/

@@ -1,0 +1,164 @@
+NFG WORD GAMES — Windows: pull from GitHub + run server (paste into Cursor on Windows)
+======================================================================================
+
+Use this when your Mac has pushed the latest server update (leaderboards, usernames, level fixes).
+
+GitHub: https://github.com/Y666SUF/nfg-word-games
+Port: **19877**
+
+---
+
+## PROMPT START
+
+Pull the latest **NFG Word Games** from GitHub on my Windows PC and start the Python server.
+
+This is standalone from NFG Crash — use folder `nfg-word-games` only, port **19877**.
+
+### A) First time on this PC? Clone the repo
+
+```powershell
+cd $env:USERPROFILE\Documents
+git clone https://github.com/Y666SUF/nfg-word-games.git
+cd nfg-word-games
+```
+
+If you already cloned before, skip to section B.
+
+### B) Already cloned? Pull latest
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+git fetch origin main
+git pull origin main
+git log -1 --oneline
+```
+
+Confirm remote if pull fails:
+
+```powershell
+git remote -v
+```
+
+Should be `https://github.com/Y666SUF/nfg-word-games.git`
+
+### C) Install / update Python dependencies
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+if (-not (Test-Path .venv)) { py -3 -m venv .venv }
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+New server files in this update:
+- `server.py` — player login, score sync, leaderboards
+- `profanity.py` — username filter
+
+### D) Optional: build web UI (browser play at :19877)
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games\app
+npm install
+npm run build
+```
+
+### E) Start the server
+
+**Option 1 — batch file (easiest):**
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+.\windows\run-server.bat
+```
+
+**Option 2 — manual:**
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+.\.venv\Scripts\activate
+py -m uvicorn server:app --host 0.0.0.0 --port 19877
+```
+
+Keep the window open while the iPhone app or browser connects.
+
+### F) Verify server is running
+
+New PowerShell window:
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/health
+curl http://127.0.0.1:19877/api/word-games/leaderboard
+```
+
+Health should return `"ok":true`. Leaderboard should return `"entries":[]` or a list of players.
+
+Test login API:
+
+```powershell
+curl -Method POST http://127.0.0.1:19877/api/word-games/players/login `
+  -ContentType "application/json" `
+  -Body '{"username":"windows_test"}'
+```
+
+### G) iPhone connects to this Windows PC
+
+1. Find your Windows LAN IP:
+
+```powershell
+ipconfig
+```
+
+Look for **IPv4 Address** on your Wi‑Fi adapter (e.g. `192.168.1.50`).
+
+2. Allow **TCP 19877** through Windows Firewall (Private network).
+
+3. On iPhone, `Info.plist` → `NFG_API_BASE` must be:
+
+```
+http://YOUR_WINDOWS_IP:19877
+```
+
+Phone and PC must be on the same Wi‑Fi.
+
+### H) Do NOT use NFG Crash ports
+
+- Word Games: **19877**
+- NFG Crash: **3847**
+- Hangman: **19876**
+
+---
+
+When done, reply with:
+1. `git log -1 --oneline`
+2. Health curl output
+3. Leaderboard curl output (first line is enough)
+4. Your Windows IPv4 address for iPhone setup
+5. Any errors
+
+## PROMPT END
+
+---
+
+## Quick copy-paste (no Cursor)
+
+**First clone + run:**
+
+```powershell
+cd $env:USERPROFILE\Documents
+git clone https://github.com/Y666SUF/nfg-word-games.git
+cd nfg-word-games
+py -3 -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+.\windows\run-server.bat
+```
+
+**Update + run (already cloned):**
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+git pull origin main
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+.\windows\run-server.bat
+```

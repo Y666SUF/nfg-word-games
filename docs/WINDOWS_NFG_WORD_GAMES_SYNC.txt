@@ -1,0 +1,121 @@
+NFG WORD GAMES — Windows PC pull updates (paste into Cursor Agent on Windows)
+=============================================================================
+
+Use after first-time setup (`WINDOWS_NFG_WORD_GAMES_SETUP.txt`).
+
+Open **nfg-word-games** in Cursor → **New Agent chat** → paste **PROMPT START** through **PROMPT END**.
+
+GitHub: https://github.com/Y666SUF/nfg-word-games | Port: **19877**
+
+---
+
+## PROMPT START
+
+You are syncing my **NFG Word Games** Windows install with the latest from GitHub.
+
+**Standalone from NFG Crash** — do not pull into or modify the Crash server folder.
+
+### 1) Pull latest in the Word Games folder
+
+```powershell
+cd C:\Users\YOUR_USER\Documents\nfg-word-games
+git fetch origin main
+git pull origin main
+```
+
+If git pull fails, check remote:
+
+```powershell
+git remote -v
+```
+
+Should be:
+- `origin  https://github.com/Y666SUF/nfg-word-games.git` or
+- `origin  git@github.com:Y666SUF/nfg-word-games.git`
+
+### 2) Rebuild app if `app/` changed
+
+```powershell
+cd app
+npm install
+npm run build
+```
+
+### 3) Update Python deps if `requirements.txt` changed
+
+```powershell
+cd C:\Users\YOUR_USER\Documents\nfg-word-games
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 4) Restart ONE Word Games server instance
+
+Close the old uvicorn window on port 19877, then:
+
+```powershell
+cd C:\Users\YOUR_USER\Documents\nfg-word-games
+.\.venv\Scripts\activate
+py -m uvicorn server:app --host 0.0.0.0 --port 19877
+```
+
+### 5) Verify
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/health
+curl http://127.0.0.1:19877/api/word-games/leaderboard
+```
+
+Login API smoke test:
+
+```powershell
+curl -Method POST http://127.0.0.1:19877/api/word-games/players/login -ContentType "application/json" -Body '{"username":"sync_test"}'
+```
+
+Browser / iPhone check:
+- [ ] Hub loads with central score
+- [ ] WordWheel level progress persists (localStorage)
+- [ ] New levels/features from Mac appear after pull
+- [ ] iPhone **Ranks** tab loads leaderboard (set `NFG_API_BASE` to `http://YOUR_WINDOWS_IP:19877`)
+
+### 6) Regenerate levels (only if Mac updated `scripts/generate-levels.mjs`)
+
+```powershell
+cd C:\Users\YOUR_USER\Documents\nfg-word-games\app
+npm run generate:levels
+copy ..\data\wordwheel-levels.json src\data\wordwheel-levels.json
+npm run build
+```
+
+Then restart uvicorn.
+
+### 7) Mac → Windows workflow (for reference)
+
+Mac pushes:
+```bash
+cd ~/Documents/nfg-word-games
+git add -A && git commit -m "describe change" && git push origin main
+```
+
+Windows pulls (this prompt).
+
+---
+
+When done, reply with:
+1. Latest commit hash (`git log -1 --oneline`)
+2. Health curl output
+3. Whether WordWheel still plays
+4. Any errors
+
+## PROMPT END
+
+---
+
+Quick manual pull:
+
+```powershell
+cd C:\Users\YOUR_USER\Documents\nfg-word-games
+git pull origin main
+cd app && npm install && npm run build
+.\.venv\Scripts\activate && pip install -r requirements.txt && py -m uvicorn server:app --host 0.0.0.0 --port 19877
+```

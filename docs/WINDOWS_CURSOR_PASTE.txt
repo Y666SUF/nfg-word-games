@@ -1,0 +1,17 @@
+Copy into Windows Cursor:
+
+  NFG Word Games (PULL + RUN SERVER): docs\WINDOWS_PULL_AND_RUN_SERVER.txt   ← use this now
+  NFG Word Games (FIRST SETUP):       docs\WINDOWS_NFG_WORD_GAMES_SETUP.txt
+  NFG Word Games (PULL UPDATES):      docs\WINDOWS_NFG_WORD_GAMES_SYNC.txt
+
+On Mac (Terminal.app), copy to clipboard:
+
+  pbcopy < ~/Documents/nfg-word-games/docs/WINDOWS_PULL_AND_RUN_SERVER.txt
+  pbcopy < ~/Documents/nfg-word-games/docs/WINDOWS_NFG_WORD_GAMES_SETUP.txt
+  pbcopy < ~/Documents/nfg-word-games/docs/WINDOWS_NFG_WORD_GAMES_SYNC.txt
+
+Then paste into Windows Cursor chat.
+
+GitHub (same account as NFG Crash):
+  https://github.com/Y666SUF/nfg-word-games
+  git@github.com:Y666SUF/nfg-word-games.git

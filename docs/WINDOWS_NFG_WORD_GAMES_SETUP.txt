@@ -1,0 +1,149 @@
+NFG WORD GAMES — Windows PC first-time setup (paste into Cursor Agent on Windows)
+==================================================================================
+
+Open **nfg-word-games** in Cursor → **New Agent chat** → paste **PROMPT START** through **PROMPT END**.
+
+This project is **standalone** from NFG Crash. Same colour scheme only — no shared server, points, or chat.
+
+GitHub (same account as NFG Crash):
+  https://github.com/Y666SUF/nfg-word-games
+  git@github.com:Y666SUF/nfg-word-games.git
+  https://github.com/Y666SUF/nfg-word-games.git
+
+Port: **19877** (Word Games Python server) — do NOT use Crash port **3847** or Hangman **19876**
+
+---
+
+## PROMPT START
+
+You are setting up **NFG Word Games** on my Windows PC for the first time.
+
+This is a **separate project** from NFG Crash (`Y666SUF/NFG`). Do not merge folders, ports, or `.env` files with the Crash server.
+
+### 1) Clone from GitHub (same links as my NFG Crash repo pattern)
+
+If the Mac has already pushed to GitHub:
+
+```powershell
+cd C:\Users\YOUR_USER\Documents
+git clone https://github.com/Y666SUF/nfg-word-games.git
+cd nfg-word-games
+git branch -v
+```
+
+SSH alternative (if you use SSH for NFG Crash):
+
+```powershell
+git clone git@github.com:Y666SUF/nfg-word-games.git
+cd nfg-word-games
+```
+
+If clone fails with "repository not found":
+- On Mac, follow `docs/MAC_GITHUB_PUSH.md` to create `Y666SUF/nfg-word-games` and push `main`
+- Then retry clone on Windows
+
+### 2) Install and build the app
+
+```powershell
+cd C:\Users\YOUR_USER\Documents\nfg-word-games\app
+npm install
+npm run build
+```
+
+Dev mode (optional, hot reload):
+
+```powershell
+npm run dev
+```
+
+Opens http://localhost:5174
+
+### 3) Python server (same pattern as Hangman v2)
+
+```powershell
+cd C:\Users\YOUR_USER\Documents\nfg-word-games
+py -3 -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+py -m uvicorn server:app --host 0.0.0.0 --port 19877
+```
+
+Optional: build frontend so http://127.0.0.1:19877 serves the full UI:
+
+```powershell
+cd app
+npm install
+npm run build
+```
+
+### 4) Verify
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/health
+```
+
+Expected JSON:
+
+```json
+{"ok":true,"app":"nfg-word-games","port":19877,"standalone":true,"crash_linked":false}
+```
+
+Open browser: http://127.0.0.1:19877
+- Hub shows **NFG Word Games** with central score
+- **NFG WordWheel** is playable (1000 levels)
+- Hangman / Wordwich show "Coming soon"
+- Scores tab shows total + per-game highs
+
+### 5) Firewall (optional — LAN access from phone)
+
+Allow inbound **TCP 19877** on Private network if you want phones on your LAN to hit the PC build.
+
+Do **not** point this at the Crash tunnel (3847) or Hangman (19876).
+
+### 6) Project layout (know what lives where)
+
+```
+nfg-word-games/
+  app/                  React + Vite standalone app
+  data/                 1000 WordWheel levels (generated JSON)
+  scripts/              Level generator
+  server.py             Python FastAPI server (port 19877)
+  windows-bridge/       Legacy Node bridge (optional; Python server is primary)
+  shared/protocol.md    Future score-sync notes
+  docs/                 Mac + Windows sync prompts
+```
+
+### 7) Do NOT touch NFG Crash
+
+- Do not edit `C:\Users\YOUR_USER\Documents\nfg-crash` for Word Games work
+- Do not register Word Games routes in Crash `server/index.js`
+- Do not share `NFG_BRIDGE_TOKEN` with Crash
+
+When Hangman PC build is ready, it plugs into this hub — still separate from Crash.
+
+---
+
+When done, reply with:
+1. `git remote -v` output
+2. `curl http://127.0.0.1:19877/api/word-games/health` output
+3. Whether http://127.0.0.1:19877 loads WordWheel (after `npm run build` in app/)
+4. Any npm or Node errors
+
+## PROMPT END
+
+---
+
+Quick manual commands (no Cursor):
+
+```powershell
+cd C:\Users\YOUR_USER\Documents
+git clone https://github.com/Y666SUF/nfg-word-games.git
+cd nfg-word-games\app
+npm install
+npm run build
+py -3 -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+py -m uvicorn server:app --host 0.0.0.0 --port 19877
+curl http://127.0.0.1:19877/api/word-games/health
+```

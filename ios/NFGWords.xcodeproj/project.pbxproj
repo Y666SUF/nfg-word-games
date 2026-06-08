@@ -1,0 +1,365 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B10000000000000000000001 /* NFGWordsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000011 /* NFGWordsApp.swift */; };
+		B10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000012 /* ContentView.swift */; };
+		B10000000000000000000003 /* NFGTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000013 /* NFGTheme.swift */; };
+		B10000000000000000000004 /* GameModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000014 /* GameModels.swift */; };
+		B10000000000000000000005 /* ScoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000015 /* ScoreStore.swift */; };
+		B10000000000000000000006 /* LevelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000016 /* LevelStore.swift */; };
+		B10000000000000000000007 /* WordDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000017 /* WordDictionary.swift */; };
+		B10000000000000000000008 /* HubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000018 /* HubView.swift */; };
+		B10000000000000000000009 /* ScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000019 /* ScoresView.swift */; };
+		B1000000000000000000000A /* WordWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001A /* WordWheelView.swift */; };
+		B1000000000000000000000B /* LetterWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001B /* LetterWheelView.swift */; };
+		B1000000000000000000000C /* PuzzleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001C /* PuzzleGridView.swift */; };
+		B1000000000000000000000D /* NFGWordsLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001D /* NFGWordsLogo.swift */; };
+		B10000000000000000000023 /* WordFeedbackToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000024 /* WordFeedbackToast.swift */; };
+		B10000000000000000000025 /* FoundWordsStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000026 /* FoundWordsStrip.swift */; };
+		B10000000000000000000027 /* ProfanityFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002A /* ProfanityFilter.swift */; };
+		B10000000000000000000028 /* APIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002B /* APIConfig.swift */; };
+		B10000000000000000000029 /* LeaderboardAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002C /* LeaderboardAPI.swift */; };
+		B1000000000000000000002D /* UsernamePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002E /* UsernamePromptView.swift */; };
+		B1000000000000000000002F /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000035 /* LeaderboardView.swift */; };
+		B1000000000000000000000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001E /* Assets.xcassets */; };
+		B1000000000000000000000F /* wordwheel-levels.json in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001F /* wordwheel-levels.json */; };
+		B10000000000000000000022 /* english-dictionary.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000021 /* english-dictionary.json */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B10000000000000000000010 /* NFGWords.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NFGWords.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000000000000000000011 /* NFGWordsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGWordsApp.swift; sourceTree = "<group>"; };
+		B10000000000000000000012 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B10000000000000000000013 /* NFGTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGTheme.swift; sourceTree = "<group>"; };
+		B10000000000000000000014 /* GameModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModels.swift; sourceTree = "<group>"; };
+		B10000000000000000000015 /* ScoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreStore.swift; sourceTree = "<group>"; };
+		B10000000000000000000016 /* LevelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelStore.swift; sourceTree = "<group>"; };
+		B10000000000000000000017 /* WordDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDictionary.swift; sourceTree = "<group>"; };
+		B10000000000000000000018 /* HubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubView.swift; sourceTree = "<group>"; };
+		B10000000000000000000019 /* ScoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoresView.swift; sourceTree = "<group>"; };
+		B1000000000000000000001A /* WordWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordWheelView.swift; sourceTree = "<group>"; };
+		B1000000000000000000001B /* LetterWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterWheelView.swift; sourceTree = "<group>"; };
+		B1000000000000000000001C /* PuzzleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleGridView.swift; sourceTree = "<group>"; };
+		B1000000000000000000001D /* NFGWordsLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGWordsLogo.swift; sourceTree = "<group>"; };
+		B1000000000000000000001E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B1000000000000000000001F /* wordwheel-levels.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "wordwheel-levels.json"; sourceTree = "<group>"; };
+		B10000000000000000000020 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B10000000000000000000021 /* english-dictionary.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "english-dictionary.json"; sourceTree = "<group>"; };
+		B10000000000000000000024 /* WordFeedbackToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordFeedbackToast.swift; sourceTree = "<group>"; };
+		B10000000000000000000026 /* FoundWordsStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundWordsStrip.swift; sourceTree = "<group>"; };
+		B1000000000000000000002A /* ProfanityFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfanityFilter.swift; sourceTree = "<group>"; };
+		B1000000000000000000002B /* APIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConfig.swift; sourceTree = "<group>"; };
+		B1000000000000000000002C /* LeaderboardAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardAPI.swift; sourceTree = "<group>"; };
+		B1000000000000000000002E /* UsernamePromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsernamePromptView.swift; sourceTree = "<group>"; };
+		B10000000000000000000035 /* LeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B10000000000000000000030 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B10000000000000000000040 = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000041 /* NFGWords */,
+				B10000000000000000000042 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B10000000000000000000041 /* NFGWords */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000011 /* NFGWordsApp.swift */,
+				B10000000000000000000012 /* ContentView.swift */,
+				B10000000000000000000043 /* Theme */,
+				B10000000000000000000044 /* Models */,
+				B10000000000000000000045 /* Services */,
+				B10000000000000000000046 /* Views */,
+				B10000000000000000000047 /* Resources */,
+				B1000000000000000000001E /* Assets.xcassets */,
+				B10000000000000000000020 /* Info.plist */,
+			);
+			path = NFGWords;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000042 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000010 /* NFGWords.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000043 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000013 /* NFGTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000044 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000014 /* GameModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000045 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000015 /* ScoreStore.swift */,
+				B10000000000000000000016 /* LevelStore.swift */,
+				B10000000000000000000017 /* WordDictionary.swift */,
+				B1000000000000000000002A /* ProfanityFilter.swift */,
+				B1000000000000000000002B /* APIConfig.swift */,
+				B1000000000000000000002C /* LeaderboardAPI.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000046 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B1000000000000000000001D /* NFGWordsLogo.swift */,
+				B10000000000000000000018 /* HubView.swift */,
+				B10000000000000000000019 /* ScoresView.swift */,
+				B1000000000000000000001A /* WordWheelView.swift */,
+				B1000000000000000000001B /* LetterWheelView.swift */,
+				B1000000000000000000001C /* PuzzleGridView.swift */,
+				B10000000000000000000024 /* WordFeedbackToast.swift */,
+				B10000000000000000000026 /* FoundWordsStrip.swift */,
+				B1000000000000000000002E /* UsernamePromptView.swift */,
+				B10000000000000000000035 /* LeaderboardView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000047 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B1000000000000000000001F /* wordwheel-levels.json */,
+				B10000000000000000000021 /* english-dictionary.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B10000000000000000000050 /* NFGWords */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B10000000000000000000070 /* Build configuration list for PBXNativeTarget "NFGWords" */;
+			buildPhases = (
+				B10000000000000000000051 /* Sources */,
+				B10000000000000000000030 /* Frameworks */,
+				B10000000000000000000052 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NFGWords;
+			productName = NFGWords;
+			productReference = B10000000000000000000010 /* NFGWords.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B10000000000000000000060 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = B10000000000000000000071 /* Build configuration list for PBXProject "NFGWords" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B10000000000000000000040;
+			productRefGroup = B10000000000000000000042 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B10000000000000000000050 /* NFGWords */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B10000000000000000000052 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1000000000000000000000E /* Assets.xcassets in Resources */,
+				B1000000000000000000000F /* wordwheel-levels.json in Resources */,
+				B10000000000000000000022 /* english-dictionary.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B10000000000000000000051 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000001 /* NFGWordsApp.swift in Sources */,
+				B10000000000000000000002 /* ContentView.swift in Sources */,
+				B10000000000000000000003 /* NFGTheme.swift in Sources */,
+				B10000000000000000000004 /* GameModels.swift in Sources */,
+				B10000000000000000000005 /* ScoreStore.swift in Sources */,
+				B10000000000000000000006 /* LevelStore.swift in Sources */,
+				B10000000000000000000007 /* WordDictionary.swift in Sources */,
+				B10000000000000000000008 /* HubView.swift in Sources */,
+				B10000000000000000000009 /* ScoresView.swift in Sources */,
+				B1000000000000000000000A /* WordWheelView.swift in Sources */,
+				B1000000000000000000000B /* LetterWheelView.swift in Sources */,
+				B1000000000000000000000C /* PuzzleGridView.swift in Sources */,
+				B1000000000000000000000D /* NFGWordsLogo.swift in Sources */,
+				B10000000000000000000023 /* WordFeedbackToast.swift in Sources */,
+				B10000000000000000000025 /* FoundWordsStrip.swift in Sources */,
+				B10000000000000000000027 /* ProfanityFilter.swift in Sources */,
+				B10000000000000000000028 /* APIConfig.swift in Sources */,
+				B10000000000000000000029 /* LeaderboardAPI.swift in Sources */,
+				B1000000000000000000002D /* UsernamePromptView.swift in Sources */,
+				B1000000000000000000002F /* LeaderboardView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B10000000000000000000080 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B10000000000000000000081 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B10000000000000000000082 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VM34N9485F;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = NFGWords/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "NFG Words";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yusufali.nfgwords;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B10000000000000000000083 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VM34N9485F;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = NFGWords/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "NFG Words";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yusufali.nfgwords;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B10000000000000000000070 /* Build configuration list for PBXNativeTarget "NFGWords" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000082 /* Debug */,
+				B10000000000000000000083 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B10000000000000000000071 /* Build configuration list for PBXProject "NFGWords" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000080 /* Debug */,
+				B10000000000000000000081 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B10000000000000000000060 /* Project object */;
+}
