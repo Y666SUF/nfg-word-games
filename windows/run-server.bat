@@ -2,13 +2,19 @@
 setlocal
 cd /d "%~dp0\.."
 
+echo.
+echo NOTE: For iPhone leaderboards, use the NFG Platform launcher instead:
+echo   C:\Users\Yusef\Documents\nfg-crash\run-electron-cloudflare.bat
+echo.
+echo That starts Word Games on port 19877 and exposes it at:
+echo   https://y666suf.com/api/word-games/*
+echo.
+echo This script is for local dev/testing only.
+echo.
+
 if not exist "server.py" (
   echo ERROR: server.py not found in %CD%
-  echo.
-  echo You may have an old clone. Run: git pull origin main
-  echo Expected commit message: "Add leaderboard server, username login..."
-  echo.
-  echo Do NOT use run_web.bat — that is a different hangman-tiktok-live server.
+  echo Run: git pull origin main
   pause
   exit /b 1
 )
@@ -27,9 +33,8 @@ call .venv\Scripts\activate.bat
 pip install -r requirements.txt
 
 echo.
-echo Starting NFG Word Games server on port 19877...
-echo   Health:  http://127.0.0.1:19877/api/word-games/health
-echo   Leaderboard: http://127.0.0.1:19877/api/word-games/leaderboard
+echo Starting NFG Word Games LOCAL server on port 19877...
+echo   Health: http://127.0.0.1:19877/api/word-games/health
+echo   iPhone app uses https://y666suf.com ^(not this local URL^)
 echo.
-echo Keep this window open while playing. Press Ctrl+C to stop.
 py -m uvicorn server:app --host 0.0.0.0 --port 19877

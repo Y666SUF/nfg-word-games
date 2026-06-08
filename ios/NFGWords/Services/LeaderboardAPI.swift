@@ -7,7 +7,8 @@ enum LeaderboardAPI {
 
         var errorDescription: String? {
             switch self {
-            case .invalidResponse: "Could not reach the leaderboard server."
+            case .invalidResponse:
+                "Could not reach NFG Words at \(APIConfig.displayURL). Start run-electron-cloudflare.bat on your PC."
             case .server(let message): message
             }
         }
@@ -27,6 +28,11 @@ enum LeaderboardAPI {
         let wordwheelLevel: Int
     }
 
+    private struct HealthResponse: Decodable {
+        let ok: Bool
+        let app: String?
+    }
+
     private struct LeaderboardResponse: Decodable {
         let ok: Bool
         let gameId: String?
@@ -37,15 +43,29 @@ enum LeaderboardAPI {
         let detail: String?
     }
 
+    private static func endpoint(_ path: String) -> URL {
+        let base = APIConfig.baseURL.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        let clean = path.hasPrefix("/") ? String(path.dropFirst()) : path
+        return URL(string: "\(base)/\(clean)")!
+    }
+
     private static func request<T: Decodable>(_ path: String, method: String, body: [String: Any]? = nil) async throws -> T {
-        var request = URLRequest(url: APIConfig.baseURL.appendingPathComponent(path))
+        var request = URLRequest(url: endpoint(path))
         request.httpMethod = method
+        request.timeoutInterval = 12
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         if let body {
             request.httpBody = try JSONSerialization.data(withJSONObject: body)
         }
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await URLSession.shared.data(for: request)
+        } catch {
+            throw APIError.invalidResponse
+        }
+
         guard let http = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
         }
@@ -56,6 +76,13 @@ enum LeaderboardAPI {
         }
 
         return try JSONDecoder().decode(T.self, from: data)
+    }
+
+    static func checkHealth() async throws {
+        let response: HealthResponse = try await request("api/word-games/health", method: "GET")
+        guard response.ok, response.app == "nfg-word-games" else {
+            throw APIError.server("Wrong server — expected NFG Word Games.")
+        }
     }
 
     static func login(username: String) async throws -> PlayerProfile {
@@ -73,8 +100,9 @@ enum LeaderboardAPI {
             "gameHighScores": state.gameHighScores,
             "wordwheelLevel": state.wordwheelLevel,
         ]
-        var request = URLRequest(url: APIConfig.baseURL.appendingPathComponent("api/word-games/players/\(playerId)/scores"))
+        var request = URLRequest(url: endpoint("api/word-games/players/\(playerId)/scores"))
         request.httpMethod = "PUT"
+        request.timeoutInterval = 12
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         let (_, response) = try await URLSession.shared.data(for: request)

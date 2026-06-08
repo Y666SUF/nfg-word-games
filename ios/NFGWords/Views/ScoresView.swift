@@ -22,6 +22,7 @@ struct ScoresView: View {
                     value: "Level \(scores.state.wordwheelLevel)",
                     accent: false
                 )
+
             }
             .padding(16)
         }

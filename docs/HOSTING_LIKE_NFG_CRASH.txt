@@ -1,0 +1,65 @@
+NFG Word Games — host like NFG Crash (PC + iPhone)
+==================================================
+
+The iPhone app connects to a **fixed** public URL (users cannot change it):
+  https://y666suf.com/api/word-games/*
+
+## How it works (same pattern as Hangman)
+
+1. **Windows PC** runs `nfg-crash\run-electron-cloudflare.bat`
+2. That starts:
+   - NFG Platform Node on port **3847** (Cloudflare tunnel → y666suf.com)
+   - Hangman Python on **19876** (proxied through 3847)
+   - **Word Games Python on 19877** (proxied through 3847)
+3. **iPhone app** uses baked-in `GameServerConfig.serverURL = https://y666suf.com`
+
+## Folder layout on Windows PC
+
+```
+Documents\
+  nfg-crash\          ← run run-electron-cloudflare.bat from here
+  nfg-word-games\     ← Python server auto-started by platform
+```
+
+## Start hosting (Windows)
+
+```powershell
+cd C:\Users\Yusef\Documents\nfg-crash
+git pull origin main
+cd ..\nfg-word-games
+git pull origin main
+cd ..\nfg-crash
+.\run-electron-cloudflare.bat
+```
+
+## Verify from any device
+
+```powershell
+curl https://y666suf.com/api/word-games/health
+```
+
+Expected:
+```json
+{"ok":true,"app":"nfg-word-games","port":19877,"standalone":true,"crash_linked":false}
+```
+
+## Mac dev (local only)
+
+```bash
+cd ~/Documents/nfg-word-games
+./run_server.sh
+curl http://127.0.0.1:19877/api/word-games/health
+```
+
+For iPhone testing against Mac LAN, change `GameServerConfig.serverURL` in Xcode
+and rebuild — production builds use https://y666suf.com only.
+
+## Do NOT
+
+- Let users pick a server URL in the app (removed)
+- Use `windows\run-server.bat` for production iPhone hosting
+- Point the app at 127.0.0.1 on a real iPhone
+
+## Change public server URL (new app build only)
+
+Edit: `ios/NFGWords/Config/GameServerConfig.swift`

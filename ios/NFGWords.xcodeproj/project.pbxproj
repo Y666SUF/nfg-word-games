@@ -27,6 +27,7 @@
 		B10000000000000000000029 /* LeaderboardAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002C /* LeaderboardAPI.swift */; };
 		B1000000000000000000002D /* UsernamePromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002E /* UsernamePromptView.swift */; };
 		B1000000000000000000002F /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000035 /* LeaderboardView.swift */; };
+		B10000000000000000000036 /* GameServerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000037 /* GameServerConfig.swift */; };
 		B1000000000000000000000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001E /* Assets.xcassets */; };
 		B1000000000000000000000F /* wordwheel-levels.json in Resources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001F /* wordwheel-levels.json */; };
 		B10000000000000000000022 /* english-dictionary.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000021 /* english-dictionary.json */; };
@@ -58,6 +59,7 @@
 		B1000000000000000000002C /* LeaderboardAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardAPI.swift; sourceTree = "<group>"; };
 		B1000000000000000000002E /* UsernamePromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsernamePromptView.swift; sourceTree = "<group>"; };
 		B10000000000000000000035 /* LeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
+		B10000000000000000000037 /* GameServerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameServerConfig.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 				B10000000000000000000011 /* NFGWordsApp.swift */,
 				B10000000000000000000012 /* ContentView.swift */,
 				B10000000000000000000043 /* Theme */,
+				B10000000000000000000038 /* Config */,
 				B10000000000000000000044 /* Models */,
 				B10000000000000000000045 /* Services */,
 				B10000000000000000000046 /* Views */,
@@ -109,6 +112,14 @@
 				B10000000000000000000013 /* NFGTheme.swift */,
 			);
 			path = Theme;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000038 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				B10000000000000000000037 /* GameServerConfig.swift */,
+			);
+			path = Config;
 			sourceTree = "<group>";
 		};
 		B10000000000000000000044 /* Models */ = {
@@ -244,6 +255,7 @@
 				B10000000000000000000029 /* LeaderboardAPI.swift in Sources */,
 				B1000000000000000000002D /* UsernamePromptView.swift in Sources */,
 				B1000000000000000000002F /* LeaderboardView.swift in Sources */,
+				B10000000000000000000036 /* GameServerConfig.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

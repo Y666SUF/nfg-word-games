@@ -21,7 +21,7 @@ struct UsernamePromptView: View {
                         .font(.system(size: 28, weight: .black, design: .rounded))
                         .foregroundStyle(NFGTheme.text)
 
-                    Text("Pick a name to join the NFG Words leaderboards. Letters, numbers, and underscores only.")
+                    Text("Join the NFG Words leaderboards on y666suf.com. Letters, numbers, and underscores only.")
                         .font(.subheadline)
                         .foregroundStyle(NFGTheme.muted)
                 }

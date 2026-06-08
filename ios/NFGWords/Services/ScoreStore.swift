@@ -8,6 +8,8 @@ final class ScoreStore: ObservableObject {
     private let key = "nfg-words-scores-v2"
 
     init() {
+        APIConfig.applyBakedInServerIfNeeded()
+
         if let data = UserDefaults.standard.data(forKey: key),
            let decoded = try? JSONDecoder().decode(ScoreState.self, from: data) {
             state = decoded
@@ -33,6 +35,7 @@ final class ScoreStore: ObservableObject {
     }
 
     func login(username: String) async throws {
+        try await LeaderboardAPI.checkHealth()
         let profile = try await LeaderboardAPI.login(username: username)
         state.player = profile
         persist()
