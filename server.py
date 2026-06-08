@@ -21,10 +21,12 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from profanity import validate_username
+from wordwich_round import store as wordwich_store
 
 load_dotenv()
 
 ROOT = Path(__file__).resolve().parent
+LEGAL_DIR = ROOT / "legal"
 DATA_DIR = Path(os.getenv("WORD_GAMES_DATA_DIR", str(ROOT / "data")))
 SCORES_FILE = DATA_DIR / "scores.json"
 LEVELS_FILE = ROOT / "data" / "wordwheel-levels.json"
@@ -119,6 +121,21 @@ app.add_middleware(
 )
 
 
+@app.get("/privacy")
+def privacy_page() -> FileResponse:
+    return FileResponse(LEGAL_DIR / "privacy.html")
+
+
+@app.get("/terms")
+def terms_page() -> FileResponse:
+    return FileResponse(LEGAL_DIR / "terms.html")
+
+
+@app.get("/support")
+def support_page() -> FileResponse:
+    return FileResponse(LEGAL_DIR / "support.html")
+
+
 @app.get("/api/word-games/health")
 def health() -> dict[str, Any]:
     return {
@@ -196,6 +213,16 @@ def game_leaderboard(game_id: str, limit: int = 100) -> dict[str, Any]:
     return {"ok": True, "gameId": game_id, "entries": rows}
 
 
+@app.delete("/api/word-games/players/{player_id}")
+def delete_player(player_id: str) -> dict[str, Any]:
+    data = _load_scores()
+    if player_id not in data["players"]:
+        raise HTTPException(status_code=404, detail="player_not_found")
+    del data["players"][player_id]
+    _save_scores(data)
+    return {"ok": True, "deleted": True, "playerId": player_id}
+
+
 @app.get("/api/word-games/scores/{player_id}")
 def get_scores(player_id: str) -> dict[str, Any]:
     data = _load_scores()
@@ -220,6 +247,24 @@ def post_scores(
     data["players"][player_id] = _merge_scores(existing, scores)
     _save_scores(data)
     return {"ok": True}
+
+
+@app.get("/api/wordwich/state")
+def wordwich_state() -> dict[str, Any]:
+    return wordwich_store.get_state()
+
+
+@app.post("/api/wordwich/guess")
+def wordwich_guess(body: dict[str, Any]) -> dict[str, Any]:
+    word = str(body.get("word") or "")
+    player_id = str(body.get("playerId") or "").strip() or None
+    username = str(body.get("username") or "").strip() or None
+    return wordwich_store.submit_guess(word, player_id=player_id, username=username)
+
+
+@app.post("/api/wordwich/rounds")
+def wordwich_new_round() -> dict[str, Any]:
+    return wordwich_store.new_round()
 
 
 @app.get("/api/word-games/wordwheel/levels")
