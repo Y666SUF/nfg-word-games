@@ -1,0 +1,56 @@
+Set up automatic NFG Word Games server updates on this Windows PC. Mac already pushed to GitHub — pull and install the auto-update task so I never manually pull/restart again.
+
+Repo: $env:USERPROFILE\Documents\nfg-word-games
+Port: 19877
+
+### 1) Pull latest (includes auto-deploy scripts)
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+git fetch origin main
+git pull origin main
+git log -1 --oneline
+```
+
+If the folder does not exist yet:
+
+```powershell
+cd $env:USERPROFILE\Documents
+git clone https://github.com/Y666SUF/nfg-word-games.git
+cd nfg-word-games
+```
+
+### 2) Install scheduled task (runs at logon + every 5 minutes)
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+powershell -ExecutionPolicy Bypass -File .\windows\install-auto-update-task.ps1
+```
+
+### 3) Run deploy once immediately
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\windows\auto-deploy.ps1
+```
+
+### 4) Verify
+
+```powershell
+Get-ScheduledTask -TaskName "NFG Word Games Auto Update" | Format-List TaskName, State
+Get-Content .\windows\deploy.log -Tail 10
+curl http://127.0.0.1:19877/api/word-games/health
+```
+
+Health JSON must include "app":"nfg-word-games", "gitRev", and "deployedAt".
+
+### 5) One-time score repair (fixes inflated WordWheel levels + total score glitch)
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+.\.venv\Scripts\activate
+python scripts\reconcile_scores.py
+```
+
+Then run auto-deploy.ps1 again.
+
+Reply with: git log -1 --oneline, scheduled task State, last 5 lines of deploy.log, and full health JSON.
