@@ -111,7 +111,7 @@ enum LeaderboardAPI {
                 throw APIError.server("NFG Words service is unavailable. Please try again later.")
             }
             if http.statusCode == 502 || http.statusCode == 503 {
-                throw APIError.server("NFG Words server is starting up. Retrying automatically…")
+                throw APIError.server("NFG Words is temporarily unavailable. Please try again.")
             }
             throw APIError.server(message.replacingOccurrences(of: "_", with: " "))
         }
@@ -119,17 +119,14 @@ enum LeaderboardAPI {
         do {
             return try JSONDecoder().decode(T.self, from: data)
         } catch {
-            if let snippet = String(data: data.prefix(200), encoding: .utf8), !snippet.isEmpty {
-                throw APIError.server("Leaderboard response was invalid. The Word Games server may need a restart on your PC.")
-            }
-            throw APIError.invalidResponse
+            throw APIError.server("Couldn't load data. Please try again.")
         }
     }
 
     static func checkHealth() async throws {
         let response: HealthResponse = try await request("api/word-games/health", method: "GET")
         guard response.ok, response.app == "nfg-word-games" else {
-            throw APIError.server("Wrong server — expected NFG Word Games.")
+            throw APIError.server("NFG Words is temporarily unavailable. Please try again.")
         }
     }
 

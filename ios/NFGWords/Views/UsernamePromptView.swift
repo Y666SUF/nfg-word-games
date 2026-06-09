@@ -56,7 +56,7 @@ struct UsernamePromptView: View {
                             if isSubmitting {
                                 ProgressView().tint(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
                             }
-                            Text(isSubmitting ? "Signing in..." : "Continue")
+                            Text(isSubmitting ? "Setting up…" : "Continue")
                                 .font(.system(size: 17, weight: .heavy, design: .rounded))
                         }
                         .foregroundStyle(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
@@ -118,7 +118,7 @@ struct UsernamePromptView: View {
             do {
                 try await scores.login(username: sanitized)
             } catch {
-                errorMessage = error.localizedDescription
+                errorMessage = UserFacingMessages.friendly(error)
             }
             isSubmitting = false
         }

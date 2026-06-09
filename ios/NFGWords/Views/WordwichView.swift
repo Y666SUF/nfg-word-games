@@ -205,7 +205,7 @@ final class WordwichSession: ObservableObject {
                     creditGuess(word: word, oldPrefixLen: oldPrefixLen, won: won)
                 }
             } catch {
-                feedback = error.localizedDescription
+                feedback = UserFacingMessages.friendly(error)
             }
             return
         }
@@ -381,21 +381,25 @@ struct WordwichView: View {
     }
 
     private var header: some View {
-        HStack {
-            Text(session.isOnline ? "Live" : "Solo")
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(session.isOnline ? NFGTheme.successGreen : NFGTheme.muted)
-            Spacer()
-            Text("Round \(session.roundScore.formatted())")
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(NFGTheme.purpleLight)
-            Text("\(session.guesses.count) guesses")
-                .font(.caption2)
+        HStack(spacing: 12) {
+            Label("\(session.guesses.count) guesses", systemImage: "text.word.spacing")
+                .font(.caption2.weight(.semibold))
                 .foregroundStyle(NFGTheme.muted)
+            Spacer()
+            HStack(spacing: 4) {
+                Text("Round")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(NFGTheme.muted)
+                NFGAnimatedScore(
+                    value: session.roundScore,
+                    font: .caption.weight(.bold),
+                    color: AnyShapeStyle(NFGTheme.purpleLight)
+                )
+            }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 6)
-        .background(NFGTheme.panel.opacity(0.9))
+        .padding(.vertical, 8)
+        .background(NFGTheme.panel.opacity(0.92))
     }
 
     private var centerWord: some View {

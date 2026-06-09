@@ -5,9 +5,8 @@ struct LeaderboardView: View {
 
     @State private var scope: LeaderboardScope = .overall
     @State private var entries: [LeaderboardEntry] = []
-    @State private var isLoading = false
-    @State private var errorMessage: String?
-    @State private var usingCache = false
+    @State private var isInitialLoad = true
+    @State private var emptyMessage: String?
 
     private static let cacheKey = "nfg-words-leaderboard-cache-v1"
 
@@ -51,32 +50,13 @@ struct LeaderboardView: View {
                 }
                 .pickerStyle(.segmented)
 
-                statusBanner
-
-                if isLoading {
-                    ProgressView("Loading leaderboard...")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 24)
-                } else if let errorMessage {
-                    Text(errorMessage)
-                        .font(.footnote)
-                        .foregroundStyle(NFGTheme.muted)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(14)
-                        .background(NFGTheme.panel)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                } else if entries.isEmpty {
-                    Text("No players on this leaderboard yet.")
-                        .font(.footnote)
-                        .foregroundStyle(NFGTheme.muted)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(14)
-                        .background(NFGTheme.panel)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                if entries.isEmpty {
+                    emptyState
                 } else {
                     ForEach(entries) { entry in
                         leaderboardRow(entry)
                     }
+                    .animation(.easeInOut(duration: 0.25), value: entries.map(\.id))
                 }
             }
             .padding(16)
@@ -86,37 +66,62 @@ struct LeaderboardView: View {
         .refreshable { await loadEntries(forceLive: true) }
         .onAppear { scores.setWantsFrequentLeaderboardSync(true) }
         .onDisappear { scores.setWantsFrequentLeaderboardSync(false) }
-        .task(id: "\(scope.rawValue)-\(scores.leaderboardRefreshTick)") { await loadEntries() }
-    }
-
-    @ViewBuilder
-    private var statusBanner: some View {
-        if isLoading {
-            EmptyView()
-        } else if usingCache {
-            Text("Showing last saved rankings — could not reach the live server. Pull down to retry.")
-                .font(.caption)
-                .foregroundStyle(NFGTheme.pink)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(12)
-                .background(NFGTheme.panel2)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-        } else if scores.isServerReachable {
-            Text("Live rankings")
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(NFGTheme.successGreen)
-                .frame(maxWidth: .infinity, alignment: .leading)
+        .onChange(of: scope) { _, _ in
+            applyCachedEntries(for: scope)
+            Task { await loadEntries() }
+        }
+        .onChange(of: scores.leaderboardRefreshTick) { _, _ in
+            Task { await loadEntries(silent: true) }
+        }
+        .task(id: scope) {
+            applyCachedEntries(for: scope)
+            await loadEntries()
+        }
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 30_000_000_000)
+                await loadEntries(silent: true)
+            }
         }
     }
 
-    private func scoreLabel(for scope: LeaderboardScope, player: PlayerProfile) -> String {
+    @ViewBuilder
+    private var emptyState: some View {
+        if isInitialLoad {
+            VStack(spacing: 12) {
+                ProgressView()
+                    .tint(NFGTheme.accent)
+                Text("Loading rankings…")
+                    .font(.footnote)
+                    .foregroundStyle(NFGTheme.muted)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 32)
+        } else {
+            Text(emptyMessage ?? "No players on this leaderboard yet.")
+                .font(.footnote)
+                .foregroundStyle(NFGTheme.muted)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(20)
+                .background(NFGTheme.panel)
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+        }
+    }
+
+    private func displayScore(for entry: LeaderboardEntry, isYou: Bool) -> Int {
+        if isYou { return scoreValue(for: scope) }
+        return entry.score
+    }
+
+    private func scoreValue(for scope: LeaderboardScope) -> Int {
         switch scope {
         case .overall:
-            return scores.state.totalScore.formatted()
+            return scores.state.totalScore
         case .wordwheel:
-            return scores.state.highScore(for: .wordwheel).formatted()
+            return scores.state.highScore(for: .wordwheel)
         case .wordwich:
-            return scores.state.highScore(for: .wordwich).formatted()
+            return scores.state.highScore(for: .wordwich)
         }
     }
 
@@ -139,16 +144,16 @@ struct LeaderboardView: View {
                             .foregroundStyle(NFGTheme.gold)
                     }
                 }
-                Text("Your profile · \(style.tier.title)")
+                Text("Your rank · \(style.tier.title)")
                     .font(.caption)
                     .foregroundStyle(NFGTheme.muted)
             }
             Spacer()
-            Text(scoreLabel(for: scope, player: player))
-                .font(.system(size: 22, weight: .heavy, design: .rounded))
-                .foregroundStyle(
-                    LinearGradient(colors: style.tier.nameColors, startPoint: .leading, endPoint: .trailing)
-                )
+            NFGAnimatedScore(
+                value: scoreValue(for: scope),
+                font: .system(size: 22, weight: .heavy, design: .rounded),
+                color: AnyShapeStyle(LinearGradient(colors: style.tier.nameColors, startPoint: .leading, endPoint: .trailing))
+            )
         }
         .padding(14)
         .background(style.rowBackground(isYou: true))
@@ -203,7 +208,7 @@ struct LeaderboardView: View {
 
             Spacer()
 
-            Text(entry.score.formatted())
+            Text(displayScore(for: entry, isYou: isYou).formatted())
                 .font(.system(size: 20, weight: .heavy, design: .rounded))
                 .foregroundStyle(NFGTheme.text)
         }
@@ -213,73 +218,56 @@ struct LeaderboardView: View {
         .overlay { style.rowBorder(isYou: isYou) }
     }
 
-    @ViewBuilder
-    private func panel(title: String, subtitle: String, value: String, accent: Bool) -> some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundStyle(NFGTheme.muted)
-            }
-            Spacer()
-            Text(value)
-                .font(.system(size: 22, weight: .heavy, design: .rounded))
-                .foregroundStyle(accent ? NFGTheme.accent : NFGTheme.text)
+    private func applyCachedEntries(for scope: LeaderboardScope) {
+        if let cached = loadCache(scope: scope), !cached.isEmpty {
+            entries = cached
+            emptyMessage = nil
         }
-        .padding(14)
-        .background(NFGTheme.panel)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).stroke(NFGTheme.border))
     }
 
-    private func loadEntries(forceLive: Bool = false) async {
-        isLoading = true
-        errorMessage = nil
-        usingCache = false
-        defer { isLoading = false }
+    private func loadEntries(forceLive: Bool = false, silent: Bool = false) async {
+        if !silent, entries.isEmpty {
+            applyCachedEntries(for: scope)
+        }
 
+        emptyMessage = nil
         var lastError: Error?
-        let attempts = forceLive ? 10 : 8
+        let attempts = forceLive ? 10 : 6
         for attempt in 0..<attempts {
             if attempt > 0 {
-                let delayNs = UInt64(min(8, attempt + 1)) * 1_000_000_000
+                let delayNs = UInt64(min(6, attempt + 1)) * 1_000_000_000
                 try? await Task.sleep(nanoseconds: delayNs)
             }
             do {
                 try await LeaderboardAPI.checkHealth()
                 let fresh = try await LeaderboardAPI.fetchLeaderboard(game: scope.game)
-                entries = fresh
                 saveCache(fresh, scope: scope)
-                usingCache = false
                 scores.markServerReachable()
+                await MainActor.run {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        entries = fresh
+                        emptyMessage = nil
+                    }
+                    isInitialLoad = false
+                }
                 return
             } catch {
                 lastError = error
             }
         }
 
-        guard let lastError else { return }
-        scores.markServerUnreachable()
-        let allowCache = !forceLive && !scores.isServerReachable
-        if allowCache, let cached = loadCache(scope: scope), !cached.isEmpty {
-            entries = cached
-            usingCache = true
-            errorMessage = nil
-        } else {
-            entries = []
-            errorMessage = friendlyError(lastError)
-            usingCache = false
-        }
-    }
+        await MainActor.run {
+            isInitialLoad = false
+            scores.markServerUnreachable()
 
-    private func friendlyError(_ error: Error) -> String {
-        let text = error.localizedDescription
-        if text.contains("unavailable") || text.contains("offline") || text.contains("Could not reach") {
-            return "NFG Words server is offline. On your Windows PC, run run-electron-cloudflare.bat from nfg-crash and wait until the log shows [WordGames] Ready (~30 seconds). Word Games must be on port 19877."
+            if entries.isEmpty, let cached = loadCache(scope: scope), !cached.isEmpty {
+                entries = cached
+                emptyMessage = nil
+            } else if entries.isEmpty {
+                emptyMessage = lastError.map { UserFacingMessages.friendly($0) }
+                    ?? "Rankings aren't available right now. Pull down to try again."
+            }
         }
-        return text
     }
 
     private func cacheStorageKey(for scope: LeaderboardScope) -> String {

@@ -280,10 +280,12 @@ final class ScoreStore: ObservableObject {
         do {
             try await LeaderboardAPI.checkHealth()
             let remote = try await LeaderboardAPI.fetchPlayerScores(playerId: state.player!.playerId)
-            mergeRemoteScores(remote)
+            let changed = mergeRemoteScores(remote)
             _ = await flushPendingSync()
             isServerReachable = true
-            leaderboardRefreshTick += 1
+            if changed {
+                leaderboardRefreshTick += 1
+            }
             return true
         } catch {
             isServerReachable = false
@@ -294,16 +296,24 @@ final class ScoreStore: ObservableObject {
         }
     }
 
-    private func mergeRemoteScores(_ remote: LeaderboardAPI.PlayerScores) {
-        let before = state.totalScore
+    @discardableResult
+    private func mergeRemoteScores(_ remote: LeaderboardAPI.PlayerScores) -> Bool {
+        let beforeTotal = state.totalScore
+        let beforeGames = state.gameHighScores
+        let beforeLevel = state.wordwheelLevel
+
         state.totalScore = max(state.totalScore, remote.totalScore, state.lifetimePeakTotal)
         for (gameId, score) in remote.gameHighScores {
             state.gameHighScores[gameId] = max(state.gameHighScores[gameId] ?? 0, score)
         }
         state.wordwheelLevel = max(state.wordwheelLevel, remote.wordwheelLevel)
         recordLifetimePeak()
-        notePossibleUnlock(from: before, to: state.totalScore)
+        notePossibleUnlock(from: beforeTotal, to: state.totalScore)
         persist()
+
+        return beforeTotal != state.totalScore
+            || beforeLevel != state.wordwheelLevel
+            || beforeGames != state.gameHighScores
     }
 
     /// App Store Guideline 5.1.1(v) — in-app account deletion.

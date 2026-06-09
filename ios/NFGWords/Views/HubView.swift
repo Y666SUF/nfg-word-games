@@ -11,6 +11,12 @@ struct HubView: View {
                     .padding(.top, 8)
                     .padding(.bottom, 4)
 
+                Text("Pick a game")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(NFGTheme.muted)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 2)
+
                 ForEach(GameId.listedGames) { game in
                     NavigationLink {
                         destination(for: game)
@@ -75,13 +81,13 @@ struct HubView: View {
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(NFGTheme.muted)
             }
-            Text(scores.state.totalScore.formatted())
-                .font(.system(size: 15, weight: .heavy, design: .rounded))
-                .foregroundStyle(
-                    style.tier.isStarter
-                        ? AnyShapeStyle(NFGTheme.purpleLight)
-                        : AnyShapeStyle(LinearGradient(colors: style.tier.nameColors, startPoint: .leading, endPoint: .trailing))
-                )
+            NFGAnimatedScore(
+                value: scores.state.totalScore,
+                font: .system(size: 15, weight: .heavy, design: .rounded),
+                color: style.tier.isStarter
+                    ? AnyShapeStyle(NFGTheme.purpleLight)
+                    : AnyShapeStyle(LinearGradient(colors: style.tier.nameColors, startPoint: .leading, endPoint: .trailing))
+            )
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Score \(scores.state.totalScore), \(style.tier.title) reward tier")

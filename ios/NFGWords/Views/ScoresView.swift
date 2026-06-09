@@ -12,22 +12,18 @@ struct ScoresView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 14) {
-                panel(title: "Total (all games)", value: "\(scores.state.totalScore.formatted())", accent: false)
+                scorePanel(title: "Total score", subtitle: "Across all games", value: scores.state.totalScore, accent: false)
 
                 ForEach(GameId.listedGames) { game in
-                    panel(
+                    scorePanel(
                         title: game.displayName,
                         subtitle: "Personal best",
-                        value: "\(scores.state.highScore(for: game).formatted())",
+                        value: scores.state.highScore(for: game),
                         accent: true
                     )
                 }
 
-                panel(
-                    title: "WordWheel progress",
-                    value: "Level \(scores.state.wordwheelLevel)",
-                    accent: false
-                )
+                levelPanel(title: "WordWheel progress", level: scores.state.wordwheelLevel)
 
                 RewardUnlocksSection(totalScore: scores.state.totalScore)
 
@@ -129,13 +125,13 @@ struct ScoresView: View {
         do {
             try await scores.deleteAccount()
         } catch {
-            deleteError = error.localizedDescription
+            deleteError = UserFacingMessages.friendly(error)
         }
         isDeleting = false
     }
 
     @ViewBuilder
-    private func panel(title: String, subtitle: String? = nil, value: String, accent: Bool) -> some View {
+    private func scorePanel(title: String, subtitle: String? = nil, value: Int, accent: Bool) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
@@ -147,9 +143,31 @@ struct ScoresView: View {
                 }
             }
             Spacer()
-            Text(value)
+            NFGAnimatedScore(
+                value: value,
+                font: .system(size: 22, weight: .heavy, design: .rounded),
+                color: accent ? AnyShapeStyle(NFGTheme.accent) : AnyShapeStyle(NFGTheme.text)
+            )
+        }
+        .padding(14)
+        .background(NFGTheme.panel)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(NFGTheme.border))
+    }
+
+    private func levelPanel(title: String, level: Int) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                Text("Current level")
+                    .font(.caption)
+                    .foregroundStyle(NFGTheme.muted)
+            }
+            Spacer()
+            Text("Level \(level)")
                 .font(.system(size: 22, weight: .heavy, design: .rounded))
-                .foregroundStyle(accent ? NFGTheme.accent : NFGTheme.text)
+                .foregroundStyle(NFGTheme.text)
         }
         .padding(14)
         .background(NFGTheme.panel)

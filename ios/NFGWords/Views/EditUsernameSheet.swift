@@ -75,7 +75,7 @@ struct EditUsernameSheet: View {
                 try await scores.updateUsername(username)
                 dismiss()
             } catch {
-                errorMessage = error.localizedDescription
+                errorMessage = UserFacingMessages.friendly(error)
             }
             isSaving = false
         }

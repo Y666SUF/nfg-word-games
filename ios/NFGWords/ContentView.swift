@@ -74,34 +74,53 @@ struct ContentView: View {
     }
 
     private var tabBar: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             tabButton(.games, label: "Games", icon: "gamecontroller.fill")
             tabButton(.leaderboard, label: "Ranks", icon: "list.number")
             tabButton(.scores, label: "Mine", icon: "trophy.fill")
         }
-        .padding(.horizontal, 12)
-        .padding(.top, 8)
-        .padding(.bottom, 10)
-        .background(NFGTheme.background.opacity(0.98))
-        .overlay(alignment: .top) { Divider().background(NFGTheme.border) }
+        .padding(.horizontal, 10)
+        .padding(.top, 6)
+        .padding(.bottom, 8)
+        .background {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .overlay(NFGTheme.background.opacity(0.55))
+                .ignoresSafeArea(edges: .bottom)
+        }
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(NFGTheme.border)
+                .frame(height: 0.5)
+        }
     }
 
     private func tabButton(_ value: AppTab, label: String, icon: String) -> some View {
         Button {
-            tab = value
+            withAnimation(.easeInOut(duration: 0.2)) { tab = value }
         } label: {
-            VStack(spacing: 4) {
+            VStack(spacing: 3) {
                 Image(systemName: icon)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 17, weight: .semibold))
+                    .symbolEffect(.bounce, value: tab == value)
                 Text(label)
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
             }
             .foregroundStyle(tab == value ? NFGTheme.accent : NFGTheme.muted)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
-            .background(tab == value ? NFGTheme.accent.opacity(0.12) : .clear)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding(.vertical, 9)
+            .background {
+                if tab == value {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(NFGTheme.accent.opacity(0.14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(NFGTheme.accent.opacity(0.25), lineWidth: 1)
+                        )
+                }
+            }
         }
+        .buttonStyle(.plain)
     }
 }
 
