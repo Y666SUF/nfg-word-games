@@ -4,6 +4,8 @@ struct UsernamePromptView: View {
     @EnvironmentObject private var scores: ScoreStore
 
     @State private var username = ""
+    @State private var playerCode = ""
+    @State private var showRestore = false
     @State private var errorMessage: String?
     @State private var isSubmitting = false
     @State private var showPrivacy = false
@@ -14,71 +16,94 @@ struct UsernamePromptView: View {
             NFGTheme.background.ignoresSafeArea()
             NFGTheme.backgroundGlow.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                NFGWordsLogo(style: .welcome)
-                    .padding(.top, 56)
+            ScrollView {
+                VStack(spacing: 0) {
+                    NFGWordsLogo(style: .welcome)
+                        .padding(.top, 56)
 
-                Spacer(minLength: 20)
+                    VStack(spacing: 24) {
+                        VStack(spacing: 10) {
+                            Text(showRestore ? "Restore your profile" : "Choose your username")
+                                .font(.system(size: 28, weight: .black, design: .rounded))
+                                .foregroundStyle(NFGTheme.text)
+                                .multilineTextAlignment(.center)
 
-                VStack(spacing: 24) {
-                    VStack(spacing: 10) {
-                        Text("Choose your username")
-                            .font(.system(size: 28, weight: .black, design: .rounded))
-                            .foregroundStyle(NFGTheme.text)
-                            .multilineTextAlignment(.center)
-
-                        Text("Join the NFG Words leaderboards. Letters, numbers, and underscores only.")
-                            .font(.subheadline)
-                            .foregroundStyle(NFGTheme.muted)
-                            .multilineTextAlignment(.center)
-                    }
-
-                    TextField("Username", text: $username)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                        .textContentType(.username)
-                        .padding(14)
-                        .background(NFGTheme.panel2)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(NFGTheme.border))
-                        .accessibilityLabel("Username")
-
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.footnote)
-                            .foregroundStyle(.red)
-                            .multilineTextAlignment(.center)
-                            .accessibilityLabel("Error: \(errorMessage)")
-                    }
-
-                    Button(action: submit) {
-                        HStack {
-                            if isSubmitting {
-                                ProgressView().tint(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
-                            }
-                            Text(isSubmitting ? "Setting up…" : "Continue")
-                                .font(.system(size: 17, weight: .heavy, design: .rounded))
+                            Text(showRestore
+                                 ? "Enter your username and player code from the Mine tab on your old device."
+                                 : "Pick a unique name for the leaderboards. Letters, numbers, and underscores only.")
+                                .font(.subheadline)
+                                .foregroundStyle(NFGTheme.muted)
+                                .multilineTextAlignment(.center)
                         }
-                        .foregroundStyle(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(NFGTheme.heroGradient)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                        TextField("Username", text: $username)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .textContentType(.username)
+                            .padding(14)
+                            .background(NFGTheme.panel2)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(NFGTheme.border))
+                            .accessibilityLabel("Username")
+
+                        if showRestore {
+                            TextField("Player code", text: $playerCode)
+                                .textInputAutocapitalization(.never)
+                                .autocorrectionDisabled()
+                                .font(.system(.body, design: .monospaced))
+                                .padding(14)
+                                .background(NFGTheme.panel2)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(NFGTheme.border))
+                                .accessibilityLabel("Player code")
+                        }
+
+                        if let errorMessage {
+                            Text(errorMessage)
+                                .font(.footnote)
+                                .foregroundStyle(.red)
+                                .multilineTextAlignment(.center)
+                                .accessibilityLabel("Error: \(errorMessage)")
+                        }
+
+                        Button(action: submit) {
+                            HStack {
+                                if isSubmitting {
+                                    ProgressView().tint(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
+                                }
+                                Text(isSubmitting ? "Setting up…" : (showRestore ? "Restore profile" : "Continue"))
+                                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                            }
+                            .foregroundStyle(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(NFGTheme.heroGradient)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .disabled(isSubmitting || !canSubmit)
+                        .accessibilityHint(showRestore ? "Restores your saved profile" : "Creates your leaderboard profile")
+
+                        Button(showRestore ? "Create new profile instead" : "Already playing? Restore profile") {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                showRestore.toggle()
+                                errorMessage = nil
+                                if !showRestore { playerCode = "" }
+                            }
+                        }
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(NFGTheme.purpleLight)
+
+                        legalNotice
                     }
-                    .disabled(isSubmitting || username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    .accessibilityHint("Creates your leaderboard profile")
-
-                    legalNotice
+                    .padding(24)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(NFGTheme.panel.opacity(0.94))
+                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(NFGTheme.border))
+                    )
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 28)
                 }
-                .padding(24)
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(NFGTheme.panel.opacity(0.94))
-                        .overlay(RoundedRectangle(cornerRadius: 20).stroke(NFGTheme.border))
-                )
-                .padding(.horizontal, 24)
-
-                Spacer(minLength: 28)
             }
         }
         .sheet(isPresented: $showPrivacy) {
@@ -87,6 +112,20 @@ struct UsernamePromptView: View {
         .sheet(isPresented: $showTerms) {
             LegalDocumentView(title: "Terms of Use", sections: AppLegalContent.termsSections)
         }
+        .onAppear {
+            if let creds = PlayerKeychain.load() {
+                username = creds.username
+            }
+        }
+    }
+
+    private var canSubmit: Bool {
+        let name = username.trimmingCharacters(in: .whitespacesAndNewlines)
+        if name.isEmpty { return false }
+        if showRestore {
+            return !playerCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+        return true
     }
 
     private var legalNotice: some View {
@@ -112,11 +151,17 @@ struct UsernamePromptView: View {
             return
         }
 
+        let code = playerCode.trimmingCharacters(in: .whitespacesAndNewlines)
+        if showRestore && code.isEmpty {
+            errorMessage = "Enter your player code from the Mine tab."
+            return
+        }
+
         errorMessage = nil
         isSubmitting = true
         Task {
             do {
-                try await scores.login(username: sanitized)
+                try await scores.login(username: sanitized, playerId: showRestore ? code : nil)
             } catch {
                 errorMessage = UserFacingMessages.friendly(error)
             }

@@ -47,6 +47,9 @@ final class ScoreStore: ObservableObject {
         if hasPendingSync, state.isLoggedIn {
             enqueueServerSync()
         }
+        if let player = state.player {
+            PlayerKeychain.save(playerId: player.playerId, username: player.username)
+        }
     }
 
     var needsUsername: Bool { !state.isLoggedIn }
@@ -111,12 +114,15 @@ final class ScoreStore: ObservableObject {
         UserDefaults.standard.set(pending, forKey: pendingSyncKey)
     }
 
-    func login(username: String) async throws {
+    func login(username: String, playerId: String? = nil) async throws {
         try await LeaderboardAPI.checkHealth()
-        let profile = try await LeaderboardAPI.login(username: username)
+        let resolvedPlayerId = playerId ?? PlayerKeychain.playerId(forUsername: username)
+        let profile = try await LeaderboardAPI.login(username: username, playerId: resolvedPlayerId)
+        PlayerKeychain.save(playerId: profile.playerId, username: profile.username)
         state.player = profile
         persist()
         setPendingSync(true)
+        _ = await refreshFromServer()
         _ = await flushPendingSync()
         isServerReachable = true
         leaderboardRefreshTick += 1
@@ -326,6 +332,7 @@ final class ScoreStore: ObservableObject {
         state = .empty
         isServerReachable = false
         setPendingSync(false)
+        PlayerKeychain.clear()
         UserDefaults.standard.removeObject(forKey: key)
         UserDefaults.standard.removeObject(forKey: roundKey)
         UserDefaults.standard.removeObject(forKey: "nfg-words-scores-v1")

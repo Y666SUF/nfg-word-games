@@ -21,6 +21,9 @@ enum UserFacingMessages {
             || lowered.contains("retrying automatically") {
             return "Something went wrong. Please try again in a moment."
         }
+        if lowered.contains("username taken") || lowered.contains("username_taken") {
+            return "That username is already taken. Choose a different name, or restore your profile with your player code."
+        }
         if lowered.contains("unavailable") || lowered.contains("offline") || lowered.contains("could not reach") {
             return "You're offline right now. We'll sync when you're back online."
         }

@@ -130,11 +130,15 @@ enum LeaderboardAPI {
         }
     }
 
-    static func login(username: String) async throws -> PlayerProfile {
+    static func login(username: String, playerId: String? = nil) async throws -> PlayerProfile {
+        var body: [String: Any] = ["username": username]
+        if let playerId, !playerId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            body["playerId"] = playerId.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
         let response: LoginResponse = try await request(
             "api/word-games/players/login",
             method: "POST",
-            body: ["username": username]
+            body: body
         )
         return PlayerProfile(playerId: response.playerId, username: response.player.username)
     }

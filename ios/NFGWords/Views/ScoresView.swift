@@ -8,6 +8,7 @@ struct ScoresView: View {
     @State private var showDeleteConfirm = false
     @State private var isDeleting = false
     @State private var deleteError: String?
+    @State private var copiedPlayerCode = false
 
     var body: some View {
         ScrollView {
@@ -24,6 +25,10 @@ struct ScoresView: View {
                 }
 
                 levelPanel(title: "WordWheel progress", level: scores.state.wordwheelLevel)
+
+                if let player = scores.state.player {
+                    playerCodePanel(player: player)
+                }
 
                 RewardUnlocksSection(totalScore: scores.state.totalScore)
 
@@ -148,6 +153,42 @@ struct ScoresView: View {
                 font: .system(size: 22, weight: .heavy, design: .rounded),
                 color: accent ? AnyShapeStyle(NFGTheme.accent) : AnyShapeStyle(NFGTheme.text)
             )
+        }
+        .padding(14)
+        .background(NFGTheme.panel)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(NFGTheme.border))
+    }
+
+    private func playerCodePanel(player: PlayerProfile) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Player code")
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+            Text("Keep this private. You need it to restore your profile on a new phone.")
+                .font(.caption)
+                .foregroundStyle(NFGTheme.muted)
+            Text(player.playerId)
+                .font(.system(.footnote, design: .monospaced))
+                .foregroundStyle(NFGTheme.text)
+                .textSelection(.enabled)
+                .padding(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(NFGTheme.panel2)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            Button {
+                UIPasteboard.general.string = player.playerId
+                copiedPlayerCode = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    copiedPlayerCode = false
+                }
+            } label: {
+                Text(copiedPlayerCode ? "Copied" : "Copy player code")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(NFGTheme.purple)
         }
         .padding(14)
         .background(NFGTheme.panel)

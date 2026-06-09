@@ -13,6 +13,7 @@
 		B100000000000000000000D0 /* NFGPolish.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000D1 /* NFGPolish.swift */; };
 		B10000000000000000000004 /* GameModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000014 /* GameModels.swift */; };
 		B10000000000000000000005 /* ScoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000015 /* ScoreStore.swift */; };
+		B100000000000000000000E0 /* PlayerKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000E1 /* PlayerKeychain.swift */; };
 		B10000000000000000000006 /* LevelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000016 /* LevelStore.swift */; };
 		B10000000000000000000007 /* WordDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000017 /* WordDictionary.swift */; };
 		B10000000000000000000008 /* HubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000018 /* HubView.swift */; };
@@ -55,6 +56,7 @@
 		B100000000000000000000D1 /* NFGPolish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGPolish.swift; sourceTree = "<group>"; };
 		B10000000000000000000014 /* GameModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModels.swift; sourceTree = "<group>"; };
 		B10000000000000000000015 /* ScoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreStore.swift; sourceTree = "<group>"; };
+		B100000000000000000000E1 /* PlayerKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerKeychain.swift; sourceTree = "<group>"; };
 		B10000000000000000000016 /* LevelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelStore.swift; sourceTree = "<group>"; };
 		B10000000000000000000017 /* WordDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordDictionary.swift; sourceTree = "<group>"; };
 		B10000000000000000000018 /* HubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubView.swift; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				B10000000000000000000015 /* ScoreStore.swift */,
+				B100000000000000000000E1 /* PlayerKeychain.swift */,
 				B10000000000000000000016 /* LevelStore.swift */,
 				B10000000000000000000017 /* WordDictionary.swift */,
 				B1000000000000000000002A /* ProfanityFilter.swift */,
@@ -285,6 +288,7 @@
 				B100000000000000000000D0 /* NFGPolish.swift in Sources */,
 				B10000000000000000000004 /* GameModels.swift in Sources */,
 				B10000000000000000000005 /* ScoreStore.swift in Sources */,
+				B100000000000000000000E0 /* PlayerKeychain.swift in Sources */,
 				B10000000000000000000006 /* LevelStore.swift in Sources */,
 				B10000000000000000000007 /* WordDictionary.swift in Sources */,
 				B10000000000000000000008 /* HubView.swift in Sources */,
@@ -358,7 +362,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -385,7 +389,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;

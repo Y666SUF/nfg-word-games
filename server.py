@@ -243,6 +243,8 @@ def login_player(body: dict[str, Any]) -> dict[str, Any]:
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    requested_player_id = str(body.get("playerId") or "").strip() or None
+
     data = _load_scores()
     player_id = _find_player_by_username(data, username)
     if player_id is None:
@@ -257,6 +259,9 @@ def login_player(body: dict[str, Any]) -> dict[str, Any]:
         _save_scores(data)
         created = True
     else:
+        # Existing username — require the secret player id so others cannot hijack the profile.
+        if not requested_player_id or requested_player_id != player_id:
+            raise HTTPException(status_code=409, detail="username_taken")
         created = False
         player = data["players"][player_id]
         if player.get("username") != username:
