@@ -37,8 +37,7 @@ struct WordWheelView: View {
             let puzzleH = max(100, geo.size.height - topH - foundH - wheelH - 24)
 
             ZStack {
-                NFGTheme.gameBackground.ignoresSafeArea()
-                NFGTheme.backgroundGlow.ignoresSafeArea()
+                NFGAnimatedBackground(style: .game)
 
                 VStack(spacing: 10) {
                     topBar

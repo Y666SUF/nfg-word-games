@@ -142,14 +142,15 @@ struct RewardUnlockStyle {
 
     @ViewBuilder
     func nameText(_ username: String, baseFont: Font) -> some View {
+        let label = UsernameDisplay.formatted(username)
         if tier.nameColors.count > 1 {
-            Text(username)
+            Text(label)
                 .font(baseFont)
                 .foregroundStyle(
                     LinearGradient(colors: tier.nameColors, startPoint: .leading, endPoint: .trailing)
                 )
         } else {
-            Text(username)
+            Text(label)
                 .font(baseFont)
                 .foregroundStyle(tier.nameColors[0])
         }

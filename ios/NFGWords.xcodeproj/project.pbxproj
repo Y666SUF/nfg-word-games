@@ -19,6 +19,7 @@
 		B10000000000000000000008 /* HubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000018 /* HubView.swift */; };
 		B10000000000000000000009 /* ScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000019 /* ScoresView.swift */; };
 		B1000000000000000000000A /* WordWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001A /* WordWheelView.swift */; };
+		B100000000000000000000F0 /* NFGAnimatedBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F1 /* NFGAnimatedBackground.swift */; };
 		B1000000000000000000000B /* LetterWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001B /* LetterWheelView.swift */; };
 		B1000000000000000000000C /* PuzzleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001C /* PuzzleGridView.swift */; };
 		B1000000000000000000000D /* NFGWordsLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001D /* NFGWordsLogo.swift */; };
@@ -62,6 +63,7 @@
 		B10000000000000000000018 /* HubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubView.swift; sourceTree = "<group>"; };
 		B10000000000000000000019 /* ScoresView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoresView.swift; sourceTree = "<group>"; };
 		B1000000000000000000001A /* WordWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordWheelView.swift; sourceTree = "<group>"; };
+		B100000000000000000000F1 /* NFGAnimatedBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGAnimatedBackground.swift; sourceTree = "<group>"; };
 		B1000000000000000000001B /* LetterWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterWheelView.swift; sourceTree = "<group>"; };
 		B1000000000000000000001C /* PuzzleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleGridView.swift; sourceTree = "<group>"; };
 		B1000000000000000000001D /* NFGWordsLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGWordsLogo.swift; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				B1000000000000000000001D /* NFGWordsLogo.swift */,
+				B100000000000000000000F1 /* NFGAnimatedBackground.swift */,
 				B10000000000000000000018 /* HubView.swift */,
 				B10000000000000000000019 /* ScoresView.swift */,
 				B1000000000000000000001A /* WordWheelView.swift */,
@@ -294,6 +297,7 @@
 				B10000000000000000000008 /* HubView.swift in Sources */,
 				B10000000000000000000009 /* ScoresView.swift in Sources */,
 				B1000000000000000000000A /* WordWheelView.swift in Sources */,
+				B100000000000000000000F0 /* NFGAnimatedBackground.swift in Sources */,
 				B1000000000000000000000B /* LetterWheelView.swift in Sources */,
 				B1000000000000000000000C /* PuzzleGridView.swift in Sources */,
 				B1000000000000000000000D /* NFGWordsLogo.swift in Sources */,
@@ -362,7 +366,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -389,7 +393,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;

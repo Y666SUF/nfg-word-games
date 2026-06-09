@@ -4,6 +4,10 @@ struct HubView: View {
     @EnvironmentObject private var scores: ScoreStore
     @State private var showEditUsername = false
 
+    private var rewardStyle: RewardUnlockStyle {
+        RewardUnlockStyle(totalScore: scores.state.totalScore)
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
@@ -23,12 +27,13 @@ struct HubView: View {
                     } label: {
                         gameCard(game)
                     }
+                    .buttonStyle(NFGPressableStyle())
                 }
             }
             .padding(16)
             .padding(.top, 28)
         }
-        .background(NFGTheme.backgroundGlow.ignoresSafeArea())
+        .scrollIndicators(.hidden)
         .overlay(alignment: .topLeading) {
             playerCorner
                 .padding(.top, 8)
@@ -56,25 +61,31 @@ struct HubView: View {
                     Text("Playing as")
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(NFGTheme.muted)
-                    RewardUnlockStyle(totalScore: scores.state.totalScore)
-                        .nameText(player.username, baseFont: .system(size: 15, weight: .heavy, design: .rounded))
-                        .lineLimit(1)
+                    HStack(spacing: 4) {
+                        rewardStyle
+                            .nameText(player.username, baseFont: .system(size: 15, weight: .heavy, design: .rounded))
+                            .lineLimit(1)
+                        if UsernameDisplay.showsCrown(username: player.username, rewardStyle: rewardStyle) {
+                            Image(systemName: "crown.fill")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(NFGTheme.gold)
+                        }
+                    }
                 }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Playing as \(player.username). Tap to edit username.")
+            .accessibilityLabel("Playing as \(UsernameDisplay.formatted(player.username)). Tap to edit username.")
         }
     }
 
     private var scoreCorner: some View {
-        let style = RewardUnlockStyle(totalScore: scores.state.totalScore)
-        return VStack(alignment: .trailing, spacing: 1) {
+        VStack(alignment: .trailing, spacing: 1) {
             HStack(spacing: 4) {
-                if !style.tier.isStarter {
-                    Image(systemName: style.tier.icon)
+                if !rewardStyle.tier.isStarter {
+                    Image(systemName: rewardStyle.tier.icon)
                         .font(.caption2.weight(.bold))
                         .foregroundStyle(
-                            LinearGradient(colors: style.tier.nameColors, startPoint: .leading, endPoint: .trailing)
+                            LinearGradient(colors: rewardStyle.tier.nameColors, startPoint: .leading, endPoint: .trailing)
                         )
                 }
                 Text("Score")
@@ -84,13 +95,13 @@ struct HubView: View {
             NFGAnimatedScore(
                 value: scores.state.totalScore,
                 font: .system(size: 15, weight: .heavy, design: .rounded),
-                color: style.tier.isStarter
+                color: rewardStyle.tier.isStarter
                     ? AnyShapeStyle(NFGTheme.purpleLight)
-                    : AnyShapeStyle(LinearGradient(colors: style.tier.nameColors, startPoint: .leading, endPoint: .trailing))
+                    : AnyShapeStyle(LinearGradient(colors: rewardStyle.tier.nameColors, startPoint: .leading, endPoint: .trailing))
             )
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Score \(scores.state.totalScore), \(style.tier.title) reward tier")
+        .accessibilityLabel("Score \(scores.state.totalScore), \(rewardStyle.tier.title) reward tier")
     }
 
     @ViewBuilder

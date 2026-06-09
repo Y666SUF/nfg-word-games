@@ -1,5 +1,25 @@
 import SwiftUI
 
+enum UsernameDisplay {
+    /// Title-case each segment: `yusuf` → `Yusuf`, `cool_player` → `Cool_Player`.
+    static func formatted(_ username: String) -> String {
+        username.split(separator: "_", omittingEmptySubsequences: false)
+            .map { segment -> String in
+                guard let first = segment.first else { return "" }
+                return String(first).uppercased() + segment.dropFirst().lowercased()
+            }
+            .joined(separator: "_")
+    }
+
+    static func isFounder(_ username: String) -> Bool {
+        ProfanityFilter.normalize(username) == "yusuf"
+    }
+
+    static func showsCrown(username: String, rewardStyle: RewardUnlockStyle) -> Bool {
+        rewardStyle.showsCrown || isFounder(username)
+    }
+}
+
 enum UserFacingMessages {
     static func friendly(_ error: Error) -> String {
         let text: String
@@ -46,10 +66,12 @@ struct NFGAnimatedScore: View {
 }
 
 struct NFGScreenBackground: ViewModifier {
+    var style: NFGAnimatedBackground.Style = .hub
+
     func body(content: Content) -> some View {
-        content
-            .background(NFGTheme.background.ignoresSafeArea())
-            .background(NFGTheme.backgroundGlow.ignoresSafeArea())
+        content.background {
+            NFGAnimatedBackground(style: style)
+        }
     }
 }
 

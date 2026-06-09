@@ -78,6 +78,7 @@ struct PuzzleGridView: View {
                     }
                 }
                 .frame(width: gridW, height: gridH)
+                .drawingGroup(opaque: false)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

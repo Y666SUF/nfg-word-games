@@ -13,8 +13,7 @@ struct UsernamePromptView: View {
 
     var body: some View {
         ZStack {
-            NFGTheme.background.ignoresSafeArea()
-            NFGTheme.backgroundGlow.ignoresSafeArea()
+            NFGAnimatedBackground(style: .hub)
 
             ScrollView {
                 VStack(spacing: 0) {
@@ -30,7 +29,7 @@ struct UsernamePromptView: View {
 
                             Text(showRestore
                                  ? "Enter your username and player code from the Mine tab on your old device."
-                                 : "Pick a unique name for the leaderboards. Letters, numbers, and underscores only.")
+                                 : "Pick a unique name for the leaderboards. Names are shown with capital letters (e.g. Yusuf, Cool_Player).")
                                 .font(.subheadline)
                                 .foregroundStyle(NFGTheme.muted)
                                 .multilineTextAlignment(.center)

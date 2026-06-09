@@ -22,8 +22,7 @@ struct ContentView: View {
 
     private var mainApp: some View {
         ZStack {
-            NFGTheme.background.ignoresSafeArea()
-            NFGTheme.backgroundGlow.ignoresSafeArea()
+            NFGAnimatedBackground(style: .hub)
 
             VStack(spacing: 0) {
                 Group {
@@ -45,6 +44,7 @@ struct ContentView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .animation(.smooth(duration: 0.22), value: tab)
 
                 tabBar
             }

@@ -355,7 +355,9 @@ struct WordwichView: View {
                 .scrollDismissesKeyboard(.interactively)
             }
         }
-        .background(NFGTheme.gameBackground.ignoresSafeArea())
+        .background {
+            NFGAnimatedBackground(style: .game)
+        }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             compactInputBar
         }
@@ -432,7 +434,7 @@ struct WordwichView: View {
             }
 
             if session.status == "won", let winner = session.wonBy {
-                Text("\(winner.username) solved it!")
+                Text("\(UsernameDisplay.formatted(winner.username)) solved it!")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(NFGTheme.successGreen)
                 if let countdown = session.newRoundCountdown {
@@ -464,7 +466,7 @@ struct WordwichView: View {
             }
             Spacer(minLength: 4)
             if !compact, let name = session.guessUserLookup[word] {
-                Text(name)
+                Text(UsernameDisplay.formatted(name))
                     .font(.caption2)
                     .foregroundStyle(NFGTheme.muted)
                     .lineLimit(1)

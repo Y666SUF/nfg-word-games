@@ -47,7 +47,14 @@ final class ScoreStore: ObservableObject {
         if hasPendingSync, state.isLoggedIn {
             enqueueServerSync()
         }
-        if let player = state.player {
+        if var player = state.player {
+            let formatted = UsernameDisplay.formatted(player.username)
+            if formatted != player.username {
+                player.username = formatted
+                state.player = player
+                persist()
+                enqueueServerSync()
+            }
             PlayerKeychain.save(playerId: player.playerId, username: player.username)
         }
     }
@@ -116,8 +123,9 @@ final class ScoreStore: ObservableObject {
 
     func login(username: String, playerId: String? = nil) async throws {
         try await LeaderboardAPI.checkHealth()
-        let resolvedPlayerId = playerId ?? PlayerKeychain.playerId(forUsername: username)
-        let profile = try await LeaderboardAPI.login(username: username, playerId: resolvedPlayerId)
+        let displayName = UsernameDisplay.formatted(ProfanityFilter.sanitize(username))
+        let resolvedPlayerId = playerId ?? PlayerKeychain.playerId(forUsername: displayName)
+        let profile = try await LeaderboardAPI.login(username: displayName, playerId: resolvedPlayerId)
         PlayerKeychain.save(playerId: profile.playerId, username: profile.username)
         state.player = profile
         persist()
@@ -138,7 +146,8 @@ final class ScoreStore: ObservableObject {
         if let validationError = ProfanityFilter.validate(sanitized) {
             throw LeaderboardAPI.APIError.server(validationError)
         }
-        let profile = try await LeaderboardAPI.updateUsername(playerId: player.playerId, username: sanitized)
+        let displayName = UsernameDisplay.formatted(sanitized)
+        let profile = try await LeaderboardAPI.updateUsername(playerId: player.playerId, username: displayName)
         state.player = profile
         persist()
         setPendingSync(true)

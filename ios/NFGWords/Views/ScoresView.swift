@@ -36,6 +36,7 @@ struct ScoresView: View {
             }
             .padding(16)
         }
+        .scrollIndicators(.hidden)
         .sheet(isPresented: $showPrivacy) {
             LegalDocumentView(title: "Privacy Policy", sections: AppLegalContent.privacySections)
         }

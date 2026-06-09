@@ -61,6 +61,7 @@ struct LeaderboardView: View {
             }
             .padding(16)
         }
+        .scrollIndicators(.hidden)
         .navigationTitle("Leaderboards")
         .navigationBarTitleDisplayMode(.inline)
         .refreshable { await loadEntries(forceLive: true) }
@@ -138,7 +139,7 @@ struct LeaderboardView: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     style.nameText(player.username, baseFont: .system(size: 16, weight: .bold, design: .rounded))
-                    if style.showsCrown {
+                    if UsernameDisplay.showsCrown(username: player.username, rewardStyle: style) {
                         Image(systemName: "crown.fill")
                             .font(.caption.weight(.bold))
                             .foregroundStyle(NFGTheme.gold)
@@ -185,11 +186,11 @@ struct LeaderboardView: View {
                     if rewardScore(for: entry, isYou: isYou) > 0 && !style.tier.isStarter {
                         style.nameText(entry.username, baseFont: .system(size: 16, weight: .bold, design: .rounded))
                     } else {
-                        Text(entry.username)
+                        Text(UsernameDisplay.formatted(entry.username))
                             .font(.system(size: 16, weight: .bold, design: .rounded))
                             .foregroundStyle(isYou ? NFGTheme.accent : NFGTheme.text)
                     }
-                    if style.showsCrown {
+                    if UsernameDisplay.showsCrown(username: entry.username, rewardStyle: style) {
                         Image(systemName: "crown.fill")
                             .font(.caption2.weight(.bold))
                             .foregroundStyle(NFGTheme.gold)
