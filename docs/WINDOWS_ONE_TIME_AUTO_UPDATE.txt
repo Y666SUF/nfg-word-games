@@ -1,0 +1,81 @@
+NFG WORD GAMES — Windows ONE-TIME auto-update setup (paste into Cursor on Windows)
+===================================================================================
+
+Run this once on your Windows PC. After that, Mac pushes deploy automatically within ~5 minutes.
+
+Repo path: %USERPROFILE%\Documents\nfg-word-games
+Port: 19877
+Public health: https://y666suf.com/api/word-games/health
+
+---
+
+## PROMPT START
+
+Set up automatic NFG Word Games server updates on this Windows PC so I never have to manually pull/restart after Mac pushes.
+
+1. cd to $env:USERPROFILE\Documents\nfg-word-games (clone from GitHub first if missing)
+2. git pull origin main
+3. Run the one-time installer:
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+powershell -ExecutionPolicy Bypass -File .\windows\install-auto-update-task.ps1
+```
+
+4. Verify the scheduled task exists:
+
+```powershell
+Get-ScheduledTask -TaskName "NFG Word Games Auto Update" | Format-List TaskName, State, Triggers
+```
+
+5. Optional — run deploy once now (don't wait 5 minutes):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\windows\auto-deploy.ps1
+Get-Content .\windows\deploy.log -Tail 15
+```
+
+6. Verify server health locally:
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/health
+```
+
+Should include `"gitRev"` and `"deployedAt"`.
+
+Reply with: scheduled task State, last 5 lines of deploy.log, and health JSON.
+
+## PROMPT END
+
+---
+
+## Quick copy-paste (no Cursor)
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+git pull origin main
+powershell -ExecutionPolicy Bypass -File .\windows\install-auto-update-task.ps1
+powershell -ExecutionPolicy Bypass -File .\windows\auto-deploy.ps1
+Get-ScheduledTask -TaskName "NFG Word Games Auto Update"
+curl http://127.0.0.1:19877/api/word-games/health
+```
+
+---
+
+## Check deploy from Mac (after pushing)
+
+```bash
+cd ~/Documents/nfg-word-games
+git rev-parse --short HEAD
+curl -s https://y666suf.com/api/word-games/health | python3 -m json.tool
+```
+
+`gitRev` in the health response should match your Mac commit after auto-deploy runs.
+
+---
+
+## Uninstall auto-update
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\windows\uninstall-auto-update-task.ps1
+```

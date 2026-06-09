@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
-"""Build professional English dictionary — real usage-based words only."""
+"""Build English dictionary — common everyday words only (no acronyms, names, or abbreviations)."""
 from __future__ import annotations
 
 import json
 import re
 from pathlib import Path
 
-from wordfreq import iter_wordlist, zipf_frequency
+from wordfreq import iter_wordlist
+
+from word_filters import collect_dynamic_rejections, is_common_english_word, write_rejections_file
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "english-dictionary.json"
-LEVELS = ROOT / "data" / "wordwheel-levels.json"
+IOS_OUT = ROOT / "ios" / "NFGWords" / "Resources" / "english-dictionary.json"
+APP_OUT = ROOT / "app" / "src" / "data" / "english-dictionary.json"
 VOWELS = set("aeiouy")
 
 
-def is_professional(word: str) -> bool:
+def is_valid_word(word: str) -> bool:
     w = word.lower()
     if len(w) < 3 or len(w) > 15:
         return False
@@ -24,32 +27,24 @@ def is_professional(word: str) -> bool:
         return False
     if re.search(r"(.)\1{2,}", w):
         return False
-    z = zipf_frequency(w, "en")
-    if len(w) <= 4:
-        return z >= 4.0
-    if len(w) <= 6:
-        return z >= 3.2
-    return z >= 2.8
+    return is_common_english_word(w)
 
 
 def main() -> None:
-    words = {w.lower() for w in iter_wordlist("en") if is_professional(w.lower())}
-
-    if LEVELS.is_file():
-        levels = json.loads(LEVELS.read_text(encoding="utf-8"))
-        for level in levels.get("levels", []):
-            for entry in level.get("words", []):
-                w = str(entry.get("word", "")).lower()
-                if w.isalpha() and len(w) >= 3:
-                    words.add(w)
+    source_words = [w.lower() for w in iter_wordlist("en")]
+    write_rejections_file(collect_dynamic_rejections(source_words))
+    words = {w for w in source_words if is_valid_word(w)}
 
     payload = {
-        "version": 1,
-        "source": "wordfreq-en-professional",
+        "version": 6,
+        "source": "wordfreq-en-common-english-only",
         "count": len(words),
         "words": sorted(words),
     }
-    OUT.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
+    body = json.dumps(payload, separators=(",", ":"))
+    OUT.write_text(body, encoding="utf-8")
+    IOS_OUT.write_text(body, encoding="utf-8")
+    APP_OUT.write_text(body, encoding="utf-8")
     print(f"Wrote {payload['count']} words → {OUT}")
 
 

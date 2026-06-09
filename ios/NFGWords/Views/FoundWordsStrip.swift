@@ -18,9 +18,13 @@ struct FoundWordsStrip: View {
                     .font(.system(size: 11, weight: .heavy, design: .rounded))
                     .foregroundStyle(NFGTheme.muted)
                 Spacer()
-                Text("\(found.count)/\(puzzleWords.count) puzzle")
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundStyle(NFGTheme.muted)
+                Text("\(found.count)/\(puzzleWords.count)")
+                    .font(.system(size: 11, weight: .heavy, design: .rounded))
+                    .foregroundStyle(NFGTheme.accent)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(NFGTheme.accent.opacity(0.12))
+                    .clipShape(Capsule())
             }
 
             if sortedFound.isEmpty {
@@ -39,10 +43,21 @@ struct FoundWordsStrip: View {
             }
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(NFGTheme.panel2)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(RoundedRectangle(cornerRadius: 12).stroke(NFGTheme.border))
+        .padding(.vertical, 9)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(
+                    LinearGradient(
+                        colors: [NFGTheme.panel2, NFGTheme.panel.opacity(0.9)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(NFGTheme.purple.opacity(0.2), lineWidth: 1)
+                )
+        )
     }
 
     @ViewBuilder
@@ -59,8 +74,12 @@ struct FoundWordsStrip: View {
         .foregroundStyle(isBonus ? NFGTheme.gold : NFGTheme.accent2)
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
-        .background((isBonus ? NFGTheme.gold : NFGTheme.accent2).opacity(0.14))
-        .clipShape(Capsule())
-        .overlay(Capsule().stroke((isBonus ? NFGTheme.gold : NFGTheme.accent2).opacity(0.35)))
+        .background(
+            Capsule()
+                .fill((isBonus ? NFGTheme.gold : NFGTheme.accent2).opacity(0.16))
+                .overlay(
+                    Capsule().stroke((isBonus ? NFGTheme.gold : NFGTheme.accent2).opacity(0.4), lineWidth: 1)
+                )
+        )
     }
 }

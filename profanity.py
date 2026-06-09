@@ -25,8 +25,12 @@ SUBSTITUTIONS = str.maketrans({
 })
 
 
+def sanitize_username(value: str) -> str:
+    return "".join(c for c in value.strip() if c.isalnum() or c == "_")
+
+
 def normalize_username(value: str) -> str:
-    return re.sub(r"[^a-z0-9_]", "", value.strip().lower())
+    return sanitize_username(value).lower()
 
 
 def contains_profanity(value: str) -> bool:
@@ -40,11 +44,12 @@ def contains_profanity(value: str) -> bool:
 
 
 def validate_username(value: str) -> str:
-    username = normalize_username(value)
-    if len(username) < 3:
+    username = sanitize_username(value)
+    key = username.lower()
+    if len(key) < 3:
         raise ValueError("username_too_short")
-    if len(username) > 16:
+    if len(key) > 16:
         raise ValueError("username_too_long")
-    if contains_profanity(username):
+    if contains_profanity(key):
         raise ValueError("username_not_allowed")
     return username

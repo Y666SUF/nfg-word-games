@@ -10,11 +10,17 @@ enum ProfanityFilter {
         "tits", "twat", "vagina", "wank", "whore",
     ]
 
+    /// Keeps the player's chosen letter casing; strips invalid characters only.
+    static func sanitize(_ value: String) -> String {
+        String(
+            value
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .filter { $0.isLetter || $0.isNumber || $0 == "_" }
+        )
+    }
+
     static func normalize(_ value: String) -> String {
-        value
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased()
-            .filter { $0.isLetter || $0.isNumber || $0 == "_" }
+        sanitize(value).lowercased()
     }
 
     static func containsProfanity(_ value: String) -> Bool {
@@ -34,7 +40,7 @@ enum ProfanityFilter {
     }
 
     static func validate(_ value: String) -> String? {
-        let username = normalize(value)
+        let username = sanitize(value)
         if username.count < 3 { return "Username must be at least 3 characters." }
         if username.count > 16 { return "Username must be 16 characters or fewer." }
         if containsProfanity(username) { return "That username is not allowed." }

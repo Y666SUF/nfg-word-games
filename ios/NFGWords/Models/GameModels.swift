@@ -2,8 +2,11 @@ import Foundation
 
 enum GameId: String, Codable, CaseIterable, Identifiable {
     case wordwheel
-    case hangman
     case wordwich
+    case hangman
+
+    /// Hub, scores, and leaderboard — hide games until they ship.
+    static let listedGames: [GameId] = [.wordwheel, .wordwich]
 
     var id: String { rawValue }
 
@@ -19,12 +22,12 @@ enum GameId: String, Codable, CaseIterable, Identifiable {
         switch self {
         case .wordwheel: "Wheel + centre letter + crossword grid"
         case .hangman: "Classic hangman — coming soon"
-        case .wordwich: "Linked word combos — coming soon"
+        case .wordwich: "Alphabetical sandwich — guess the hidden word"
         }
     }
 
     var isAvailable: Bool {
-        self == .wordwheel
+        self == .wordwheel || self == .wordwich
     }
 }
 
@@ -48,8 +51,10 @@ struct ScoreState: Codable, Equatable {
     var gameHighScores: [String: Int]
     var wordwheelLevel: Int
     var player: PlayerProfile?
+    /// Highest total ever recorded — used to recover from accidental score reductions.
+    var lifetimePeakTotal: Int = 0
 
-    static let empty = ScoreState(totalScore: 0, gameHighScores: [:], wordwheelLevel: 1, player: nil)
+    static let empty = ScoreState(totalScore: 0, gameHighScores: [:], wordwheelLevel: 1, player: nil, lifetimePeakTotal: 0)
 
     var isLoggedIn: Bool { player != nil }
 
@@ -83,4 +88,12 @@ struct WordwheelLevelFile: Codable {
     let version: Int
     let count: Int
     let levels: [WordwheelLevel]
+}
+
+/// In-progress WordWheel round saved on device (not synced to server).
+struct WordwheelRoundProgress: Codable, Equatable {
+    var levelId: Int
+    var foundWords: [String]
+    var bonusWords: [String]
+    var roundScore: Int
 }

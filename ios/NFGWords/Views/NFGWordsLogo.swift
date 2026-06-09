@@ -1,30 +1,95 @@
 import SwiftUI
 
-/// In-app brand mark: NFG Words + WordWheel ring (matches app icon concept).
+/// In-app NFG Words mark — letter tiles only, no background (blends into the app).
 struct NFGWordsLogo: View {
-    var compact: Bool = false
-    var showWheel: Bool = true
+    enum Style {
+        case header
+        case hero
+        case welcome
+        case background
+    }
 
-    private var wheelSize: CGFloat { compact ? 52 : 88 }
-    private var titleSize: CGFloat { compact ? 22 : 34 }
-    private var subtitleSize: CGFloat { compact ? 11 : 15 }
+    var style: Style = .header
+
+    private static let rows: [(String, Int)] = [
+        ("NFG", 0),
+        ("WORDS", 1),
+    ]
+
+    private var tileSize: CGFloat {
+        switch style {
+        case .header: 36
+        case .hero: 48
+        case .welcome: 44
+        case .background: 40
+        }
+    }
+
+    private var rowGap: CGFloat { tileSize * 0.28 }
+    private var colGap: CGFloat { tileSize * 0.1 }
 
     var body: some View {
-        HStack(spacing: compact ? 12 : 18) {
-            if showWheel {
-                WordWheelBadge(size: wheelSize)
-            }
+        tileLogo
+            .frame(maxWidth: .infinity)
+            .opacity(style == .background ? 0.12 : 1)
+            .accessibilityLabel("NFG Words")
+    }
 
-            VStack(alignment: .leading, spacing: compact ? 2 : 4) {
-                Text("NFG")
-                    .font(.system(size: titleSize, weight: .black, design: .rounded))
-                    .foregroundStyle(NFGTheme.accentGradient)
-                Text("WORDS")
-                    .font(.system(size: subtitleSize, weight: .heavy, design: .rounded))
-                    .tracking(compact ? 2 : 3)
-                    .foregroundStyle(NFGTheme.text)
+    private var tileLogo: some View {
+        VStack(spacing: rowGap) {
+            ForEach(Array(Self.rows.enumerated()), id: \.offset) { _, row in
+                HStack(spacing: colGap) {
+                    ForEach(Array(row.0.enumerated()), id: \.offset) { _, ch in
+                        LetterTile(letter: String(ch), wordIndex: row.1, size: tileSize)
+                    }
+                }
             }
         }
+    }
+}
+
+private struct LetterTile: View {
+    let letter: String
+    let wordIndex: Int
+    let size: CGFloat
+
+    private var fillGradient: LinearGradient {
+        if wordIndex == 0 {
+            return LinearGradient(
+                colors: [NFGTheme.purpleLight.opacity(0.95), NFGTheme.purple.opacity(0.9)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+        return LinearGradient(
+            colors: [NFGTheme.lavender.opacity(0.95), NFGTheme.violet.opacity(0.9)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    private var strokeGradient: LinearGradient {
+        LinearGradient(
+            colors: [NFGTheme.purpleLight.opacity(0.7), NFGTheme.lavender.opacity(0.5)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    var body: some View {
+        Text(letter)
+            .font(.system(size: size * 0.44, weight: .black, design: .rounded))
+            .foregroundStyle(NFGTheme.text)
+            .frame(width: size, height: size)
+            .background(
+                RoundedRectangle(cornerRadius: size * 0.2)
+                    .fill(fillGradient)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: size * 0.2)
+                    .stroke(strokeGradient, lineWidth: max(1.5, size * 0.04))
+            )
+            .shadow(color: NFGTheme.purple.opacity(0.25), radius: size * 0.08, y: size * 0.06)
     }
 }
 
@@ -65,10 +130,12 @@ struct WordWheelBadge: View {
 #Preview {
     ZStack {
         NFGTheme.background.ignoresSafeArea()
-        VStack(spacing: 24) {
-            NFGWordsLogo()
-            NFGWordsLogo(compact: true)
+        NFGTheme.backgroundGlow.ignoresSafeArea()
+        VStack(spacing: 32) {
+            NFGWordsLogo(style: .hero)
+            NFGWordsLogo(style: .header)
         }
+        .padding()
     }
     .preferredColorScheme(.dark)
 }

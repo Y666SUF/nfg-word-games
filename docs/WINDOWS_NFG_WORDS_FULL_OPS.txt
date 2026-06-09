@@ -1,0 +1,168 @@
+NFG WORDS — Windows Cursor ops prompt (Wordwich + scoring + hosting)
+====================================================================
+
+GitHub repos:
+  https://github.com/Y666SUF/nfg-word-games
+  https://github.com/Y666SUF/nfg-crash
+
+Ports:
+  NFG Platform (tunnel)  3847  →  https://y666suf.com
+  Hangman Python         19876
+  Word Games Python      19877  →  proxied at /api/word-games/* and /api/wordwich/*
+
+iPhone app uses baked-in: https://y666suf.com (no user-configurable server URL)
+
+---
+
+## PROMPT START
+
+You are maintaining **NFG Words** hosting and updates on my Windows PC.
+
+### Goals
+1. Keep **Word Games Python** (port 19877) running and proxied through **Documents\nfg-crash**
+2. Keep **Wordwich live multiplayer** working at `/api/wordwich/*`
+3. Keep **leaderboards + score sync** working at `/api/word-games/*`
+4. Do **not** let a stray Node server on port 3847 (e.g. `C:\Users\Yusef\test`) steal the tunnel — that breaks Word Games proxy (404 on leaderboards)
+
+### A) Pull latest code
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+git fetch origin main
+git pull origin main
+git log -1 --oneline
+
+cd $env:USERPROFILE\Documents\nfg-crash
+git fetch origin main
+git pull origin main
+git log -1 --oneline
+```
+
+Required Word Games files:
+- `server.py` — health, login, scores, leaderboards, wordwich routes
+- `wordwich_round.py` — live round state, prefix-only reveal (no letter count leaked)
+- `data/wordwich-dictionary.json` — ~71k words
+- `scripts/build_wordwich_dictionary.py` — rebuild dictionary if missing
+
+Required nfg-crash proxy (`server\word-games-proxy.js`):
+```javascript
+function registerWordGamesHttpProxy(app) {
+  app.use("/api/word-games", (req, res, next) => {
+    if (req.method === "OPTIONS") return next();
+    proxyHttpRequest(req, res);
+  });
+  app.use("/api/wordwich", (req, res, next) => {
+    if (req.method === "OPTIONS") return next();
+    proxyHttpRequest(req, res);
+  });
+}
+```
+
+### B) Python deps (Word Games)
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+if (-not (Test-Path .venv)) { py -3 -m venv .venv }
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+Rebuild dictionary only if missing:
+```powershell
+cd scripts
+py build_wordwich_dictionary.py
+```
+
+### C) Stop wrong servers before restart
+
+**Do NOT use** `stop-nfg.bat` until `-Ports` is fixed — use:
+```powershell
+-Ports @(3847, 19876, 19877)
+```
+not `-Ports "3847,19876,19877"`.
+
+Manually kill stray Node on 3847 if needed:
+```powershell
+netstat -ano | findstr :3847
+# taskkill /PID <pid> /F
+```
+
+### D) Start production hosting
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-crash
+.\run-electron-cloudflare.bat
+```
+
+**Keep this cmd/Electron window open** — closing it kills the Cloudflare tunnel (502/404 on y666suf.com).
+
+Confirm startup log mentions:
+- Word Games source: Documents\nfg-word-games
+- Word Games backend port 19877
+
+### E) Verify locally
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/health
+curl http://127.0.0.1:19877/api/word-games/leaderboard
+curl http://127.0.0.1:19877/api/wordwich/state
+curl -Method POST http://127.0.0.1:19877/api/wordwich/guess -ContentType "application/json" -Body '{"username":"win_test","word":"apple"}'
+```
+
+Health must include: `"app":"nfg-word-games"`
+
+Wordwich state must include: `revealedPrefix` (NOT `answerLength` / underscore mask)
+
+### F) Verify public tunnel
+
+```powershell
+curl https://y666suf.com/api/word-games/health
+curl https://y666suf.com/api/word-games/leaderboard
+curl https://y666suf.com/api/wordwich/state
+```
+
+All must return JSON — not 404 or 502.
+
+If `/api/word-games/*` is 404 but Hangman works → wrong Node on 3847 or old nfg-crash without Word Games proxy.
+
+### G) Shared scoring (iOS — no server change required)
+
+Scoring is **client-side** and synced via `PUT /api/word-games/players/{id}/scores`.
+
+Both games use the same scale (`GameScoring` in iOS):
+
+| Action | Points |
+|--------|--------|
+| WordWheel bonus word | `(wordLength - 2) × 2` |
+| WordWheel puzzle word / **Wordwich solve** | `(wordLength - 2) × 10` |
+| Wordwich: each **new** correct prefix letter (your guess only) | `+5 per letter` |
+| Wordwich: wrong / unhelpful guess | **0** |
+
+Examples (answer **fire**):
+- Guess `drink` → **0** (no prefix match)
+- Guess `fare` → **5** (reveals F)
+- Guess `fine` → **5** (reveals I → prefix now FI; only the new letter pays)
+- Solve `fire` → **5** (reveals R) + **30** solve = **35**
+
+Per-game leaderboard scores are **cumulative** (fair across WordWheel and Wordwich).
+Overall leaderboard uses `totalScore` across all games.
+
+### H) Wordwich gameplay rules (server + iOS)
+
+- Target word length is **hidden** — only `revealedPrefix` is sent (e.g. `FI`)
+- Letters reveal **prefix-only, left-to-right** (fare vs fire → only F green, not E)
+- 5 closest guesses alphabetically **below** answer shown above; 5 **above** shown below
+- Multiplayer: shared round; guesses POST immediately; clients poll every ~2s
+
+### I) After Mac pushes new iOS build
+
+Mac builds/installs to iPhone via Xcode. Windows only needs server running — no IPA step unless distributing TestFlight from Mac.
+
+### J) Reply when done
+
+1. `git log -1` from both repos
+2. Health + wordwich state curl (local + public)
+3. Confirm platform window is open
+4. Any errors
+
+## PROMPT END

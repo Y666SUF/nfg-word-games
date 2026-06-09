@@ -40,5 +40,5 @@ export function canFormWordFromPool(word: string, letters: string[], center: str
 export function scoreWord(word: string, isPuzzleWord: boolean, bonusMultiplier = 1): number {
   const base = Math.max(1, word.length - 2);
   if (isPuzzleWord) return base * 10 * bonusMultiplier;
-  return base;
+  return base * 2;
 }

@@ -8,10 +8,11 @@ from pathlib import Path
 
 from wordfreq import iter_wordlist, zipf_frequency
 
-from word_filters import is_wordwich_word
+from word_filters import collect_dynamic_rejections, is_wordwich_word, write_rejections_file
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "wordwich-dictionary.json"
+CORE = ROOT / "data" / "english-dictionary.json"
 IOS_OUT = ROOT / "ios" / "NFGWords" / "Resources" / "wordwich-dictionary.json"
 APP_OUT = ROOT / "app" / "src" / "data" / "wordwich-dictionary.json"
 VOWELS = set("aeiouy")
@@ -31,18 +32,28 @@ def passes_shape(word: str) -> bool:
 
 
 def main() -> None:
-    words: list[str] = []
+    words: set[str] = set()
     easy: list[str] = []
     medium: list[str] = []
     hard: list[str] = []
 
+    # Core WordWheel list — already filtered for common real words.
+    if CORE.is_file():
+        core_data = json.loads(CORE.read_text(encoding="utf-8"))
+        for w in core_data.get("words", []):
+            wl = w.lower()
+            if passes_shape(wl) and is_wordwich_word(wl):
+                words.add(wl)
+
+    scanned: list[str] = []
     for raw in iter_wordlist("en"):
         w = raw.lower()
+        scanned.append(w)
         if not passes_shape(w) or not is_wordwich_word(w):
             continue
+        words.add(w)
         z = zipf_frequency(w, "en")
         length = len(w)
-        words.append(w)
         if z >= 4.0 and 4 <= length <= 6:
             easy.append(w)
         elif z >= 3.0 and 5 <= length <= 7:
@@ -50,16 +61,29 @@ def main() -> None:
         elif z >= 2.3 and 6 <= length <= 8:
             hard.append(w)
 
-    unique = sorted(set(words))
+    write_rejections_file(collect_dynamic_rejections(scanned))
+    unique = sorted(words)
+    easy_set: set[str] = set()
+    medium_set: set[str] = set()
+    hard_set: set[str] = set()
+    for w in unique:
+        z = zipf_frequency(w, "en")
+        length = len(w)
+        if z >= 4.0 and 4 <= length <= 6:
+            easy_set.add(w)
+        elif z >= 3.0 and 5 <= length <= 7:
+            medium_set.add(w)
+        elif z >= 2.3 and 6 <= length <= 8:
+            hard_set.add(w)
     payload = {
-        "version": 1,
-        "source": "wordfreq-en-wordwich-extended",
+        "version": 2,
+        "source": "wordfreq-en-wordwich-v2",
         "count": len(unique),
         "words": unique,
         "tiers": {
-            "easy": sorted(set(easy)),
-            "medium": sorted(set(medium)),
-            "hard": sorted(set(hard)),
+            "easy": sorted(easy_set),
+            "medium": sorted(medium_set),
+            "hard": sorted(hard_set),
         },
     }
     body = json.dumps(payload, separators=(",", ":"))

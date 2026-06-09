@@ -62,6 +62,7 @@ EXTRA_REJECT_BLOCKLIST = frozenset({
     "usgs", "noaa", "pentagon", "gop", "dnc", "rnc", "bezos", "musk", "gates",
     "zuckerberg", "pichai", "nadella", "wozniak", "govt", "dept", "admin", "exec",
     "misc", "approx", "qty", "vol", "avg", "ref", "num", "pkg", "div", "est",
+    "aaliyah", "ababa", "aab", "aba",
 })
 
 # Informal contractions (no apostrophe), clipped slang, and text-speak.
@@ -180,6 +181,7 @@ def ensure_name_blocklist() -> frozenset[str]:
             "steve", "susan", "teresa", "thomas", "tim", "tom", "tony", "victor", "walter",
             "william", "aaliyah", "liam", "noah", "olivia", "ava", "mia", "chloe", "ethan",
             "lucas", "mason", "logan", "aiden", "jackson", "harper", "evelyn", "abigail",
+            "aaliyah", "aaliya", "aaliyaah", "aalaya", "aalayah",
         }
 
     filtered = sorted(
@@ -198,11 +200,62 @@ def name_blocklist() -> frozenset[str]:
     return ensure_name_blocklist()
 
 
+def is_reduplicative_nonsense(word: str) -> bool:
+    """Reject doubled-syllable junk (ababa, bobo) unless very common."""
+    w = word.lower().strip()
+    if len(w) < 4 or len(w) % 2 != 0:
+        return False
+    half = len(w) // 2
+    if w[:half] != w[half:]:
+        return False
+    return zipf_frequency(w, "en") < 3.8
+
+
+def is_likely_place_or_surname(word: str) -> bool:
+    """Reject proper-noun place names and patronymic surnames not in everyday use."""
+    w = word.lower().strip()
+    if w in SHORT_WORD_ALLOWLIST:
+        return False
+    if is_reduplicative_nonsense(w):
+        return True
+    z = zipf_frequency(w, "en")
+    if _PLACE_SUFFIX_RE.search(w) and z < 4.0:
+        return True
+    if _SURNAME_SUFFIX_RE.search(w) and len(w) >= 6 and z < 3.8:
+        return True
+    # Germanic / European city stems common in wordfreq (aachen, etc.).
+    if len(w) >= 5 and z < 3.6 and re.search(r"(?:heim|burg|furt|bach|berg|dorf|hausen|stadt|chen)$", w):
+        return True
+    # Capitalized-style compounds common in wordfreq (aachen, aaronson).
+    if len(w) >= 6 and w[0].isalpha() and z < 2.8:
+        if _SURNAME_SUFFIX_RE.search(w) or _PLACE_SUFFIX_RE.search(w):
+            return True
+    return False
+
+
+def is_nonsense_shape(word: str) -> bool:
+    """Reject random letter clusters and improbable 3-letter forms (aab, aba unless allowlisted)."""
+    w = word.lower().strip()
+    if w in SHORT_WORD_ALLOWLIST:
+        return False
+    if len(w) == 3:
+        return True
+    z = zipf_frequency(w, "en")
+    vowel_count = sum(1 for c in w if c in VOWELS)
+    if vowel_count == 0:
+        return True
+    if len(w) <= 4 and vowel_count == 1 and _NONSENSE_CLUSTER_RE.match(w) and z < 3.5:
+        return True
+    return False
+
+
 def is_proper_name(word: str) -> bool:
     w = word.lower().strip()
     if w in NAME_COLLISION_ALLOWLIST:
         return False
     if w in EXTRA_REJECT_BLOCKLIST:
+        return True
+    if is_likely_place_or_surname(w):
         return True
     return w in name_blocklist()
 
@@ -231,15 +284,20 @@ def min_zipf_wordwich(length: int) -> float:
 
 
 def is_wordwich_word(word: str) -> bool:
-    """Real English word for Wordwich — same reject rules, broader frequency gate."""
+    """Real English word for Wordwich — reject slang/names/acronyms; allow broad common vocabulary."""
     w = word.lower().strip()
     if len(w) < 3 or len(w) > 15 or not w.isalpha():
         return False
     if not any(c in VOWELS for c in w):
         return False
+    if is_nonsense_shape(w):
+        return False
     if is_rejected_word(w):
         return False
-    return zipf_frequency(w, "en") >= min_zipf_wordwich(len(w))
+    if w in SHORT_WORD_ALLOWLIST:
+        return True
+    z = zipf_frequency(w, "en")
+    return z >= min_zipf_wordwich(len(w))
 
 
 def is_common_english_word(word: str) -> bool:
@@ -258,6 +316,28 @@ def is_common_english_word(word: str) -> bool:
         return False
     return zipf_frequency(w, "en") >= min_zipf_for_length(len(w))
 
+
+# Geographic / toponym patterns (low-frequency place names leak in via wordfreq).
+_PLACE_SUFFIX_RE = re.compile(
+    r"(?:"
+    r"ville|borough|burgh|borough|shire|polis|abad|pur$|nagar|"
+    r"chester|caster|minster|hampton|ington|ington|ington|"
+    r"worth|wood|field|mouth|haven|land$|lands$|"
+    r"stan$|stein$|berg$|burg$|dorf$|"
+    r"wijk|grad$|ovo$|skaya$|skiy$"
+    r")",
+    re.IGNORECASE,
+)
+
+# Patronymic / surname patterns.
+_SURNAME_SUFFIX_RE = re.compile(
+    r"(?:son|sson|dottir|owitz|ovich|evich|enko|akis|oglou|"
+    r"wicz|ski|ska|ez|ian$|yan$|ian$)",
+    re.IGNORECASE,
+)
+
+# Consonant-heavy nonsense (aab, bbc-style clusters without being allowlisted).
+_NONSENSE_CLUSTER_RE = re.compile(r"^[bcdfghjklmnpqrstvwxyz]{2,}[aeiouy]?[bcdfghjklmnpqrstvwxyz]{2,}$")
 
 ING_DROP_ALLOWLIST = frozenset({
     "basin", "begin", "latin", "login", "satin", "admin", "asin", "join", "coin",

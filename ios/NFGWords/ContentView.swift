@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var scores: ScoreStore
+    @Environment(\.scenePhase) private var scenePhase
     @State private var tab: AppTab = .games
 
     enum AppTab: Hashable {
@@ -46,6 +47,28 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 tabBar
+            }
+        }
+        .onAppear {
+            scores.beginPeriodicServerSync()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            switch phase {
+            case .active:
+                scores.beginPeriodicServerSync()
+            case .background, .inactive:
+                scores.endPeriodicServerSync()
+            @unknown default:
+                break
+            }
+        }
+        .overlay(alignment: .top) {
+            if let tier = scores.pendingUnlockCelebration {
+                RewardUnlockBanner(tier: tier) {
+                    withAnimation { scores.clearUnlockCelebration() }
+                }
+                .padding(.top, 8)
+                .zIndex(20)
             }
         }
     }

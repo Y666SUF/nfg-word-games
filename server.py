@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -21,7 +22,18 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from profanity import validate_username
-from wordwich_round import store as wordwich_store
+from wordwheel_progress import (
+    level_from_wordwheel_score,
+    reconcile_player_wordwheel,
+    reconcile_wordwheel_level,
+    repair_player_totals,
+)
+
+try:
+    from wordwich_round import store as wordwich_store
+except Exception as exc:  # noqa: BLE001 — keep core API up if Wordwich files are missing
+    wordwich_store = None
+    print(f"[Wordwich] disabled on startup: {exc}", flush=True)
 
 load_dotenv()
 
@@ -39,12 +51,23 @@ GAME_IDS = ("wordwheel", "hangman", "wordwich")
 def _load_scores() -> dict[str, Any]:
     if not SCORES_FILE.is_file():
         return {"players": {}}
-    return json.loads(SCORES_FILE.read_text(encoding="utf-8"))
+    try:
+        return json.loads(SCORES_FILE.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        backup = SCORES_FILE.with_suffix(".json.bak")
+        if backup.is_file():
+            return json.loads(backup.read_text(encoding="utf-8"))
+        return {"players": {}}
 
 
 def _save_scores(data: dict[str, Any]) -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    SCORES_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    payload = json.dumps(data, indent=2)
+    tmp = SCORES_FILE.with_suffix(".json.tmp")
+    tmp.write_text(payload, encoding="utf-8")
+    tmp.replace(SCORES_FILE)
+    backup = SCORES_FILE.with_suffix(".json.bak")
+    backup.write_text(payload, encoding="utf-8")
 
 
 def _auth(token: Optional[str]) -> None:
@@ -56,6 +79,34 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _git_short_rev() -> Optional[str]:
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        if result.returncode == 0:
+            rev = result.stdout.strip()
+            return rev or None
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    return None
+
+
+def _deploy_info() -> dict[str, Any]:
+    path = DATA_DIR / "deploy-info.json"
+    if not path.is_file():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return {}
+
+
 def _find_player_by_username(data: dict[str, Any], username: str) -> Optional[str]:
     target = username.lower()
     for player_id, player in data["players"].items():
@@ -64,12 +115,20 @@ def _find_player_by_username(data: dict[str, Any], username: str) -> Optional[st
     return None
 
 
+def _wordwheel_score(player: dict[str, Any]) -> int:
+    return int((player.get("gameHighScores") or {}).get("wordwheel") or 0)
+
+
+def _reconciled_wordwheel_level(player: dict[str, Any]) -> int:
+    return reconcile_wordwheel_level(_wordwheel_score(player), int(player.get("wordwheelLevel") or 1))
+
+
 def _player_payload(player: dict[str, Any]) -> dict[str, Any]:
     return {
         "username": player.get("username", ""),
         "totalScore": int(player.get("totalScore") or 0),
         "gameHighScores": player.get("gameHighScores") or {},
-        "wordwheelLevel": int(player.get("wordwheelLevel") or 1),
+        "wordwheelLevel": _reconciled_wordwheel_level(player),
         "updatedAt": player.get("updatedAt"),
     }
 
@@ -80,13 +139,15 @@ def _merge_scores(existing: dict[str, Any], incoming: dict[str, Any]) -> dict[st
         if game_id in GAME_IDS:
             merged_high[game_id] = max(int(merged_high.get(game_id) or 0), int(value or 0))
 
-    return {
+    merged = {
         "username": existing.get("username") or incoming.get("username"),
         "totalScore": max(int(existing.get("totalScore") or 0), int(incoming.get("totalScore") or 0)),
         "gameHighScores": merged_high,
         "wordwheelLevel": max(int(existing.get("wordwheelLevel") or 1), int(incoming.get("wordwheelLevel") or 1)),
         "updatedAt": _now(),
     }
+    reconcile_player_wordwheel(merged)
+    return merged
 
 
 def _leaderboard_rows(data: dict[str, Any], game_id: Optional[str] = None) -> list[dict[str, Any]]:
@@ -103,7 +164,7 @@ def _leaderboard_rows(data: dict[str, Any], game_id: Optional[str] = None) -> li
             "playerId": player_id,
             "username": username,
             "score": score,
-            "wordwheelLevel": int(player.get("wordwheelLevel") or 1),
+            "wordwheelLevel": _reconciled_wordwheel_level(player),
         })
     rows.sort(key=lambda row: (-row["score"], row["username"].lower()))
     for index, row in enumerate(rows, start=1):
@@ -136,14 +197,42 @@ def support_page() -> FileResponse:
     return FileResponse(LEGAL_DIR / "support.html")
 
 
+def _reconcile_all_players(data: dict[str, Any]) -> int:
+    changed = 0
+    for player in data.get("players", {}).values():
+        if repair_player_totals(player) or reconcile_player_wordwheel(player):
+            player["updatedAt"] = _now()
+            changed += 1
+    if changed:
+        _save_scores(data)
+    return changed
+
+
+@app.on_event("startup")
+def _log_startup() -> None:
+    data = _load_scores()
+    players = len(data.get("players") or {})
+    fixed = _reconcile_all_players(data)
+    print(
+        f"[WordGames] Ready on port {PORT} | scores={SCORES_FILE} | players={players} | reconciled={fixed}",
+        flush=True,
+    )
+
+
 @app.get("/api/word-games/health")
 def health() -> dict[str, Any]:
+    data = _load_scores()
+    deploy = _deploy_info()
     return {
         "ok": True,
         "app": "nfg-word-games",
         "port": PORT,
         "standalone": True,
         "crash_linked": False,
+        "players": len(data.get("players") or {}),
+        "scoresFile": str(SCORES_FILE),
+        "gitRev": _git_short_rev(),
+        "deployedAt": deploy.get("timestamp"),
     }
 
 
@@ -169,6 +258,11 @@ def login_player(body: dict[str, Any]) -> dict[str, Any]:
         created = True
     else:
         created = False
+        player = data["players"][player_id]
+        if player.get("username") != username:
+            player["username"] = username
+            player["updatedAt"] = _now()
+            _save_scores(data)
 
     player = data["players"][player_id]
     return {
@@ -177,6 +271,29 @@ def login_player(body: dict[str, Any]) -> dict[str, Any]:
         "playerId": player_id,
         "player": _player_payload(player),
     }
+
+
+@app.put("/api/word-games/players/{player_id}/username")
+def update_player_username(player_id: str, body: dict[str, Any]) -> dict[str, Any]:
+    try:
+        username = validate_username(str(body.get("username") or ""))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    data = _load_scores()
+    player = data["players"].get(player_id)
+    if not player:
+        raise HTTPException(status_code=404, detail="player_not_found")
+
+    other_id = _find_player_by_username(data, username)
+    if other_id and other_id != player_id:
+        raise HTTPException(status_code=409, detail="username_taken")
+
+    player["username"] = username
+    player["updatedAt"] = _now()
+    data["players"][player_id] = player
+    _save_scores(data)
+    return {"ok": True, "player": _player_payload(player)}
 
 
 @app.put("/api/word-games/players/{player_id}/scores")
@@ -249,22 +366,31 @@ def post_scores(
     return {"ok": True}
 
 
+def _wordwich_required() -> Any:
+    if wordwich_store is None:
+        raise HTTPException(status_code=503, detail="wordwich_unavailable")
+    return wordwich_store
+
+
 @app.get("/api/wordwich/state")
+@app.get("/api/word-games/wordwich/state")
 def wordwich_state() -> dict[str, Any]:
-    return wordwich_store.get_state()
+    return _wordwich_required().get_state()
 
 
 @app.post("/api/wordwich/guess")
+@app.post("/api/word-games/wordwich/guess")
 def wordwich_guess(body: dict[str, Any]) -> dict[str, Any]:
     word = str(body.get("word") or "")
     player_id = str(body.get("playerId") or "").strip() or None
     username = str(body.get("username") or "").strip() or None
-    return wordwich_store.submit_guess(word, player_id=player_id, username=username)
+    return _wordwich_required().submit_guess(word, player_id=player_id, username=username)
 
 
 @app.post("/api/wordwich/rounds")
+@app.post("/api/word-games/wordwich/rounds")
 def wordwich_new_round() -> dict[str, Any]:
-    return wordwich_store.new_round()
+    return _wordwich_required().new_round()
 
 
 @app.get("/api/word-games/wordwheel/levels")

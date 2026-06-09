@@ -1,0 +1,119 @@
+Deploy WordWheel level/points rebalance on my Windows NFG Word Games server. Fix inflated WordWheel levels on the leaderboard (e.g. fatimah level 38 with only 190 pts → level 7, points stay 190).
+
+Work ONLY in:
+  WORD_GAMES = %USERPROFILE%\Documents\nfg-word-games
+  NFG_CRASH  = %USERPROFILE%\Documents\nfg-crash
+
+Python Word Games: port 19877
+Proxy: https://y666suf.com/api/word-games/* → http://127.0.0.1:19877
+
+---
+
+## STEP 0 — Confirm paths (PowerShell)
+
+$wg = "$env:USERPROFILE\Documents\nfg-word-games"
+$crash = "$env:USERPROFILE\Documents\nfg-crash"
+Test-Path "$wg\server.py"
+Test-Path "$wg\data\wordwheel-levels.json"
+Test-Path "$wg\data\scores.json"
+Test-Path "$crash\server\word-games-proxy.js"
+
+If nfg-word-games is missing, copy the full folder from Mac USB or:
+  cd $env:USERPROFILE\Documents
+  git clone https://github.com/Y666SUF/nfg-word-games.git
+
+---
+
+## STEP 1 — Get latest server files from Mac
+
+If git works:
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+git pull origin main
+```
+
+If git is behind / no push yet, copy these 3 files from Mac (Documents\nfg-word-games):
+- server.py
+- wordwheel_progress.py  (NEW — repo root)
+- scripts\reconcile_scores.py  (NEW)
+
+Backup first:
+```powershell
+Copy-Item "$wg\server.py" "$wg\server.py.bak-$(Get-Date -Format yyyyMMdd)" -ErrorAction SilentlyContinue
+Copy-Item "$wg\data\scores.json" "$wg\data\scores.json.bak-$(Get-Date -Format yyyyMMdd)" -ErrorAction SilentlyContinue
+```
+
+---
+
+## STEP 2 — Verify new module exists
+
+These MUST exist after copy/pull:
+- $wg\wordwheel_progress.py
+- $wg\scripts\reconcile_scores.py
+
+server.py must import:
+  from wordwheel_progress import level_from_wordwheel_score, reconcile_player_wordwheel, reconcile_wordwheel_level
+
+server.py must call reconcile_player_wordwheel() in _merge_scores and on startup (_reconcile_all_players).
+
+If files are missing, create them exactly as on the Mac repo (ask me to paste contents if needed).
+
+---
+
+## STEP 3 — Reconcile all player scores (fixes fatimah + others)
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+py scripts\reconcile_scores.py
+```
+
+Expected for fatimah (if she has wordwheel 190 / level 38):
+  fatimah: level 38->7, wordwheel 190->190, total unchanged
+
+Print how many players were updated.
+
+---
+
+## STEP 4 — Restart Python server
+
+Stop any existing Word Games server window, then:
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+.\windows\run-server.bat
+```
+
+Or manually:
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+py -m uvicorn server:app --host 0.0.0.0 --port 19877
+```
+
+Startup log should include: reconciled=N (may be 0 if step 3 already fixed everyone).
+
+Ensure NFG Crash proxy is running (run-electron-cloudflare.bat or equivalent).
+
+---
+
+## STEP 5 — Verify
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:19877/api/word-games/health
+Invoke-RestMethod http://127.0.0.1:19877/api/word-games/leaderboard/wordwheel
+```
+
+Check fatimah (and manah) on WordWheel leaderboard:
+- Level should match WordWheel points earned
+- fatimah: ~190 pts, level 7 (not 38)
+
+On iPhone: Leaderboards → WordWheel → pull to refresh.
+
+---
+
+## DO NOT
+
+- Delete data\scores.json
+- Change port 19877
+- Edit nfg-crash game logic (proxy only)
+
+Report: files copied/pulled, reconcile output, server started, fatimah before/after on leaderboard.

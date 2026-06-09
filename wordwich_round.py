@@ -20,6 +20,19 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _prefix_match_len(guess: str, answer: str) -> int:
+    """Consecutive matching letters from the start only (fare vs fire → 1)."""
+    g = guess.lower()
+    a = answer.lower()
+    n = 0
+    for i in range(min(len(g), len(a))):
+        if g[i] == a[i]:
+            n += 1
+        else:
+            break
+    return n
+
+
 class WordwichStore:
     def __init__(self) -> None:
         self._dict: dict[str, Any] = {}
@@ -52,10 +65,30 @@ class WordwichStore:
         if ROUNDS_FILE.is_file():
             try:
                 self._round = json.loads(ROUNDS_FILE.read_text(encoding="utf-8"))
+                self._migrate_round_format()
             except json.JSONDecodeError:
                 self._round = None
         if not self._round or self._round.get("status") != "active":
             self._start_round()
+
+    def _migrate_round_format(self) -> None:
+        if not self._round:
+            return
+        if "revealedPrefixLen" in self._round:
+            return
+        revealed = self._round.get("revealed")
+        if isinstance(revealed, list):
+            n = 0
+            for flag in revealed:
+                if flag:
+                    n += 1
+                else:
+                    break
+            self._round["revealedPrefixLen"] = n
+        else:
+            self._round["revealedPrefixLen"] = 0
+        self._round.pop("revealed", None)
+        self._round.pop("answerLength", None)
 
     def _save_round(self) -> None:
         ROUNDS_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -67,8 +100,7 @@ class WordwichStore:
         self._round = {
             "roundId": str(uuid.uuid4()),
             "answer": answer,
-            "answerLength": len(answer),
-            "revealed": [False] * len(answer),
+            "revealedPrefixLen": 0,
             "guesses": [],
             "status": "active",
             "wonBy": None,
@@ -76,15 +108,15 @@ class WordwichStore:
         }
         self._save_round()
 
-    def _reveal_from_guess(self, guess: str, answer: str) -> None:
+    def _sync_revealed_prefix(self) -> None:
         if not self._round:
             return
-        g = guess.lower()
-        a = answer.lower()
-        revealed = self._round["revealed"]
-        for i in range(min(len(g), len(a))):
-            if g[i] == a[i] and i < len(revealed):
-                revealed[i] = True
+        answer = self._round["answer"]
+        if self._round.get("status") == "won":
+            self._round["revealedPrefixLen"] = len(answer)
+            return
+        lengths = [_prefix_match_len(g["word"], answer) for g in self._round.get("guesses", [])]
+        self._round["revealedPrefixLen"] = max(lengths) if lengths else 0
 
     def _alphabetical_neighbors(self, answer: str, guess_words: list[str]) -> tuple[list[str], list[str]]:
         a = answer.lower()
@@ -94,16 +126,17 @@ class WordwichStore:
         after = above[:5] if above else []
         return before, after
 
-    def _mask(self, answer: str, revealed: list[bool]) -> str:
-        chars = []
-        for i, ch in enumerate(answer):
-            chars.append(ch.upper() if revealed[i] else "_")
-        return " ".join(chars)
+    def _revealed_prefix_text(self, answer: str) -> str:
+        if not self._round:
+            return ""
+        n = int(self._round.get("revealedPrefixLen") or 0)
+        if self._round.get("status") == "won":
+            return answer.upper()
+        return answer[:n].upper()
 
-    def _guess_matches(self, guess: str, answer: str) -> list[bool]:
-        g = guess.lower()
-        a = answer.lower()
-        return [i < len(g) and g[i] == a[i] for i in range(len(a))]
+    def _guess_prefix_flags(self, guess: str, answer: str) -> list[bool]:
+        plen = _prefix_match_len(guess, answer)
+        return [i < plen for i in range(len(guess))]
 
     def _public_round(self) -> dict[str, Any]:
         if not self._round:
@@ -115,9 +148,7 @@ class WordwichStore:
         before, after = self._alphabetical_neighbors(answer, guess_words)
         return {
             "roundId": self._round["roundId"],
-            "answerLength": self._round["answerLength"],
-            "mask": self._mask(answer, self._round["revealed"]),
-            "revealed": list(self._round["revealed"]),
+            "revealedPrefix": self._revealed_prefix_text(answer),
             "guesses": [
                 {
                     "id": g["id"],
@@ -125,7 +156,7 @@ class WordwichStore:
                     "username": g.get("username", "Player"),
                     "word": g["word"],
                     "at": g.get("at"),
-                    "matches": self._guess_matches(g["word"], answer),
+                    "matches": self._guess_prefix_flags(g["word"], answer),
                 }
                 for g in guesses
             ],
@@ -161,8 +192,6 @@ class WordwichStore:
             return {"ok": False, "error": "already_guessed", "message": "That word was already guessed."}
 
         answer = self._round["answer"]
-        self._reveal_from_guess(w, answer)
-
         entry = {
             "id": str(uuid.uuid4()),
             "playerId": player_id,
@@ -171,6 +200,7 @@ class WordwichStore:
             "at": _now(),
         }
         self._round["guesses"].append(entry)
+        self._sync_revealed_prefix()
 
         won = w == answer
         if won:
@@ -180,8 +210,7 @@ class WordwichStore:
                 "username": entry["username"],
                 "word": w,
             }
-            for i in range(len(self._round["revealed"])):
-                self._round["revealed"][i] = True
+            self._round["revealedPrefixLen"] = len(answer)
 
         self._save_round()
         result = {

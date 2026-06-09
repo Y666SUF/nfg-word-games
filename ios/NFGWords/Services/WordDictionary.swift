@@ -14,6 +14,7 @@ enum WordDictionary {
 
     static var count: Int { validWords.count }
 
+    /// True if the word is in the filtered dictionary (no acronyms or personal names).
     static func isValidWord(_ word: String) -> Bool {
         validWords.contains(word.lowercased())
     }
@@ -41,10 +42,12 @@ enum WordDictionary {
         return true
     }
 
+    /// Puzzle words score much higher than bonus words (shared scale — see GameScoring).
     static func score(word: String, isPuzzle: Bool, multiplier: Double = 1) -> Int {
-        let base = max(1, word.count - 2)
-        if isPuzzle { return Int(Double(base * 10) * multiplier) }
-        return base
+        if isPuzzle {
+            return GameScoring.puzzleWordPoints(word: word, multiplier: multiplier)
+        }
+        return GameScoring.bonusWordPoints(word: word)
     }
 }
 
