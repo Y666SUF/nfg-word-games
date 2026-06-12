@@ -9,6 +9,8 @@ enum WordwichAPI {
         let after: [String]
         let status: String
         let wonBy: Winner?
+        let solvedAnswer: String?
+        let newRoundIn: Int?
         let playerCount: Int
 
         // Legacy fields — ignored when revealedPrefix is present

@@ -18,10 +18,20 @@ ROUNDS_FILE = Path(__file__).resolve().parent / "data" / "wordwich-round.json"
 
 TIER_WEIGHTS = ("easy", "medium", "hard")
 TIER_PROBS = (0.6, 0.3, 0.1)
+NEW_ROUND_DELAY_SECONDS = 5
 
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+def _parse_ts(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
 
 def _prefix_match_len(guess: str, answer: str) -> int:
@@ -86,7 +96,13 @@ class WordwichStore:
                 self._migrate_round_format()
             except json.JSONDecodeError:
                 self._round = None
-        if not self._round or self._round.get("status") != "active":
+        if not self._round:
+            self._start_round()
+            return
+        if self._round.get("status") == "won":
+            self._maybe_auto_advance_round()
+            return
+        if self._round.get("status") != "active":
             self._start_round()
             return
         answer = str(self._round.get("answer") or "").lower()
@@ -111,6 +127,31 @@ class WordwichStore:
             self._round["revealedPrefixLen"] = 0
         self._round.pop("revealed", None)
         self._round.pop("answerLength", None)
+        if self._round.get("status") == "won" and not self._round.get("wonAt"):
+            self._round["wonAt"] = self._round.get("startedAt") or _now()
+
+    def _maybe_auto_advance_round(self) -> bool:
+        """Start a fresh round once the post-solve celebration window has elapsed."""
+        if not self._round or self._round.get("status") != "won":
+            return False
+        won_at = _parse_ts(self._round.get("wonAt"))
+        if won_at is None:
+            self._start_round()
+            return True
+        elapsed = (datetime.now(timezone.utc) - won_at).total_seconds()
+        if elapsed >= NEW_ROUND_DELAY_SECONDS:
+            self._start_round()
+            return True
+        return False
+
+    def _seconds_until_new_round(self) -> int | None:
+        if not self._round or self._round.get("status") != "won":
+            return None
+        won_at = _parse_ts(self._round.get("wonAt"))
+        if won_at is None:
+            return NEW_ROUND_DELAY_SECONDS
+        remaining = NEW_ROUND_DELAY_SECONDS - (datetime.now(timezone.utc) - won_at).total_seconds()
+        return max(0, int(remaining + 0.999))
 
     def _save_round(self) -> None:
         ROUNDS_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -164,6 +205,8 @@ class WordwichStore:
         if not self._round:
             self._start_round()
         assert self._round
+        self._maybe_auto_advance_round()
+        assert self._round
         answer = self._round["answer"]
         guesses = self._round["guesses"]
         guess_words = [g["word"] for g in guesses]
@@ -186,6 +229,8 @@ class WordwichStore:
             "after": after,
             "status": self._round["status"],
             "wonBy": self._round.get("wonBy"),
+            "solvedAnswer": answer.upper() if self._round.get("status") == "won" else None,
+            "newRoundIn": self._seconds_until_new_round(),
             "playerCount": len({g.get("playerId") for g in guesses if g.get("playerId")}),
         }
 
@@ -230,6 +275,7 @@ class WordwichStore:
         won = w == answer
         if won:
             self._round["status"] = "won"
+            self._round["wonAt"] = _now()
             self._round["wonBy"] = {
                 "playerId": player_id,
                 "username": entry["username"],

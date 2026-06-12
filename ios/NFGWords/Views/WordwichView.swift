@@ -49,6 +49,7 @@ final class WordwichSession: ObservableObject {
     @Published private(set) var after: [String] = []
     @Published private(set) var status = "active"
     @Published private(set) var wonBy: WordwichAPI.Winner?
+    @Published private(set) var solvedAnswer: String?
     @Published private(set) var isOnline = false
     @Published var playMode: WordwichPlayMode = WordwichSession.loadPlayMode()
     @Published private(set) var feedback: String?
@@ -58,14 +59,13 @@ final class WordwichSession: ObservableObject {
     @Published private(set) var newRoundCountdown: Int?
     @Published var draft = ""
 
-    private static let wonRoundPauseSeconds = 6
+    private static let soloWonRoundPauseSeconds = 5
 
     private var awardPoints: ((Int) -> Void)?
     private var onValidGuess: (() -> Void)?
     private var localAnswer: String?
     private var pollTask: Task<Void, Never>?
-    private var autoAdvanceTask: Task<Void, Never>?
-    private var scheduledWonRoundId: String?
+    private var soloAdvanceTask: Task<Void, Never>?
     private var consecutivePollFailures = 0
     private var soloUsedAnswers: Set<String> = []
     private var playerId: String?
@@ -138,8 +138,8 @@ final class WordwichSession: ObservableObject {
     func stop() {
         pollTask?.cancel()
         pollTask = nil
-        autoAdvanceTask?.cancel()
-        autoAdvanceTask = nil
+        soloAdvanceTask?.cancel()
+        soloAdvanceTask = nil
         newRoundCountdown = nil
     }
 
@@ -191,52 +191,37 @@ final class WordwichSession: ObservableObject {
         after = []
         status = "active"
         wonBy = nil
+        solvedAnswer = nil
         clearAutoAdvance()
     }
 
     private func clearAutoAdvance() {
-        autoAdvanceTask?.cancel()
-        autoAdvanceTask = nil
-        scheduledWonRoundId = nil
+        soloAdvanceTask?.cancel()
+        soloAdvanceTask = nil
         newRoundCountdown = nil
     }
 
-    private func scheduleAutoAdvance(afterWonRoundId: String) {
-        guard scheduledWonRoundId != afterWonRoundId else { return }
-        scheduledWonRoundId = afterWonRoundId
-        autoAdvanceTask?.cancel()
-        autoAdvanceTask = Task { [weak self] in
+    /// Solo mode only — online rounds auto-reset on the server.
+    private func scheduleSoloAutoAdvance(afterWonRoundId: String) {
+        soloAdvanceTask?.cancel()
+        soloAdvanceTask = Task { [weak self] in
             guard let self else { return }
-            for remaining in stride(from: Self.wonRoundPauseSeconds, through: 1, by: -1) {
+            for remaining in stride(from: Self.soloWonRoundPauseSeconds, through: 1, by: -1) {
                 guard !Task.isCancelled else { return }
-                guard self.roundId == afterWonRoundId, self.status == "won" else {
-                    await MainActor.run { self.clearAutoAdvance() }
-                    return
-                }
+                guard self.roundId == afterWonRoundId, self.status == "won" else { return }
                 await MainActor.run { self.newRoundCountdown = remaining }
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
             }
             guard !Task.isCancelled else { return }
-            guard self.roundId == afterWonRoundId, self.status == "won" else {
-                await MainActor.run { self.clearAutoAdvance() }
-                return
-            }
-            await MainActor.run { self.newRoundCountdown = nil }
-            if self.isOnline {
-                do {
-                    let round = try await WordwichAPI.startNewRound()
-                    await MainActor.run {
-                        self.apply(round: round)
-                        self.clearAutoAdvance()
-                    }
-                } catch {
-                    await MainActor.run { self.clearAutoAdvance() }
-                }
-            } else {
-                await MainActor.run { self.startNewLocalRound() }
+            guard self.roundId == afterWonRoundId, self.status == "won" else { return }
+            await MainActor.run {
+                self.newRoundCountdown = nil
+                self.startNewLocalRound()
             }
         }
     }
+
+    var isRoundSolved: Bool { status == "won" }
 
     func submit() async {
         let word = draft.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
@@ -254,6 +239,10 @@ final class WordwichSession: ObservableObject {
         }
         guard !guesses.contains(where: { $0.word == word }) else {
             feedback = "Already guessed."
+            return
+        }
+        guard status == "active" else {
+            feedback = "Round solved — next word loading…"
             return
         }
 
@@ -303,6 +292,7 @@ final class WordwichSession: ObservableObject {
         if won {
             status = "won"
             wonBy = WordwichAPI.Winner(playerId: playerId, username: username, word: word)
+            solvedAnswer = answer.uppercased()
         }
         revealedPrefix = WordwichReveal.revealedPrefix(
             from: guesses.map(\.word),
@@ -313,7 +303,7 @@ final class WordwichSession: ObservableObject {
         after = alphabeticalAfter(answer: answer, guesses: guesses.map(\.word))
         creditGuess(word: word, oldPrefixLen: oldPrefixLen, won: won)
         if won {
-            scheduleAutoAdvance(afterWonRoundId: roundId)
+            scheduleSoloAutoAdvance(afterWonRoundId: roundId)
         }
     }
 
@@ -386,12 +376,14 @@ final class WordwichSession: ObservableObject {
         after = round.after
         status = round.status
         wonBy = round.wonBy
+        solvedAnswer = round.solvedAnswer
         localAnswer = nil
 
         if round.status == "won" {
-            scheduleAutoAdvance(afterWonRoundId: round.roundId)
+            newRoundCountdown = round.newRoundIn
         } else if round.status == "active", previousRoundId != round.roundId {
             clearAutoAdvance()
+            solvedAnswer = nil
         }
     }
 
@@ -472,7 +464,18 @@ struct WordwichView: View {
             Text("Everyone will get a fresh hidden word. Use this when the round is stuck.")
         }
         .overlay {
-            WordFeedbackToastView(toast: session.activeToast)
+            ZStack {
+                WordFeedbackToastView(toast: session.activeToast)
+                if session.isRoundSolved, let winner = session.wonBy {
+                    WordwichSolvedOverlay(
+                        winnerName: winner.username,
+                        solvedWord: session.solvedAnswer ?? winner.word.uppercased(),
+                        countdown: session.newRoundCountdown
+                    )
+                    .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                }
+            }
+            .animation(.spring(response: 0.35, dampingFraction: 0.82), value: session.isRoundSolved)
         }
         .onAppear {
             session.configure(
@@ -560,16 +563,6 @@ struct WordwichView: View {
                 }
             }
 
-            if session.status == "won", let winner = session.wonBy {
-                Text("\(UsernameDisplay.formatted(winner.username)) solved it!")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(NFGTheme.successGreen)
-                if let countdown = session.newRoundCountdown {
-                    Text("New round in \(countdown)s…")
-                        .font(.caption2)
-                        .foregroundStyle(NFGTheme.muted)
-                }
-            }
         }
         .frame(maxWidth: .infinity)
     }
@@ -624,6 +617,7 @@ struct WordwichView: View {
                     .textContentType(.none)
                     .submitLabel(.go)
                     .focused($inputFocused)
+                    .disabled(session.isRoundSolved)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
                     .background(NFGTheme.panel2)
@@ -636,8 +630,9 @@ struct WordwichView: View {
                 } label: {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.system(size: 28))
-                        .foregroundStyle(NFGTheme.purpleLight)
+                        .foregroundStyle(session.isRoundSolved ? NFGTheme.muted : NFGTheme.purpleLight)
                 }
+                .disabled(session.isRoundSolved)
                 .accessibilityLabel("Submit guess")
             }
         }
@@ -646,5 +641,61 @@ struct WordwichView: View {
         .padding(.bottom, 8)
         .background(NFGTheme.panel.opacity(0.98))
         .overlay(alignment: .top) { Divider().background(NFGTheme.border) }
+    }
+}
+
+private struct WordwichSolvedOverlay: View {
+    let winnerName: String
+    let solvedWord: String
+    let countdown: Int?
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.72)
+                .ignoresSafeArea()
+
+            VStack(spacing: 14) {
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 36))
+                    .foregroundStyle(NFGTheme.gold)
+
+                Text("SOLVED!")
+                    .font(.system(size: 14, weight: .black, design: .rounded))
+                    .foregroundStyle(NFGTheme.gold)
+                    .tracking(2)
+
+                Text(UsernameDisplay.formatted(winnerName))
+                    .font(.system(size: 28, weight: .black, design: .rounded))
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+
+                Text("got \(solvedWord.uppercased())")
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .foregroundStyle(NFGTheme.successGreen)
+
+                if let countdown {
+                    Text("New round in \(countdown)s…")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(NFGTheme.muted)
+                        .padding(.top, 4)
+                } else {
+                    Text("Starting new round…")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(NFGTheme.muted)
+                        .padding(.top, 4)
+                }
+            }
+            .padding(.horizontal, 28)
+            .padding(.vertical, 32)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(NFGTheme.panel.opacity(0.96))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(NFGTheme.gold.opacity(0.55), lineWidth: 1.5)
+                    )
+            )
+            .padding(.horizontal, 24)
+        }
     }
 }
