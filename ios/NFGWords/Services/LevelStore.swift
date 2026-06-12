@@ -102,15 +102,15 @@ enum LevelStore {
     }
 
     /// Trim a bundled level's wheel to the player's progression tier (4 around → +1 / 150 clears, max 10 around).
+    /// The crossword grid always keeps every puzzle word — only the wheel ring shrinks.
     static func applyProgressiveWheel(to level: WordwheelLevel, roundsCleared: Int) -> WordwheelLevel {
         let center = level.centerLetter.lowercased()
         let maxOuter = requiredOuterLetterCount(roundsCleared: roundsCleared)
         let nativeWheel = level.wheelLetters.map { $0.lowercased() }
         let nativeOuters = nativeWheel.filter { $0 != center }
 
-        guard nativeOuters.count > maxOuter else {
-            return level
-        }
+        guard !level.words.isEmpty else { return level }
+        guard nativeOuters.count > maxOuter else { return level }
 
         let outerScores = nativeOuters.map { letter -> (String, Int) in
             let score = level.words.reduce(0) { partial, entry in
@@ -122,33 +122,40 @@ enum LevelStore {
             return lhs.0 < rhs.0
         }
 
-        func buildLevel(outerCount: Int) -> WordwheelLevel {
+        func wheel(for outerCount: Int) -> [String] {
             let picked = outerScores.prefix(outerCount).map(\.0).sorted()
-            let wheel = [center] + picked
-            let formable = level.words.filter {
-                WordDictionary.canForm(word: $0.word, wheel: wheel, center: center)
-            }
-            return WordwheelLevel(
-                id: level.id,
-                centerLetter: level.centerLetter,
-                wheelLetters: wheel,
-                bonusMultiplier: level.bonusMultiplier,
-                gridRows: level.gridRows,
-                gridCols: level.gridCols,
-                words: formable
-            )
+            return [center] + picked
         }
 
-        // Prefer the largest wheel allowed at this tier that keeps every puzzle word formable.
+        // Prefer the largest wheel allowed at this tier that still forms every puzzle word.
         for outer in stride(from: maxOuter, through: 1, by: -1) {
-            let candidate = buildLevel(outerCount: outer)
-            if candidate.words.count == level.words.count {
-                return candidate
+            let trimmed = wheel(for: outer)
+            let allFormable = level.words.allSatisfy {
+                WordDictionary.canForm(word: $0.word, wheel: trimmed, center: center)
+            }
+            if allFormable {
+                return WordwheelLevel(
+                    id: level.id,
+                    centerLetter: level.centerLetter,
+                    wheelLetters: trimmed,
+                    bonusMultiplier: level.bonusMultiplier,
+                    gridRows: level.gridRows,
+                    gridCols: level.gridCols,
+                    words: level.words
+                )
             }
         }
 
-        // Tier is below this level's native wheel — play the formable subset at max tier.
-        return buildLevel(outerCount: maxOuter)
+        // Tier below this level's native wheel — keep full grid, use best-effort trimmed wheel.
+        return WordwheelLevel(
+            id: level.id,
+            centerLetter: level.centerLetter,
+            wheelLetters: wheel(for: maxOuter),
+            bonusMultiplier: level.bonusMultiplier,
+            gridRows: level.gridRows,
+            gridCols: level.gridCols,
+            words: level.words
+        )
     }
 
     /// Stable bundled layout for the current level — does not change when words are found mid-round.

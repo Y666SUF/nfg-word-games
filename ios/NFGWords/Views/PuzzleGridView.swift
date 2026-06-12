@@ -88,7 +88,6 @@ struct PuzzleGridView: View {
                     }
                 }
                 .frame(width: gridW, height: gridH)
-                .drawingGroup(opaque: false)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -131,10 +130,6 @@ struct PuzzleGridView: View {
                             endPoint: .bottom
                         )
                     )
-            } else {
-                Circle()
-                    .fill(NFGTheme.purple.opacity(0.12))
-                    .frame(width: size * 0.12, height: size * 0.12)
             }
         }
         .frame(width: size, height: size)
