@@ -5,6 +5,10 @@ struct FoundWordsStrip: View {
     let found: Set<String>
     let bonusFound: Set<String>
 
+    private var puzzleFoundCount: Int {
+        puzzleWords.filter { found.contains($0.lowercased()) }.count
+    }
+
     private var sortedFound: [(word: String, isBonus: Bool)] {
         let puzzle = puzzleWords.filter { found.contains($0.lowercased()) }.map { ($0.uppercased(), false) }
         let bonus = bonusFound.sorted().map { ($0.uppercased(), true) }
@@ -18,7 +22,7 @@ struct FoundWordsStrip: View {
                     .font(.system(size: 11, weight: .heavy, design: .rounded))
                     .foregroundStyle(NFGTheme.muted)
                 Spacer()
-                Text("\(found.count)/\(puzzleWords.count)")
+                Text("\(puzzleFoundCount)/\(puzzleWords.count)")
                     .font(.system(size: 11, weight: .heavy, design: .rounded))
                     .foregroundStyle(NFGTheme.accent)
                     .padding(.horizontal, 8)

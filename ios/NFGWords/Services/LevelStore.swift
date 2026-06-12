@@ -52,11 +52,7 @@ enum LevelStore {
         let targetSize = requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
 
         if id <= bundledLevelCount,
-           let bundled = bundledLevel(
-               preferId: id,
-               totalLetters: targetSize,
-               excludingWords: excludingWords
-           ) {
+           let bundled = bundledLevelForPlay(preferId: id, totalLetters: targetSize) {
             return WordwheelLevel(
                 id: id,
                 centerLetter: bundled.centerLetter,
@@ -116,7 +112,17 @@ enum LevelStore {
         true
     }
 
-    /// Bundled puzzle matching exact wheel size for the player's tier (prefers `preferId`).
+    /// Stable bundled layout for the current level — does not change when words are found mid-round.
+    static func bundledLevelForPlay(preferId: Int, totalLetters: Int) -> WordwheelLevel? {
+        if let exact = level(id: preferId), exact.wheelLetters.count == totalLetters {
+            return exact
+        }
+        return levels
+            .filter { $0.wheelLetters.count == totalLetters }
+            .min { abs($0.id - preferId) < abs($1.id - preferId) }
+    }
+
+    /// Pick next bundled level id — may skip layouts whose puzzle words were already played.
     static func bundledLevel(
         preferId: Int,
         totalLetters: Int,

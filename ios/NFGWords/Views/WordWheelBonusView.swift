@@ -9,9 +9,10 @@ struct WordWheelBonusView: View {
     @State private var shake = false
     @State private var activeToast: WordToast?
     @State private var showComplete = false
+    @State private var activeLevel: WordwheelLevel?
 
     private var bonusLevel: WordwheelLevel {
-        BonusRoundLayout.level(from: pack)
+        activeLevel ?? BonusRoundLayout.level(from: pack)
     }
 
     private var targetWords: Set<String> {
@@ -69,6 +70,9 @@ struct WordWheelBonusView: View {
             }
             .animation(.spring(response: 0.35, dampingFraction: 0.8), value: activeToast?.id)
             .animation(.spring(response: 0.4, dampingFraction: 0.82), value: showComplete)
+        }
+        .onAppear {
+            activeLevel = BonusRoundLayout.level(from: pack)
         }
     }
 

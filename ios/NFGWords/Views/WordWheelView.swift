@@ -15,13 +15,19 @@ struct WordWheelView: View {
     @State private var showBonusOffer = false
     @State private var showBonusRound = false
     @State private var activeBonusPack: BonusRoundPack?
+    /// Locked for the whole round so the crossword grid does not swap after each guess.
+    @State private var activeLevel: WordwheelLevel?
 
     private var levelId: Int { scores.state.wordwheelLevel }
     private var level: WordwheelLevel {
-        LevelStore.resolveLevel(
-            id: levelId,
-            excludingWords: scores.sessionUsedWords(),
-            roundsCleared: scores.state.wordwheelRoundsCleared
+        activeLevel ?? LevelStore.level(id: 1) ?? WordwheelLevel(
+            id: 1,
+            centerLetter: "a",
+            wheelLetters: ["a", "e", "h", "r", "t"],
+            bonusMultiplier: 1,
+            gridRows: 5,
+            gridCols: 6,
+            words: []
         )
     }
 
@@ -138,9 +144,13 @@ struct WordWheelView: View {
                 )
             }
         }
-        .onAppear { restoreRoundIfNeeded() }
+        .onAppear {
+            loadActiveLevel()
+            restoreRoundIfNeeded()
+        }
         .onDisappear { persistRound() }
         .onChange(of: levelId) { _, _ in
+            loadActiveLevel()
             restoreRoundIfNeeded()
         }
     }
@@ -353,6 +363,7 @@ struct WordWheelView: View {
         let next = scores.nextWordwheelLevel(after: levelId)
         scores.advanceWordwheelLevel(to: next)
         resetRound(clearSaved: false)
+        loadActiveLevel()
     }
 
     private func purchaseHint() {
@@ -385,6 +396,14 @@ struct WordWheelView: View {
         }
         hintedCells.insert(pick)
         persistRound()
+    }
+
+    private func loadActiveLevel() {
+        activeLevel = LevelStore.resolveLevel(
+            id: levelId,
+            excludingWords: scores.sessionUsedWords(),
+            roundsCleared: scores.state.wordwheelRoundsCleared
+        )
     }
 
     private func restoreRoundIfNeeded() {
