@@ -27,6 +27,7 @@
 		B10000000000000000000025 /* FoundWordsStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000026 /* FoundWordsStrip.swift */; };
 		B1000000000000000000003A /* RoundClearedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000003B /* RoundClearedView.swift */; };
 		B1000000000000000000003C /* AppLegalConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000003D /* AppLegalConfig.swift */; };
+		B100000000000000000000C3 /* AdminConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000C4 /* AdminConfig.swift */; };
 		B1000000000000000000003E /* LegalDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000003F /* LegalDocumentView.swift */; };
 		B100000000000000000000A1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000A2 /* PrivacyInfo.xcprivacy */; };
 		B10000000000000000000027 /* ProfanityFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002A /* ProfanityFilter.swift */; };
@@ -47,6 +48,24 @@
 		B100000000000000000000BC /* RewardUnlocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000BE /* RewardUnlocks.swift */; };
 		B100000000000000000000BD /* RewardUnlockViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000BF /* RewardUnlockViews.swift */; };
 		B100000000000000000000C0 /* WordwheelProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000C2 /* WordwheelProgress.swift */; };
+		B100000000000000000000C9 /* BonusRoundStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000C5 /* BonusRoundStore.swift */; };
+		B100000000000000000000CD /* NFGCoinsVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000CE /* NFGCoinsVault.swift */; };
+		B100000000000000000000CA /* BonusRoundOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000C6 /* BonusRoundOfferView.swift */; };
+		B100000000000000000000CB /* WordWheelBonusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000C7 /* WordWheelBonusView.swift */; };
+		B100000000000000000000CC /* bonus-round-packs.json in Resources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000C8 /* bonus-round-packs.json */; };
+		B100000000000000000000D2 /* ThemePalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000D3 /* ThemePalette.swift */; };
+		B100000000000000000000D4 /* ThemeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000D5 /* ThemeStore.swift */; };
+		B100000000000000000000D6 /* StyleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000D7 /* StyleView.swift */; };
+		B100000000000000000000D8 /* DailyMissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000D9 /* DailyMissions.swift */; };
+		B100000000000000000000DA /* DailyMissionsVault.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000DB /* DailyMissionsVault.swift */; };
+		B100000000000000000000DC /* DailyMissionsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000DD /* DailyMissionsCard.swift */; };
+		B100000000000000000000DE /* NFGCoinIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000DF /* NFGCoinIcon.swift */; };
+		B100000000000000000000E2 /* DeviceInstall.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000E3 /* DeviceInstall.swift */; };
+		B100000000000000000000E4 /* WordwichWordPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000E5 /* WordwichWordPolicy.swift */; };
+		B100000000000000000000E6 /* BonusRoundLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000E7 /* BonusRoundLayout.swift */; };
+		B100000000000000000000E8 /* TimedWordWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000E9 /* TimedWordWheelView.swift */; };
+		B100000000000000000000EA /* ProceduralLevelEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000EB /* ProceduralLevelEngine.swift */; };
+		B100000000000000000000EC /* CrosswordPlacer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000ED /* CrosswordPlacer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +99,7 @@
 		B10000000000000000000026 /* FoundWordsStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundWordsStrip.swift; sourceTree = "<group>"; };
 		B1000000000000000000003B /* RoundClearedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundClearedView.swift; sourceTree = "<group>"; };
 		B1000000000000000000003D /* AppLegalConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLegalConfig.swift; sourceTree = "<group>"; };
+		B100000000000000000000C4 /* AdminConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminConfig.swift; sourceTree = "<group>"; };
 		B1000000000000000000003F /* LegalDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalDocumentView.swift; sourceTree = "<group>"; };
 		B100000000000000000000A2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		B1000000000000000000002A /* ProfanityFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfanityFilter.swift; sourceTree = "<group>"; };
@@ -92,6 +112,24 @@
 		B100000000000000000000BE /* RewardUnlocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardUnlocks.swift; sourceTree = "<group>"; };
 		B100000000000000000000BF /* RewardUnlockViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardUnlockViews.swift; sourceTree = "<group>"; };
 		B100000000000000000000C2 /* WordwheelProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordwheelProgress.swift; sourceTree = "<group>"; };
+		B100000000000000000000C5 /* BonusRoundStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusRoundStore.swift; sourceTree = "<group>"; };
+		B100000000000000000000C6 /* BonusRoundOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusRoundOfferView.swift; sourceTree = "<group>"; };
+		B100000000000000000000C7 /* WordWheelBonusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordWheelBonusView.swift; sourceTree = "<group>"; };
+		B100000000000000000000C8 /* bonus-round-packs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "bonus-round-packs.json"; sourceTree = "<group>"; };
+		B100000000000000000000CE /* NFGCoinsVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGCoinsVault.swift; sourceTree = "<group>"; };
+		B100000000000000000000D3 /* ThemePalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePalette.swift; sourceTree = "<group>"; };
+		B100000000000000000000D5 /* ThemeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeStore.swift; sourceTree = "<group>"; };
+		B100000000000000000000D7 /* StyleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleView.swift; sourceTree = "<group>"; };
+		B100000000000000000000D9 /* DailyMissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyMissions.swift; sourceTree = "<group>"; };
+		B100000000000000000000DB /* DailyMissionsVault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyMissionsVault.swift; sourceTree = "<group>"; };
+		B100000000000000000000DD /* DailyMissionsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyMissionsCard.swift; sourceTree = "<group>"; };
+		B100000000000000000000DF /* NFGCoinIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGCoinIcon.swift; sourceTree = "<group>"; };
+		B100000000000000000000E3 /* DeviceInstall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInstall.swift; sourceTree = "<group>"; };
+		B100000000000000000000E5 /* WordwichWordPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordwichWordPolicy.swift; sourceTree = "<group>"; };
+		B100000000000000000000E7 /* BonusRoundLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusRoundLayout.swift; sourceTree = "<group>"; };
+		B100000000000000000000E9 /* TimedWordWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimedWordWheelView.swift; sourceTree = "<group>"; };
+		B100000000000000000000EB /* ProceduralLevelEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProceduralLevelEngine.swift; sourceTree = "<group>"; };
+		B100000000000000000000ED /* CrosswordPlacer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordPlacer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				B10000000000000000000013 /* NFGTheme.swift */,
+				B100000000000000000000D3 /* ThemePalette.swift */,
 				B100000000000000000000D1 /* NFGPolish.swift */,
 			);
 			path = Theme;
@@ -153,6 +192,7 @@
 			children = (
 				B10000000000000000000037 /* GameServerConfig.swift */,
 				B1000000000000000000003D /* AppLegalConfig.swift */,
+				B100000000000000000000C4 /* AdminConfig.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -162,6 +202,7 @@
 			children = (
 				B10000000000000000000014 /* GameModels.swift */,
 				B100000000000000000000BE /* RewardUnlocks.swift */,
+				B100000000000000000000D9 /* DailyMissions.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -177,9 +218,18 @@
 				B1000000000000000000002B /* APIConfig.swift */,
 				B1000000000000000000002C /* LeaderboardAPI.swift */,
 				B100000000000000000000B3 /* WordwichDictionary.swift */,
+				B100000000000000000000E5 /* WordwichWordPolicy.swift */,
+				B100000000000000000000E7 /* BonusRoundLayout.swift */,
+				B100000000000000000000EB /* ProceduralLevelEngine.swift */,
+				B100000000000000000000ED /* CrosswordPlacer.swift */,
 				B100000000000000000000B5 /* WordwichAPI.swift */,
 				B100000000000000000000B9 /* GameScoring.swift */,
 				B100000000000000000000C2 /* WordwheelProgress.swift */,
+				B100000000000000000000C5 /* BonusRoundStore.swift */,
+				B100000000000000000000CE /* NFGCoinsVault.swift */,
+				B100000000000000000000D5 /* ThemeStore.swift */,
+				B100000000000000000000DB /* DailyMissionsVault.swift */,
+				B100000000000000000000E3 /* DeviceInstall.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -192,6 +242,7 @@
 				B10000000000000000000018 /* HubView.swift */,
 				B10000000000000000000019 /* ScoresView.swift */,
 				B1000000000000000000001A /* WordWheelView.swift */,
+				B100000000000000000000E9 /* TimedWordWheelView.swift */,
 				B1000000000000000000001B /* LetterWheelView.swift */,
 				B1000000000000000000001C /* PuzzleGridView.swift */,
 				B10000000000000000000024 /* WordFeedbackToast.swift */,
@@ -203,6 +254,11 @@
 				B10000000000000000000035 /* LeaderboardView.swift */,
 				B100000000000000000000B1 /* WordwichView.swift */,
 				B100000000000000000000BF /* RewardUnlockViews.swift */,
+				B100000000000000000000C6 /* BonusRoundOfferView.swift */,
+				B100000000000000000000C7 /* WordWheelBonusView.swift */,
+				B100000000000000000000D7 /* StyleView.swift */,
+				B100000000000000000000DD /* DailyMissionsCard.swift */,
+				B100000000000000000000DF /* NFGCoinIcon.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -213,6 +269,7 @@
 				B1000000000000000000001F /* wordwheel-levels.json */,
 				B10000000000000000000021 /* english-dictionary.json */,
 				B100000000000000000000B7 /* wordwich-dictionary.json */,
+				B100000000000000000000C8 /* bonus-round-packs.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -275,6 +332,7 @@
 				B10000000000000000000022 /* english-dictionary.json in Resources */,
 				B100000000000000000000B6 /* wordwich-dictionary.json in Resources */,
 				B100000000000000000000A1 /* PrivacyInfo.xcprivacy in Resources */,
+				B100000000000000000000CC /* bonus-round-packs.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +363,7 @@
 				B10000000000000000000025 /* FoundWordsStrip.swift in Sources */,
 				B1000000000000000000003A /* RoundClearedView.swift in Sources */,
 				B1000000000000000000003C /* AppLegalConfig.swift in Sources */,
+				B100000000000000000000C3 /* AdminConfig.swift in Sources */,
 				B1000000000000000000003E /* LegalDocumentView.swift in Sources */,
 				B10000000000000000000027 /* ProfanityFilter.swift in Sources */,
 				B10000000000000000000028 /* APIConfig.swift in Sources */,
@@ -320,6 +379,23 @@
 				B100000000000000000000BC /* RewardUnlocks.swift in Sources */,
 				B100000000000000000000BD /* RewardUnlockViews.swift in Sources */,
 				B100000000000000000000C0 /* WordwheelProgress.swift in Sources */,
+				B100000000000000000000C9 /* BonusRoundStore.swift in Sources */,
+				B100000000000000000000CA /* BonusRoundOfferView.swift in Sources */,
+				B100000000000000000000CB /* WordWheelBonusView.swift in Sources */,
+				B100000000000000000000CD /* NFGCoinsVault.swift in Sources */,
+				B100000000000000000000D2 /* ThemePalette.swift in Sources */,
+				B100000000000000000000D4 /* ThemeStore.swift in Sources */,
+				B100000000000000000000D6 /* StyleView.swift in Sources */,
+				B100000000000000000000D8 /* DailyMissions.swift in Sources */,
+				B100000000000000000000DA /* DailyMissionsVault.swift in Sources */,
+				B100000000000000000000DC /* DailyMissionsCard.swift in Sources */,
+				B100000000000000000000DE /* NFGCoinIcon.swift in Sources */,
+				B100000000000000000000E2 /* DeviceInstall.swift in Sources */,
+				B100000000000000000000E4 /* WordwichWordPolicy.swift in Sources */,
+				B100000000000000000000E6 /* BonusRoundLayout.swift in Sources */,
+				B100000000000000000000E8 /* TimedWordWheelView.swift in Sources */,
+				B100000000000000000000EA /* ProceduralLevelEngine.swift in Sources */,
+				B100000000000000000000EC /* CrosswordPlacer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -366,7 +442,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -393,7 +469,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;

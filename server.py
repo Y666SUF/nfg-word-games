@@ -45,7 +45,16 @@ LEVELS_FILE = ROOT / "data" / "wordwheel-levels.json"
 DIST_DIR = ROOT / "app" / "dist"
 BRIDGE_TOKEN = os.getenv("WORD_GAMES_BRIDGE_TOKEN", "change-me-to-a-long-secret")
 PORT = int(os.getenv("WORD_GAMES_PORT", "19877"))
-GAME_IDS = ("wordwheel", "hangman", "wordwich")
+# Yusuf (yusuf) — iPhone 17 Pro Max player code; comma-separated for multiple admins.
+WORD_GAMES_ADMIN_PLAYER_IDS = {
+    p.strip()
+    for p in os.getenv(
+        "WORD_GAMES_ADMIN_PLAYER_ID",
+        "6a2dca48-c66d-4b48-b8e0-4245b846ee06",
+    ).split(",")
+    if p.strip()
+}
+GAME_IDS = ("wordwheel", "wordwheelTimed", "hangman", "wordwich")
 
 
 def _load_scores() -> dict[str, Any]:
@@ -107,6 +116,57 @@ def _deploy_info() -> dict[str, Any]:
         return {}
 
 
+MAX_DEVICES_PER_PLAYER = 3
+
+
+def _player_devices(player: dict[str, Any]) -> list[dict[str, Any]]:
+    raw = player.get("devices")
+    if not isinstance(raw, list):
+        return []
+    out: list[dict[str, Any]] = []
+    for entry in raw:
+        if not isinstance(entry, dict):
+            continue
+        device_id = str(entry.get("id") or "").strip()
+        if device_id:
+            out.append(entry)
+    return out
+
+
+def _device_known(player: dict[str, Any], device_id: str) -> bool:
+    return any(str(entry.get("id") or "") == device_id for entry in _player_devices(player))
+
+
+def _touch_device(player: dict[str, Any], device_id: str) -> None:
+    devices = _player_devices(player)
+    for entry in devices:
+        if str(entry.get("id") or "") == device_id:
+            entry["lastSeenAt"] = _now()
+    player["devices"] = devices
+
+
+def _register_device(player: dict[str, Any], device_id: str, *, force: bool = False) -> None:
+    devices = _player_devices(player)
+    for entry in devices:
+        if str(entry.get("id") or "") == device_id:
+            entry["lastSeenAt"] = _now()
+            player["devices"] = devices
+            return
+
+    if len(devices) >= MAX_DEVICES_PER_PLAYER:
+        if not force:
+            raise HTTPException(status_code=403, detail="device_limit_reached")
+        devices.sort(key=lambda row: str(row.get("lastSeenAt") or row.get("registeredAt") or ""))
+        devices = devices[1:]
+
+    devices.append({
+        "id": device_id,
+        "registeredAt": _now(),
+        "lastSeenAt": _now(),
+    })
+    player["devices"] = devices
+
+
 def _find_player_by_username(data: dict[str, Any], username: str) -> Optional[str]:
     target = username.lower()
     for player_id, player in data["players"].items():
@@ -146,6 +206,8 @@ def _merge_scores(existing: dict[str, Any], incoming: dict[str, Any]) -> dict[st
         "wordwheelLevel": max(int(existing.get("wordwheelLevel") or 1), int(incoming.get("wordwheelLevel") or 1)),
         "updatedAt": _now(),
     }
+    if existing.get("devices") is not None:
+        merged["devices"] = existing.get("devices")
     reconcile_player_wordwheel(merged)
     return merged
 
@@ -244,30 +306,57 @@ def login_player(body: dict[str, Any]) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     requested_player_id = str(body.get("playerId") or "").strip() or None
+    device_id = str(body.get("deviceId") or "").strip() or None
 
     data = _load_scores()
-    player_id = _find_player_by_username(data, username)
-    if player_id is None:
-        player_id = str(uuid.uuid4())
-        data["players"][player_id] = {
-            "username": username,
-            "totalScore": 0,
-            "gameHighScores": {},
-            "wordwheelLevel": 1,
-            "updatedAt": _now(),
-        }
-        _save_scores(data)
-        created = True
-    else:
-        # Existing username — require the secret player id so others cannot hijack the profile.
-        if not requested_player_id or requested_player_id != player_id:
-            raise HTTPException(status_code=409, detail="username_taken")
-        created = False
-        player = data["players"][player_id]
+
+    # Player code flow — proves ownership; always allowed (registers this device, evicting oldest if needed).
+    if requested_player_id:
+        player = data["players"].get(requested_player_id)
+        if not player:
+            raise HTTPException(status_code=404, detail="player_not_found")
+        stored_name = str(player.get("username") or "").strip().lower()
+        if stored_name != username.lower():
+            raise HTTPException(status_code=409, detail="username_mismatch")
         if player.get("username") != username:
             player["username"] = username
+        if device_id:
+            _register_device(player, device_id, force=True)
+        player["updatedAt"] = _now()
+        data["players"][requested_player_id] = player
+        _save_scores(data)
+        player_id = requested_player_id
+        created = False
+    else:
+        existing_id = _find_player_by_username(data, username)
+        if existing_id is not None:
+            player = data["players"][existing_id]
+            if not device_id:
+                raise HTTPException(status_code=409, detail="username_taken")
+            if _device_known(player, device_id):
+                _touch_device(player, device_id)
+            else:
+                _register_device(player, device_id, force=False)
             player["updatedAt"] = _now()
+            data["players"][existing_id] = player
             _save_scores(data)
+            player_id = existing_id
+            created = False
+        else:
+            player_id = str(uuid.uuid4())
+            player = {
+                "username": username,
+                "totalScore": 0,
+                "gameHighScores": {},
+                "wordwheelLevel": 1,
+                "updatedAt": _now(),
+                "devices": [],
+            }
+            if device_id:
+                _register_device(player, device_id, force=True)
+            data["players"][player_id] = player
+            _save_scores(data)
+            created = True
 
     player = data["players"][player_id]
     return {
@@ -396,6 +485,16 @@ def wordwich_guess(body: dict[str, Any]) -> dict[str, Any]:
 @app.post("/api/word-games/wordwich/rounds")
 def wordwich_new_round() -> dict[str, Any]:
     return _wordwich_required().new_round()
+
+
+@app.post("/api/wordwich/reset")
+@app.post("/api/word-games/wordwich/reset")
+def wordwich_admin_reset(body: dict[str, Any]) -> dict[str, Any]:
+    player_id = str(body.get("playerId") or "").strip() or None
+    result = _wordwich_required().admin_reset(player_id, WORD_GAMES_ADMIN_PLAYER_IDS)
+    if not result.get("ok"):
+        raise HTTPException(status_code=403, detail=result.get("error", "forbidden"))
+    return result
 
 
 @app.get("/api/word-games/wordwheel/levels")

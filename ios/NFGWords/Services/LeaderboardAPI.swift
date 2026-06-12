@@ -108,10 +108,14 @@ enum LeaderboardAPI {
                 ?? String(data: data, encoding: .utf8)
                 ?? "Request failed."
             if http.statusCode == 404 {
-                throw APIError.server("NFG Words service is unavailable. Please try again later.")
+                let body = String(data: data, encoding: .utf8) ?? ""
+                if body.lowercased().contains("player_not_found") || message.lowercased().contains("player not found") {
+                    throw APIError.server("player_not_found")
+                }
+                throw APIError.server("NFG Words server is temporarily down. Please try again in a few minutes.")
             }
             if http.statusCode == 502 || http.statusCode == 503 {
-                throw APIError.server("NFG Words is temporarily unavailable. Please try again.")
+                throw APIError.server("NFG Words server is temporarily down. Please try again in a few minutes.")
             }
             throw APIError.server(message.replacingOccurrences(of: "_", with: " "))
         }
@@ -130,8 +134,11 @@ enum LeaderboardAPI {
         }
     }
 
-    static func login(username: String, playerId: String? = nil) async throws -> PlayerProfile {
-        var body: [String: Any] = ["username": username]
+    static func login(username: String, playerId: String? = nil, deviceId: String) async throws -> PlayerProfile {
+        var body: [String: Any] = [
+            "username": username,
+            "deviceId": deviceId,
+        ]
         if let playerId, !playerId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             body["playerId"] = playerId.trimmingCharacters(in: .whitespacesAndNewlines)
         }

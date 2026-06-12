@@ -13,9 +13,10 @@ struct LeaderboardView: View {
     enum LeaderboardScope: String, Identifiable {
         case overall
         case wordwheel
+        case wordwheelTimed
         case wordwich
 
-        static let allScopes: [LeaderboardScope] = [.overall, .wordwheel, .wordwich]
+        static let allScopes: [LeaderboardScope] = [.overall, .wordwheel, .wordwheelTimed, .wordwich]
 
         var id: String { rawValue }
 
@@ -23,6 +24,7 @@ struct LeaderboardView: View {
             switch self {
             case .overall: "Overall"
             case .wordwheel: "WordWheel"
+            case .wordwheelTimed: "Timed"
             case .wordwich: "Wordwich"
             }
         }
@@ -31,6 +33,7 @@ struct LeaderboardView: View {
             switch self {
             case .overall: nil
             case .wordwheel: .wordwheel
+            case .wordwheelTimed: .wordwheelTimed
             case .wordwich: .wordwich
             }
         }
@@ -121,6 +124,8 @@ struct LeaderboardView: View {
             return scores.state.totalScore
         case .wordwheel:
             return scores.state.highScore(for: .wordwheel)
+        case .wordwheelTimed:
+            return scores.state.highScore(for: .wordwheelTimed)
         case .wordwich:
             return scores.state.highScore(for: .wordwich)
         }

@@ -41,10 +41,31 @@ enum UserFacingMessages {
             || lowered.contains("retrying automatically") {
             return "Something went wrong. Please try again in a moment."
         }
-        if lowered.contains("username taken") || lowered.contains("username_taken") {
-            return "That username is already taken. Choose a different name, or restore your profile with your player code."
+        if lowered.contains("not_allowed") || lowered.contains("not allowed") {
+            return "That word isn't allowed in Wordwich."
         }
-        if lowered.contains("unavailable") || lowered.contains("offline") || lowered.contains("could not reach") {
+        if lowered.contains("player_code_mismatch") || lowered.contains("username mismatch") {
+            return "That username doesn't match this player code. Check both and try again."
+        }
+        if lowered.contains("player_not_found") || lowered.contains("player not found") {
+            return "Player code not found. Double-check the code from your Mine tab."
+        }
+        if lowered.contains("username taken") || lowered.contains("username_taken") {
+            return "That username is already taken. Use your player code to sign in on a new device."
+        }
+        if lowered.contains("device_limit") || lowered.contains("device limit") {
+            return "This account is already on 3 devices. Open Mine on an existing device and use your player code here."
+        }
+        if lowered.contains("temporarily unavailable")
+            || lowered.contains("temporarily down")
+            || lowered.contains("error code: 502")
+            || lowered.contains("error code: 503") {
+            return "NFG Words server is temporarily down. Please try again in a few minutes."
+        }
+        if lowered.contains("could not reach") || lowered.contains("internet connection") {
+            return "Can't connect to NFG Words. Check your internet and try again."
+        }
+        if lowered.contains("offline") {
             return "You're offline right now. We'll sync when you're back online."
         }
         return text

@@ -5,11 +5,15 @@ struct UsernamePromptView: View {
 
     @State private var username = ""
     @State private var playerCode = ""
-    @State private var showRestore = false
+    @State private var showOtherDevice = false
     @State private var errorMessage: String?
     @State private var isSubmitting = false
     @State private var showPrivacy = false
     @State private var showTerms = false
+
+    private var savedUsername: String? {
+        PlayerKeychain.load()?.username
+    }
 
     var body: some View {
         ZStack {
@@ -22,14 +26,14 @@ struct UsernamePromptView: View {
 
                     VStack(spacing: 24) {
                         VStack(spacing: 10) {
-                            Text(showRestore ? "Restore your profile" : "Choose your username")
+                            Text(showOtherDevice ? "Sign in on another device" : "Choose your username")
                                 .font(.system(size: 28, weight: .black, design: .rounded))
                                 .foregroundStyle(NFGTheme.text)
                                 .multilineTextAlignment(.center)
 
-                            Text(showRestore
-                                 ? "Enter your username and player code from the Mine tab on your old device."
-                                 : "Pick a unique name for the leaderboards. Names are shown with capital letters (e.g. Yusuf, Cool_Player).")
+                            Text(showOtherDevice
+                                 ? "Enter your username and player code from the Mine tab on a device where you're already signed in."
+                                 : "This phone remembers you — just pick your name. Updates won't sign you out.")
                                 .font(.subheadline)
                                 .foregroundStyle(NFGTheme.muted)
                                 .multilineTextAlignment(.center)
@@ -45,7 +49,7 @@ struct UsernamePromptView: View {
                             .overlay(RoundedRectangle(cornerRadius: 12).stroke(NFGTheme.border))
                             .accessibilityLabel("Username")
 
-                        if showRestore {
+                        if showOtherDevice {
                             TextField("Player code", text: $playerCode)
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
@@ -70,7 +74,7 @@ struct UsernamePromptView: View {
                                 if isSubmitting {
                                     ProgressView().tint(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
                                 }
-                                Text(isSubmitting ? "Setting up…" : (showRestore ? "Restore profile" : "Continue"))
+                                Text(isSubmitting ? "Setting up…" : (showOtherDevice ? "Sign in" : "Continue"))
                                     .font(.system(size: 17, weight: .heavy, design: .rounded))
                             }
                             .foregroundStyle(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
@@ -80,13 +84,13 @@ struct UsernamePromptView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         .disabled(isSubmitting || !canSubmit)
-                        .accessibilityHint(showRestore ? "Restores your saved profile" : "Creates your leaderboard profile")
+                        .accessibilityHint(showOtherDevice ? "Signs in with your player code" : "Creates or resumes your profile on this device")
 
-                        Button(showRestore ? "Create new profile instead" : "Already playing? Restore profile") {
+                        Button(showOtherDevice ? "Back — use this device only" : "Signing in on another device?") {
                             withAnimation(.easeInOut(duration: 0.2)) {
-                                showRestore.toggle()
+                                showOtherDevice.toggle()
                                 errorMessage = nil
-                                if !showRestore { playerCode = "" }
+                                if !showOtherDevice { playerCode = "" }
                             }
                         }
                         .font(.caption.weight(.semibold))
@@ -112,8 +116,8 @@ struct UsernamePromptView: View {
             LegalDocumentView(title: "Terms of Use", sections: AppLegalContent.termsSections)
         }
         .onAppear {
-            if let creds = PlayerKeychain.load() {
-                username = creds.username
+            if let saved = savedUsername {
+                username = saved
             }
         }
     }
@@ -121,7 +125,7 @@ struct UsernamePromptView: View {
     private var canSubmit: Bool {
         let name = username.trimmingCharacters(in: .whitespacesAndNewlines)
         if name.isEmpty { return false }
-        if showRestore {
+        if showOtherDevice {
             return !playerCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         }
         return true
@@ -151,7 +155,7 @@ struct UsernamePromptView: View {
         }
 
         let code = playerCode.trimmingCharacters(in: .whitespacesAndNewlines)
-        if showRestore && code.isEmpty {
+        if showOtherDevice && code.isEmpty {
             errorMessage = "Enter your player code from the Mine tab."
             return
         }
@@ -160,7 +164,10 @@ struct UsernamePromptView: View {
         isSubmitting = true
         Task {
             do {
-                try await scores.login(username: sanitized, playerId: showRestore ? code : nil)
+                try await scores.login(
+                    username: sanitized,
+                    playerId: showOtherDevice ? code : nil
+                )
             } catch {
                 errorMessage = UserFacingMessages.friendly(error)
             }

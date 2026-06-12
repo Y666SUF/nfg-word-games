@@ -7,37 +7,47 @@ struct PuzzleCell: Identifiable {
     let letter: String?
     let revealed: Bool
     let colorIndex: Int
+    var hinted: Bool = false
 }
 
 struct PuzzleGridView: View {
     let level: WordwheelLevel
     let found: Set<String>
+    var hintedCells: Set<String> = []
     var maxCellSize: CGFloat = 36
 
     private var cells: [PuzzleCell] {
-        var map: [String: (letter: Character, revealed: Bool, colorIndex: Int)] = [:]
+        var map: [String: (letter: Character, revealed: Bool, hinted: Bool, colorIndex: Int)] = [:]
         for (wordIndex, entry) in level.words.enumerated() {
             let show = found.contains(entry.word.lowercased())
             for (i, ch) in entry.word.enumerated() {
                 let row = entry.startRow + (entry.direction == "down" ? i : 0)
                 let col = entry.startCol + (entry.direction == "across" ? i : 0)
                 let key = "\(row),\(col)"
+                let hinted = hintedCells.contains(key)
                 if let existing = map[key] {
-                    map[key] = (ch, existing.revealed || show, existing.colorIndex)
+                    map[key] = (
+                        ch,
+                        existing.revealed || show || hinted,
+                        existing.hinted || hinted,
+                        existing.colorIndex
+                    )
                 } else {
-                    map[key] = (ch, show, wordIndex)
+                    map[key] = (ch, show || hinted, hinted, wordIndex)
                 }
             }
         }
         return map.map { key, value in
             let parts = key.split(separator: ",").compactMap { Int($0) }
+            let showHintStyle = value.hinted && value.revealed
             return PuzzleCell(
                 id: key,
                 row: parts[0],
                 col: parts[1],
                 letter: value.revealed ? String(value.letter).uppercased() : nil,
                 revealed: value.revealed,
-                colorIndex: value.colorIndex
+                colorIndex: value.colorIndex,
+                hinted: showHintStyle
             )
         }
     }
@@ -87,9 +97,18 @@ struct PuzzleGridView: View {
     @ViewBuilder
     private func puzzleTile(cell: PuzzleCell, size: CGFloat) -> some View {
         let filled = cell.revealed
+        let hintStyle = cell.hinted && cell.letter != nil
         ZStack {
             RoundedRectangle(cornerRadius: size * 0.22)
-                .fill(NFGTheme.puzzleTileGradient(revealed: filled, index: cell.colorIndex))
+                .fill(
+                    hintStyle
+                        ? LinearGradient(
+                            colors: [NFGTheme.gold.opacity(0.35), NFGTheme.gold.opacity(0.18)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        : NFGTheme.puzzleTileGradient(revealed: filled, index: cell.colorIndex)
+                )
                 .shadow(
                     color: filled ? NFGTheme.accent.opacity(0.35) : .clear,
                     radius: filled ? 6 : 0,

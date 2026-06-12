@@ -11,9 +11,14 @@ final class ScoreStore: ObservableObject {
     @Published private(set) var hasPendingSync = false
     /// Set when total score crosses a new reward threshold (cosmetic unlock — points are kept).
     @Published private(set) var pendingUnlockCelebration: RewardUnlocks.Tier?
+    @Published private(set) var dailyMissions = DailyMissionsVault.load()
+    @Published private(set) var pendingDailyMissionCelebration = false
+    @Published private(set) var isRestoringSession = false
 
     private let key = "nfg-words-scores-v2"
     private let roundKey = "nfg-words-wordwheel-round-v1"
+    private let lifetimeWordsKey = "nfg-words-lifetime-words-v1"
+    private let legacySessionWordsKey = "nfg-words-session-words-v1"
     private let pendingSyncKey = "nfg-words-pending-sync-v1"
     private var periodicSyncTask: Task<Void, Never>?
     private var pendingSyncTask: Task<Void, Never>?
@@ -41,8 +46,13 @@ final class ScoreStore: ObservableObject {
         } else {
             state = .empty
         }
+        NFGCoinsVault.migrateIfNeeded(from: coinSnapshot(from: state))
+        applyCoinVault(NFGCoinsVault.load())
+        migrateWordwheelRoundsClearedIfNeeded()
+        migrateLifetimeWordsIfNeeded()
         recoverPeakFromLeaderboardCacheIfNeeded()
         reconcileWordwheelProgress()
+        refreshDailyMissions()
 
         if hasPendingSync, state.isLoggedIn {
             enqueueServerSync()
@@ -57,14 +67,40 @@ final class ScoreStore: ObservableObject {
             }
             PlayerKeychain.save(playerId: player.playerId, username: player.username)
         }
+
+        isRestoringSession = !state.isLoggedIn && PlayerKeychain.load() != nil
+        if isRestoringSession {
+            Task { await restoreSessionIfNeeded() }
+        } else if state.isLoggedIn {
+            Task { await refreshSessionQuietly() }
+        }
     }
 
     var needsUsername: Bool { !state.isLoggedIn }
 
     private func persist() {
         reconcileWordwheelProgress()
+        persistCoinVault()
         guard let data = try? JSONEncoder().encode(state) else { return }
         UserDefaults.standard.set(data, forKey: key)
+    }
+
+    private func coinSnapshot(from state: ScoreState) -> NFGCoinsVault.Snapshot {
+        NFGCoinsVault.Snapshot(
+            nfgCoins: state.nfgCoins,
+            bonusClearsSinceLastOffer: state.bonusClearsSinceLastOffer,
+            bonusNextThreshold: state.bonusNextThreshold
+        )
+    }
+
+    func applyCoinVault(_ snapshot: NFGCoinsVault.Snapshot) {
+        state.nfgCoins = snapshot.nfgCoins
+        state.bonusClearsSinceLastOffer = snapshot.bonusClearsSinceLastOffer
+        state.bonusNextThreshold = snapshot.bonusNextThreshold
+    }
+
+    private func persistCoinVault() {
+        NFGCoinsVault.save(coinSnapshot(from: state))
     }
 
     private func reconcileWordwheelProgress() {
@@ -122,10 +158,24 @@ final class ScoreStore: ObservableObject {
     }
 
     func login(username: String, playerId: String? = nil) async throws {
-        try await LeaderboardAPI.checkHealth()
         let displayName = UsernameDisplay.formatted(ProfanityFilter.sanitize(username))
         let resolvedPlayerId = playerId ?? PlayerKeychain.playerId(forUsername: displayName)
-        let profile = try await LeaderboardAPI.login(username: displayName, playerId: resolvedPlayerId)
+        let profile: PlayerProfile
+        do {
+            profile = try await LeaderboardAPI.login(
+                username: displayName,
+                playerId: resolvedPlayerId,
+                deviceId: DeviceInstall.id
+            )
+        } catch {
+            if let creds = PlayerKeychain.load(),
+               creds.username.caseInsensitiveCompare(displayName) == .orderedSame,
+               resolvedPlayerId == nil || creds.playerId == resolvedPlayerId {
+                adoptOfflineSession(from: creds)
+                return
+            }
+            throw error
+        }
         PlayerKeychain.save(playerId: profile.playerId, username: profile.username)
         state.player = profile
         persist()
@@ -138,6 +188,38 @@ final class ScoreStore: ObservableObject {
         recoverPeakFromLeaderboardCacheIfNeeded()
         reconcileWordwheelProgress()
         persist()
+    }
+
+    /// Silent sign-in on launch — Keychain + device id, or offline fallback from Keychain.
+    func restoreSessionIfNeeded() async {
+        isRestoringSession = true
+        defer { isRestoringSession = false }
+
+        guard let creds = PlayerKeychain.load() else { return }
+        do {
+            try await login(username: creds.username, playerId: creds.playerId)
+        } catch {
+            adoptOfflineSession(from: creds)
+        }
+    }
+
+    func refreshSessionQuietly() async {
+        guard let creds = PlayerKeychain.load() else { return }
+        do {
+            try await login(username: creds.username, playerId: creds.playerId)
+        } catch {
+            beginPeriodicServerSync()
+        }
+    }
+
+    private func adoptOfflineSession(from creds: PlayerKeychain.Credentials) {
+        guard !state.isLoggedIn else {
+            beginPeriodicServerSync()
+            return
+        }
+        state.player = PlayerProfile(playerId: creds.playerId, username: creds.username)
+        persist()
+        beginPeriodicServerSync()
     }
 
     func updateUsername(_ raw: String) async throws {
@@ -156,6 +238,73 @@ final class ScoreStore: ObservableObject {
 
     func clearUnlockCelebration() {
         pendingUnlockCelebration = nil
+    }
+
+    func clearDailyMissionCelebration() {
+        pendingDailyMissionCelebration = false
+    }
+
+    func refreshDailyMissions() {
+        let loaded = DailyMissionsVault.load()
+        if loaded != dailyMissions {
+            dailyMissions = loaded
+        }
+    }
+
+    /// Call when a WordWheel round is cleared (daily mission progress).
+    func recordDailyRoundClear() {
+        refreshDailyMissions()
+        guard dailyMissions.roundsCleared < DailyMissions.roundsTarget else {
+            tryClaimDailyMissionBonus()
+            return
+        }
+        var next = dailyMissions
+        next.roundsCleared += 1
+        applyDailyMissions(next)
+    }
+
+    /// Call when a bonus round is fully completed (not skipped).
+    func recordDailyBonusComplete() {
+        refreshDailyMissions()
+        guard dailyMissions.bonusRoundsCompleted < DailyMissions.bonusTarget else {
+            tryClaimDailyMissionBonus()
+            return
+        }
+        var next = dailyMissions
+        next.bonusRoundsCompleted += 1
+        applyDailyMissions(next)
+    }
+
+    /// Call when the player submits a valid new Wordwich guess.
+    func recordDailyWordwichGuess() {
+        refreshDailyMissions()
+        guard dailyMissions.wordwichGuesses < DailyMissions.wordwichTarget else {
+            tryClaimDailyMissionBonus()
+            return
+        }
+        var next = dailyMissions
+        next.wordwichGuesses += 1
+        applyDailyMissions(next)
+    }
+
+    private func applyDailyMissions(_ snapshot: DailyMissionsVault.Snapshot) {
+        dailyMissions = snapshot
+        DailyMissionsVault.save(snapshot)
+        tryClaimDailyMissionBonus()
+    }
+
+    private func tryClaimDailyMissionBonus() {
+        guard DailyMissions.allComplete(dailyMissions), !dailyMissions.bonusClaimed else { return }
+        let amount = DailyMissions.completionCoinBonus
+        let current = coinSnapshot(from: state)
+        guard let updated = NFGCoinsVault.grantCoins(current: current, amount: amount) else { return }
+        applyCoinVault(updated)
+        var claimed = dailyMissions
+        claimed.bonusClaimed = true
+        dailyMissions = claimed
+        DailyMissionsVault.save(claimed)
+        pendingDailyMissionCelebration = true
+        persist()
     }
 
     private func notePossibleUnlock(from before: Int, to after: Int) {
@@ -187,6 +336,94 @@ final class ScoreStore: ObservableObject {
         enqueueServerSync()
     }
 
+    /// Call when a WordWheel round is cleared. Returns true if a bonus round should be offered.
+    func recordWordwheelRoundClear() -> Bool {
+        recordDailyRoundClear()
+        state.wordwheelRoundsCleared += 1
+        state.bonusClearsSinceLastOffer += 1
+        let offer = state.bonusClearsSinceLastOffer >= state.bonusNextThreshold
+        persist()
+        setPendingSync(true)
+        enqueueServerSync()
+        return offer
+    }
+
+    func recordTimedWordwheelRun(roundsCleared: Int) {
+        guard roundsCleared > 0 else { return }
+        let current = state.highScore(for: .wordwheelTimed)
+        if roundsCleared > current {
+            state.setHighScore(roundsCleared, for: .wordwheelTimed)
+            persist()
+            setPendingSync(true)
+            enqueueServerSync()
+        }
+    }
+
+    /// After bonus played or skipped — reset the 10–20 clear window.
+    func finishBonusRoundWindow() {
+        state.bonusClearsSinceLastOffer = 0
+        state.bonusNextThreshold = BonusRoundScheduler.freshThreshold()
+        persist()
+    }
+
+    func addNfgCoins(_ amount: Int) {
+        let current = coinSnapshot(from: state)
+        guard let updated = NFGCoinsVault.grantCoins(current: current, amount: amount) else { return }
+        applyCoinVault(updated)
+        persist()
+    }
+
+    @discardableResult
+    func spendNfgCoins(_ amount: Int) -> Bool {
+        let current = coinSnapshot(from: state)
+        guard let updated = NFGCoinsVault.spendCoins(current: current, amount: amount) else { return false }
+        applyCoinVault(updated)
+        persist()
+        return true
+    }
+
+    var wordwheelTimedUnlocked: Bool {
+        state.wordwheelRoundsCleared >= GameId.timedUnlockClears
+    }
+
+    /// Puzzle and bonus words already played — avoids repeats across levels and modes.
+    func sessionUsedWords() -> Set<String> {
+        let list = UserDefaults.standard.stringArray(forKey: lifetimeWordsKey) ?? []
+        return Set(list.map { $0.lowercased() })
+    }
+
+    func markSessionWordsUsed(_ words: Set<String>) {
+        guard !words.isEmpty else { return }
+        var merged = sessionUsedWords()
+        merged.formUnion(words.map { $0.lowercased() })
+        UserDefaults.standard.set(Array(merged).sorted(), forKey: lifetimeWordsKey)
+    }
+
+    private func migrateLifetimeWordsIfNeeded() {
+        guard UserDefaults.standard.stringArray(forKey: lifetimeWordsKey) == nil,
+              let legacy = UserDefaults.standard.stringArray(forKey: legacySessionWordsKey) else {
+            return
+        }
+        UserDefaults.standard.set(legacy, forKey: lifetimeWordsKey)
+    }
+
+    func nextWordwheelLevel(after currentId: Int) -> Int {
+        if currentId < LevelStore.bundledLevelCount {
+            return LevelStore.nextBundledLevel(
+                after: currentId,
+                roundsCleared: state.wordwheelRoundsCleared,
+                excludingWords: sessionUsedWords()
+            )
+        }
+        return currentId + 1
+    }
+
+    private func migrateWordwheelRoundsClearedIfNeeded() {
+        guard state.wordwheelRoundsCleared == 0, state.wordwheelLevel > 1 else { return }
+        state.wordwheelRoundsCleared = max(0, state.wordwheelLevel - 1)
+        persist()
+    }
+
     func wordwheelRoundProgress() -> WordwheelRoundProgress? {
         guard let data = UserDefaults.standard.data(forKey: roundKey),
               let decoded = try? JSONDecoder().decode(WordwheelRoundProgress.self, from: data) else {
@@ -195,8 +432,13 @@ final class ScoreStore: ObservableObject {
         return decoded
     }
 
-    func saveWordwheelRound(found: Set<String>, bonusFound: Set<String>, roundScore: Int) {
-        guard !found.isEmpty || !bonusFound.isEmpty else {
+    func saveWordwheelRound(
+        found: Set<String>,
+        bonusFound: Set<String>,
+        roundScore: Int,
+        hintedCells: Set<String> = []
+    ) {
+        guard !found.isEmpty || !bonusFound.isEmpty || !hintedCells.isEmpty else {
             clearWordwheelRound()
             return
         }
@@ -204,7 +446,8 @@ final class ScoreStore: ObservableObject {
             levelId: state.wordwheelLevel,
             foundWords: found.sorted(),
             bonusWords: bonusFound.sorted(),
-            roundScore: roundScore
+            roundScore: roundScore,
+            hintedCells: hintedCells.sorted()
         )
         guard let data = try? JSONEncoder().encode(progress) else { return }
         UserDefaults.standard.set(data, forKey: roundKey)
@@ -331,6 +574,22 @@ final class ScoreStore: ObservableObject {
             || beforeGames != state.gameHighScores
     }
 
+    /// Clears this device only — server account and scores are kept (use to test restore).
+    func logoutLocally() {
+        endPeriodicServerSync()
+        pendingSyncTask?.cancel()
+        state = .empty
+        isServerReachable = false
+        setPendingSync(false)
+        PlayerKeychain.clear()
+        NFGCoinsVault.clear()
+        UserDefaults.standard.removeObject(forKey: key)
+        UserDefaults.standard.removeObject(forKey: roundKey)
+        UserDefaults.standard.removeObject(forKey: lifetimeWordsKey)
+        UserDefaults.standard.removeObject(forKey: legacySessionWordsKey)
+        UserDefaults.standard.removeObject(forKey: "nfg-words-scores-v1")
+    }
+
     /// App Store Guideline 5.1.1(v) — in-app account deletion.
     func deleteAccount() async throws {
         endPeriodicServerSync()
@@ -342,8 +601,11 @@ final class ScoreStore: ObservableObject {
         isServerReachable = false
         setPendingSync(false)
         PlayerKeychain.clear()
+        NFGCoinsVault.clear()
         UserDefaults.standard.removeObject(forKey: key)
         UserDefaults.standard.removeObject(forKey: roundKey)
+        UserDefaults.standard.removeObject(forKey: lifetimeWordsKey)
+        UserDefaults.standard.removeObject(forKey: legacySessionWordsKey)
         UserDefaults.standard.removeObject(forKey: "nfg-words-scores-v1")
     }
 }

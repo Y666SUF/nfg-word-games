@@ -7,6 +7,13 @@ private struct WheelNode: Identifiable {
     let position: CGPoint
 }
 
+/// Stable outer letter — only `slotIndex` changes when shuffling.
+private struct OuterLetterToken: Identifiable, Equatable {
+    let id: String
+    let letter: String
+    var slotIndex: Int
+}
+
 struct LetterWheelView: View {
     let center: String
     let wheel: [String]
@@ -15,19 +22,21 @@ struct LetterWheelView: View {
     @State private var nodes: [WheelNode] = []
     @State private var path: [String] = []
     @State private var dragActive = false
-    @State private var shuffledOuter: [String]?
+    @State private var tokens: [OuterLetterToken] = []
+    @State private var isShuffling = false
+    @State private var ringSpin: Double = 0
+    @State private var shuffleIconSpin: Double = 0
+    @State private var shufflePulse = false
 
     private var defaultOuter: [String] {
         wheel.filter { $0.lowercased() != center.lowercased() }
     }
 
     private var outerLetters: [String] {
-        guard let shuffled = shuffledOuter,
-              Set(shuffled) == Set(defaultOuter),
-              shuffled.count == defaultOuter.count else {
-            return defaultOuter
-        }
-        return shuffled
+        guard !tokens.isEmpty else { return defaultOuter }
+        return tokens
+            .sorted { $0.slotIndex < $1.slotIndex }
+            .map(\.letter)
     }
 
     private var currentWord: String {
@@ -40,13 +49,17 @@ struct LetterWheelView: View {
             let cx = geo.size.width / 2
             let cy = geo.size.height / 2
             let outer = outerLetters
-            let radius = size * 0.34
+            let outerCount = max(outer.count, 1)
+            let radius = size * (outerCount >= 9 ? 0.38 : 0.34)
+            let outerSize: CGFloat = outerCount >= 9 ? 34 : (outerCount >= 7 ? 40 : 46)
+            let centerSize: CGFloat = outerCount >= 9 ? 52 : 60
 
             ZStack {
                 Circle()
                     .fill(NFGTheme.wheelGlow)
                     .frame(width: size * 0.96, height: size * 0.96)
                     .position(x: cx, y: cy)
+                    .scaleEffect(shufflePulse ? 1.04 : 1)
 
                 Circle()
                     .stroke(
@@ -58,7 +71,8 @@ struct LetterWheelView: View {
                     )
                     .frame(width: size * 0.94, height: size * 0.94)
                     .position(x: cx, y: cy)
-                    .opacity(0.75)
+                    .opacity(isShuffling ? 0.95 : 0.75)
+                    .rotationEffect(.degrees(ringSpin))
 
                 if path.count > 1 {
                     Path { p in
@@ -74,33 +88,45 @@ struct LetterWheelView: View {
                     .shadow(color: NFGTheme.accent.opacity(0.5), radius: 4)
                 }
 
-                ForEach(Array(outer.enumerated()), id: \.offset) { index, letter in
-                    let angle = (Double(index) / Double(max(outer.count, 1))) * 2 * .pi - .pi / 2
+                ForEach(tokens) { token in
+                    let angle = slotAngle(slotIndex: token.slotIndex, count: tokens.count)
                     let x = cx + CGFloat(cos(angle)) * radius
                     let y = cy + CGFloat(sin(angle)) * radius
-                    let nodeId = "o-\(letter)-\(index)"
+                    let nodeId = "o-\(token.letter)-\(token.slotIndex)"
                     let selected = path.contains(nodeId)
+                    let colorIndex = token.slotIndex
 
-                    letterCircle(letter: letter, selected: selected, isCenter: false, size: 46, index: index)
-                        .position(x: x, y: y)
+                    letterCircle(
+                        letter: token.letter,
+                        selected: selected,
+                        isCenter: false,
+                        size: outerSize,
+                        index: colorIndex,
+                        shuffling: isShuffling
+                    )
+                    .position(x: x, y: y)
+                    .animation(.spring(response: 0.52, dampingFraction: 0.66), value: token.slotIndex)
+                    .zIndex(isShuffling ? Double(token.slotIndex) : (selected ? 2 : 0))
                 }
 
                 let centerId = "center-\(center)"
                 let centerSelected = path.contains(centerId)
-                letterCircle(letter: center, selected: centerSelected, isCenter: true, size: 60, index: 0)
+                letterCircle(letter: center, selected: centerSelected, isCenter: true, size: centerSize, index: 0, shuffling: isShuffling)
                     .position(x: cx, y: cy)
+                    .scaleEffect(isShuffling ? 1.06 : 1)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.65), value: isShuffling)
             }
             .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                     .onChanged { value in
+                        guard !isShuffling else { return }
                         dragActive = true
                         guard let hit = hitTest(
                             point: value.location,
                             cx: cx,
                             cy: cy,
                             radius: radius,
-                            outer: outer,
                             path: path
                         ) else { return }
 
@@ -122,20 +148,21 @@ struct LetterWheelView: View {
                     }
             )
             .onAppear {
-                rebuildNodes(cx: cx, cy: cy, radius: radius, outer: outer)
+                resetTokens(from: defaultOuter)
+                rebuildNodes(cx: cx, cy: cy, radius: radius)
             }
             .onChange(of: center) { _, _ in
-                shuffledOuter = nil
-                rebuildNodes(cx: cx, cy: cy, radius: radius, outer: outer)
+                resetTokens(from: defaultOuter)
+                rebuildNodes(cx: cx, cy: cy, radius: radius)
                 path.removeAll()
             }
             .onChange(of: wheel) { _, _ in
-                shuffledOuter = nil
-                rebuildNodes(cx: cx, cy: cy, radius: radius, outer: outer)
+                resetTokens(from: defaultOuter)
+                rebuildNodes(cx: cx, cy: cy, radius: radius)
                 path.removeAll()
             }
-            .onChange(of: shuffledOuter) { _, _ in
-                rebuildNodes(cx: cx, cy: cy, radius: radius, outer: outer)
+            .onChange(of: tokens) { _, _ in
+                rebuildNodes(cx: cx, cy: cy, radius: radius)
             }
         }
         .aspectRatio(1, contentMode: .fit)
@@ -149,10 +176,13 @@ struct LetterWheelView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(NFGTheme.purple.opacity(0.45), lineWidth: 1)
+                            .stroke(NFGTheme.purple.opacity(isShuffling ? 0.85 : 0.45), lineWidth: isShuffling ? 2 : 1)
                     )
-                    .shadow(color: NFGTheme.purple.opacity(0.25), radius: 4, y: 2)
+                    .shadow(color: NFGTheme.purple.opacity(isShuffling ? 0.45 : 0.25), radius: isShuffling ? 8 : 4, y: 2)
+                    .rotationEffect(.degrees(shuffleIconSpin))
+                    .scaleEffect(isShuffling ? 1.12 : 1)
             }
+            .disabled(isShuffling || defaultOuter.count <= 1)
             .accessibilityLabel("Shuffle letters")
             .padding(2)
         }
@@ -177,28 +207,69 @@ struct LetterWheelView: View {
         .padding(.bottom, currentWord.isEmpty ? 0 : 20)
     }
 
-    private func shuffleOuterLetters() {
-        var letters = defaultOuter
-        guard letters.count > 1 else { return }
+    private func slotAngle(slotIndex: Int, count: Int) -> Double {
+        (Double(slotIndex) / Double(max(count, 1))) * 2 * .pi - .pi / 2
+    }
 
-        let previousOrder = outerLetters
-        repeat {
-            letters.shuffle()
-        } while letters == previousOrder
-
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
-            shuffledOuter = letters
-            path.removeAll()
+    private func resetTokens(from letters: [String]) {
+        tokens = letters.enumerated().map { index, letter in
+            OuterLetterToken(id: "token-\(index)", letter: letter.lowercased(), slotIndex: index)
         }
     }
 
-    private func rebuildNodes(cx: CGFloat, cy: CGFloat, radius: CGFloat, outer: [String]) {
+    private func shuffleOuterLetters() {
+        guard tokens.count > 1, !isShuffling else { return }
+
+        path.removeAll()
+        isShuffling = true
+
+        var perm = Array(0..<tokens.count)
+        repeat {
+            perm.shuffle()
+        } while perm == Array(0..<tokens.count)
+
+        let targets = tokens.map { perm[$0.slotIndex] }
+
+        withAnimation(.easeInOut(duration: 0.28)) {
+            shuffleIconSpin += 360
+            ringSpin += 180
+            shufflePulse = true
+        }
+
+        for i in tokens.indices {
+            let target = targets[i]
+            let delay = Double(i) * 0.045
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                withAnimation(.spring(response: 0.52, dampingFraction: 0.66)) {
+                    tokens[i].slotIndex = target
+                }
+            }
+        }
+
+        let finishDelay = Double(tokens.count) * 0.045 + 0.55
+        DispatchQueue.main.asyncAfter(deadline: .now() + finishDelay) {
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                isShuffling = false
+                shufflePulse = false
+            }
+        }
+    }
+
+    private func rebuildNodes(cx: CGFloat, cy: CGFloat, radius: CGFloat) {
         var built: [WheelNode] = []
-        for (index, letter) in outer.enumerated() {
-            let angle = (Double(index) / Double(max(outer.count, 1))) * 2 * .pi - .pi / 2
+        let count = tokens.count
+        for token in tokens {
+            let angle = slotAngle(slotIndex: token.slotIndex, count: count)
             let x = cx + CGFloat(cos(angle)) * radius
             let y = cy + CGFloat(sin(angle)) * radius
-            built.append(WheelNode(id: "o-\(letter)-\(index)", letter: letter.lowercased(), isCenter: false, position: CGPoint(x: x, y: y)))
+            built.append(
+                WheelNode(
+                    id: "o-\(token.letter)-\(token.slotIndex)",
+                    letter: token.letter,
+                    isCenter: false,
+                    position: CGPoint(x: x, y: y)
+                )
+            )
         }
         built.append(WheelNode(id: "center-\(center)", letter: center.lowercased(), isCenter: true, position: CGPoint(x: cx, y: cy)))
         nodes = built
@@ -209,19 +280,19 @@ struct LetterWheelView: View {
         cx: CGFloat,
         cy: CGFloat,
         radius: CGFloat,
-        outer: [String],
         path: [String]
     ) -> String? {
         let hitR: CGFloat = 30
         var candidates: [(id: String, dist: CGFloat)] = []
+        let count = tokens.count
 
-        for (index, letter) in outer.enumerated() {
-            let angle = (Double(index) / Double(max(outer.count, 1))) * 2 * .pi - .pi / 2
+        for token in tokens {
+            let angle = slotAngle(slotIndex: token.slotIndex, count: count)
             let x = cx + CGFloat(cos(angle)) * radius
             let y = cy + CGFloat(sin(angle)) * radius
             let d = hypot(point.x - x, point.y - y)
             if d < hitR {
-                candidates.append(("o-\(letter)-\(index)", d))
+                candidates.append(("o-\(token.letter)-\(token.slotIndex)", d))
             }
         }
 
@@ -233,13 +304,18 @@ struct LetterWheelView: View {
         guard !candidates.isEmpty else { return nil }
         candidates.sort { $0.dist < $1.dist }
 
-        // Ignore already-selected letters while dragging so you can swipe through them
-        // (e.g. back over the centre letter) to reach the next tile.
         return candidates.first(where: { !path.contains($0.id) })?.id
     }
 
     @ViewBuilder
-    private func letterCircle(letter: String, selected: Bool, isCenter: Bool, size: CGFloat, index: Int) -> some View {
+    private func letterCircle(
+        letter: String,
+        selected: Bool,
+        isCenter: Bool,
+        size: CGFloat,
+        index: Int,
+        shuffling: Bool
+    ) -> some View {
         let outerColors: [Color] = [NFGTheme.purpleLight, NFGTheme.purple, NFGTheme.violet, NFGTheme.lavender, NFGTheme.pink]
         Text(letter.uppercased())
             .font(.system(size: isCenter ? 26 : 19, weight: .heavy, design: .rounded))
@@ -273,7 +349,10 @@ struct LetterWheelView: View {
                     lineWidth: selected || isCenter ? 2.5 : 1
                 )
             )
-            .scaleEffect(selected ? 1.1 : 1)
+            .scaleEffect(selected ? 1.1 : (shuffling && !isCenter ? 1.14 : 1))
+            .rotationEffect(.degrees(shuffling && !isCenter ? 8 : 0))
+            .shadow(color: shuffling && !isCenter ? NFGTheme.purpleLight.opacity(0.35) : .clear, radius: 6)
             .animation(.spring(response: 0.2, dampingFraction: 0.7), value: selected)
+            .animation(.spring(response: 0.45, dampingFraction: 0.62), value: shuffling)
     }
 }

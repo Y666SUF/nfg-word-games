@@ -15,6 +15,9 @@ struct HubView: View {
                     .padding(.top, 8)
                     .padding(.bottom, 4)
 
+                DailyMissionsCard(snapshot: scores.dailyMissions)
+                    .onAppear { scores.refreshDailyMissions() }
+
                 Text("Pick a game")
                     .font(.system(size: 13, weight: .bold, design: .rounded))
                     .foregroundStyle(NFGTheme.muted)
@@ -29,6 +32,17 @@ struct HubView: View {
                     }
                     .buttonStyle(NFGPressableStyle())
                 }
+
+                if scores.wordwheelTimedUnlocked {
+                    NavigationLink {
+                        TimedWordWheelView()
+                    } label: {
+                        timedGameCard
+                    }
+                    .buttonStyle(NFGPressableStyle())
+                } else {
+                    lockedTimedCard
+                }
             }
             .padding(16)
             .padding(.top, 28)
@@ -40,9 +54,12 @@ struct HubView: View {
                 .padding(.leading, 16)
         }
         .overlay(alignment: .topTrailing) {
-            scoreCorner
-                .padding(.top, 8)
-                .padding(.trailing, 16)
+            VStack(alignment: .trailing, spacing: 8) {
+                coinsCorner
+                scoreCorner
+            }
+            .padding(.top, 8)
+            .padding(.trailing, 16)
         }
         .sheet(isPresented: $showEditUsername) {
             if let player = scores.state.player {
@@ -78,6 +95,18 @@ struct HubView: View {
         }
     }
 
+    private var coinsCorner: some View {
+        HStack(spacing: 4) {
+            NFGCoinIcon(size: 15)
+            NFGAnimatedScore(
+                value: scores.state.nfgCoins,
+                font: .system(size: 14, weight: .heavy, design: .rounded),
+                color: AnyShapeStyle(NFGTheme.gold)
+            )
+        }
+        .accessibilityLabel("\(scores.state.nfgCoins) NFG Coins")
+    }
+
     private var scoreCorner: some View {
         VStack(alignment: .trailing, spacing: 1) {
             HStack(spacing: 4) {
@@ -109,11 +138,75 @@ struct HubView: View {
         switch game {
         case .wordwheel:
             WordWheelView()
+        case .wordwheelTimed:
+            TimedWordWheelView()
         case .wordwich:
             WordwichView()
         case .hangman:
             Text("Coming soon")
         }
+    }
+
+    private var timedGameCard: some View {
+        HStack(spacing: 14) {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(LinearGradient(colors: [NFGTheme.gold, NFGTheme.gold.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .frame(width: 52, height: 52)
+                .overlay(
+                    Image(systemName: "timer")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundStyle(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
+                )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(GameId.wordwheelTimed.displayName)
+                    .font(.system(size: 18, weight: .heavy, design: .rounded))
+                    .foregroundStyle(NFGTheme.text)
+                Text(GameId.wordwheelTimed.tagline)
+                    .font(.footnote)
+                    .foregroundStyle(NFGTheme.muted)
+                Text("Best: \(scores.state.highScore(for: .wordwheelTimed)) rounds")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(NFGTheme.gold)
+            }
+            Spacer()
+            Image(systemName: "play.fill")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundStyle(NFGTheme.text)
+                .padding(10)
+                .background(NFGTheme.heroGradient)
+                .clipShape(Circle())
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(NFGTheme.panel)
+                .overlay(RoundedRectangle(cornerRadius: 16).stroke(NFGTheme.gold.opacity(0.4), lineWidth: 1.2))
+        )
+    }
+
+    private var lockedTimedCard: some View {
+        HStack(spacing: 14) {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(NFGTheme.panel2)
+                .frame(width: 52, height: 52)
+                .overlay(Image(systemName: "lock.fill").foregroundStyle(NFGTheme.muted))
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("WordWheel Timed")
+                    .font(.system(size: 18, weight: .heavy, design: .rounded))
+                    .foregroundStyle(NFGTheme.muted)
+                Text("Clear \(GameId.timedUnlockClears) WordWheel rounds to unlock")
+                    .font(.footnote)
+                    .foregroundStyle(NFGTheme.muted)
+                Text("\(scores.state.wordwheelRoundsCleared)/\(GameId.timedUnlockClears)")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(NFGTheme.accent)
+            }
+            Spacer()
+        }
+        .padding(14)
+        .background(RoundedRectangle(cornerRadius: 16).fill(NFGTheme.panel.opacity(0.6)))
     }
 
     @ViewBuilder

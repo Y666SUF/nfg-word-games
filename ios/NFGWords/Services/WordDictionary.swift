@@ -14,6 +14,24 @@ enum WordDictionary {
 
     static var count: Int { validWords.count }
 
+    static var allWords: [String] { Array(validWords) }
+
+    /// Words formable on this wheel (centre required, each wheel letter used at most once per word).
+    static func formableWords(
+        wheel: [String],
+        center: String,
+        maxLength: Int,
+        excluding: Set<String> = []
+    ) -> [String] {
+        let pool = letterPool(wheel: wheel, center: center)
+        let cap = min(maxLength, pool.count)
+        return allWords.filter { word in
+            let w = word.lowercased()
+            guard w.count >= minLength, w.count <= cap, !excluding.contains(w) else { return false }
+            return canForm(word: w, letters: pool, center: center)
+        }
+    }
+
     /// True if the word is in the filtered dictionary (no acronyms or personal names).
     static func isValidWord(_ word: String) -> Bool {
         validWords.contains(word.lowercased())

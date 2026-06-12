@@ -36,3 +36,24 @@ enum GameScoring {
         return total
     }
 }
+
+/// Per-level hint caps for WordWheel (1 NFG Coin each).
+enum WordwheelHintPolicy {
+    /// From this level onward, only one hint is allowed per round.
+    static let singleHintFromLevel = 300
+
+    static func maxHintsPerRound(forLevel levelId: Int) -> Int {
+        levelId >= singleHintFromLevel ? 1 : 2
+    }
+
+    static func hintsRemaining(used: Int, forLevel levelId: Int) -> Int {
+        max(0, maxHintsPerRound(forLevel: levelId) - used)
+    }
+
+    static func limitReachedMessage(forLevel levelId: Int) -> String {
+        if levelId >= singleHintFromLevel {
+            return "Only 1 hint per level from level 300 onward."
+        }
+        return "No hints left this level (2 max)."
+    }
+}

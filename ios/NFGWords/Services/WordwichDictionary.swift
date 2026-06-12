@@ -15,10 +15,12 @@ enum WordwichDictionary {
     static var count: Int { validWords.count }
 
     static func isValidWord(_ word: String) -> Bool {
-        validWords.contains(word.lowercased())
+        let w = word.lowercased()
+        guard WordwichWordPolicy.isAllowed(w) else { return false }
+        return validWords.contains(w)
     }
 
-    static func randomAnswer() -> String {
+    static func randomAnswer(excluding used: Set<String> = []) -> String {
         let tiers = payload.tiers
         let roll = Int.random(in: 0..<100)
         let pool: [String]
@@ -31,7 +33,20 @@ enum WordwichDictionary {
         } else {
             pool = payload.words
         }
-        return pool.randomElement()?.lowercased() ?? "horse"
+        let safe = pool.filter {
+            let w = $0.lowercased()
+            return WordwichWordPolicy.isAllowed(w)
+                && validWords.contains(w)
+                && !used.contains(w)
+        }
+        if let pick = safe.randomElement() {
+            return pick.lowercased()
+        }
+        let fallback = payload.words.filter {
+            let w = $0.lowercased()
+            return WordwichWordPolicy.isAllowed(w) && !used.contains(w)
+        }
+        return fallback.randomElement()?.lowercased() ?? "horse"
     }
 }
 

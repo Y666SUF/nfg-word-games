@@ -6,6 +6,7 @@ struct ScoresView: View {
     @State private var showPrivacy = false
     @State private var showTerms = false
     @State private var showDeleteConfirm = false
+    @State private var showSignOutConfirm = false
     @State private var isDeleting = false
     @State private var deleteError: String?
     @State private var copiedPlayerCode = false
@@ -14,6 +15,8 @@ struct ScoresView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 14) {
+                nfgCoinsPanel
+
                 scorePanel(title: "Total score", subtitle: "Across all games", value: scores.state.totalScore, accent: false)
 
                 ForEach(GameId.listedGames) { game in
@@ -44,6 +47,18 @@ struct ScoresView: View {
         }
         .sheet(isPresented: $showTerms) {
             LegalDocumentView(title: "Terms of Use", sections: AppLegalContent.termsSections)
+        }
+        .confirmationDialog(
+            "Sign out on this device?",
+            isPresented: $showSignOutConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Sign out", role: .destructive) {
+                scores.logoutLocally()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Your account stays on the server. Use Restore profile with your player code to sign back in.")
         }
         .confirmationDialog(
             "Delete your account?",
@@ -80,6 +95,17 @@ struct ScoresView: View {
                 .padding(.top, 4)
 
             if scores.state.isLoggedIn {
+                Button {
+                    showSignOutConfirm = true
+                } label: {
+                    Text("Sign out on this device")
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.bordered)
+                .tint(NFGTheme.purpleLight)
+
                 Button(role: .destructive) {
                     showDeleteConfirm = true
                 } label: {
@@ -138,6 +164,32 @@ struct ScoresView: View {
         isDeleting = false
     }
 
+    private var nfgCoinsPanel: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    NFGCoinIcon(size: 22)
+                    Text("Coins")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundStyle(NFGTheme.text)
+                }
+                Text("Earned from bonus rounds · shop coming soon")
+                    .font(.caption)
+                    .foregroundStyle(NFGTheme.muted)
+            }
+            Spacer()
+            NFGAnimatedScore(
+                value: scores.state.nfgCoins,
+                font: .system(size: 28, weight: .heavy, design: .rounded),
+                color: AnyShapeStyle(NFGTheme.gold)
+            )
+        }
+        .padding(14)
+        .background(NFGTheme.panel)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(NFGTheme.gold.opacity(0.35), lineWidth: 1))
+    }
+
     @ViewBuilder
     private func scorePanel(title: String, subtitle: String? = nil, value: Int, accent: Bool) -> some View {
         HStack {
@@ -166,7 +218,7 @@ struct ScoresView: View {
     private func playerCodePanel(player: PlayerProfile) -> some View {
         DisclosureGroup(isExpanded: $showPlayerCode) {
             VStack(alignment: .leading, spacing: 10) {
-                Text("Keep this private — only needed to restore your profile on a new phone.")
+                Text("Keep this private — use it to sign in on another device (up to 3 devices per account).")
                     .font(.caption)
                     .foregroundStyle(NFGTheme.muted)
                 Text(player.playerId)

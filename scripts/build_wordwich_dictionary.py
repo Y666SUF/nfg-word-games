@@ -8,7 +8,13 @@ from pathlib import Path
 
 from wordfreq import iter_wordlist, zipf_frequency
 
-from word_filters import collect_dynamic_rejections, is_wordwich_word, write_rejections_file
+from word_filters import (
+    collect_dynamic_rejections,
+    is_wordwich_allowed,
+    is_wordwich_word,
+    write_rejections_file,
+    write_sensitive_words_file,
+)
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "wordwich-dictionary.json"
@@ -42,14 +48,14 @@ def main() -> None:
         core_data = json.loads(CORE.read_text(encoding="utf-8"))
         for w in core_data.get("words", []):
             wl = w.lower()
-            if passes_shape(wl) and is_wordwich_word(wl):
+            if passes_shape(wl) and is_wordwich_allowed(wl):
                 words.add(wl)
 
     scanned: list[str] = []
     for raw in iter_wordlist("en"):
         w = raw.lower()
         scanned.append(w)
-        if not passes_shape(w) or not is_wordwich_word(w):
+        if not passes_shape(w) or not is_wordwich_allowed(w):
             continue
         words.add(w)
         z = zipf_frequency(w, "en")
@@ -61,6 +67,7 @@ def main() -> None:
         elif z >= 2.3 and 6 <= length <= 8:
             hard.append(w)
 
+    write_sensitive_words_file()
     write_rejections_file(collect_dynamic_rejections(scanned))
     unique = sorted(words)
     easy_set: set[str] = set()
@@ -76,8 +83,8 @@ def main() -> None:
         elif z >= 2.3 and 6 <= length <= 8:
             hard_set.add(w)
     payload = {
-        "version": 2,
-        "source": "wordfreq-en-wordwich-v2",
+        "version": 4,
+        "source": "wordfreq-en-wordwich-v4-family",
         "count": len(unique),
         "words": unique,
         "tiers": {

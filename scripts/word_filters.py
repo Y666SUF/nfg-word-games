@@ -11,8 +11,33 @@ from wordfreq import zipf_frequency
 ROOT = Path(__file__).resolve().parent.parent
 NAME_BLOCKLIST_PATH = ROOT / "data" / "name-blocklist.json"
 REJECTIONS_PATH = ROOT / "data" / "word-rejections.json"
+SENSITIVE_WORDS_PATH = ROOT / "data" / "sensitive-word-blocklist.json"
 
 VOWELS = set("aeiouy")
+
+# Words removed from WordWheel / Wordwich — sexual violence, slurs, explicit, hate, self-harm.
+SENSITIVE_WORD_BLOCKLIST = frozenset({
+    "arse", "asshole", "bastard", "bitch", "bollocks", "boner", "boob", "boobs",
+    "chink", "cock", "cunt", "dildo", "douche", "dyke", "fag", "faggot", "fuck",
+    "fucker", "fucking", "fucks", "genocide", "gook", "holocaust", "homo", "incest",
+    "kike", "lynch", "lynched", "lynching", "lynchings", "milf", "molest", "molested",
+    "molesting", "molestation", "molester", "molests", "nazi", "nazis", "nigga",
+    "nigger", "paedophile", "paedophilia", "pedo", "pedophile", "pedophilia", "penis",
+    "piss", "pissed", "pissing", "porn", "porno", "prick", "pussy", "rape", "raped",
+    "rapes", "raping", "rapist", "retard", "retarded", "shit", "shits", "shitting",
+    "slut", "sluts", "spic", "suicidal", "suicide", "suicides", "terrorism",
+    "terrorist", "terrorists", "tits", "tranny", "twat", "vagina", "wank", "wanked",
+    "wanking", "wetback", "whore", "whores",
+})
+
+# Mild rude / swear words — excluded from Wordwich answers and guesses (family-friendly game).
+WORDWICH_RUDE_BLOCKLIST = frozenset({
+    "arsehole", "asshat", "bitchy", "bloody", "bollocking", "boners", "bugger", "buggered",
+    "buggering", "bullshit", "crap", "crapped", "crapping", "crappy", "craps", "dammit",
+    "damn", "damned", "damning", "damns", "dickhead", "dumbass", "fart", "farted", "farting",
+    "farts", "frigging", "goddamn", "hell", "hellish", "pissed", "pisses", "pissing", "screwed",
+    "screwing", "shag", "shagged", "shagging", "shitty", "snot", "snotty", "tosser", "wanker",
+})
 
 ACRONYM_BLOCKLIST = frozenset({
     "abc", "acs", "aol", "bbc", "bce", "bpd", "bsd", "btw", "cce", "ccu",
@@ -279,13 +304,52 @@ def min_zipf_wordwich(length: int) -> float:
     if length <= 4:
         return 3.0
     if length <= 7:
-        return 2.3
-    return 1.8
+        return 2.2
+    if length <= 10:
+        return 1.5
+    if length <= 12:
+        return 1.2
+    return 1.0
+
+
+def is_sensitive_word(word: str) -> bool:
+    w = word.lower().strip()
+    if w in SENSITIVE_WORD_BLOCKLIST:
+        return True
+    if w.startswith("molest"):
+        return True
+    # rape, raped, raping, rapist — not grape, drape, scrape
+    if w.startswith("rape"):
+        return True
+    return False
+
+
+def write_sensitive_words_file() -> frozenset[str]:
+    words = sorted(SENSITIVE_WORD_BLOCKLIST)
+    payload = {"version": 1, "count": len(words), "words": words}
+    body = json.dumps(payload, indent=2)
+    SENSITIVE_WORDS_PATH.write_text(body, encoding="utf-8")
+    return SENSITIVE_WORD_BLOCKLIST
+
+
+def is_rude_wordwich_word(word: str) -> bool:
+    w = word.lower().strip()
+    return w in WORDWICH_RUDE_BLOCKLIST
+
+
+def is_wordwich_allowed(word: str) -> bool:
+    """Family-friendly Wordwich vocabulary — no offensive, rude, or invalid forms."""
+    w = word.lower().strip()
+    if is_sensitive_word(w) or is_rude_wordwich_word(w):
+        return False
+    return is_wordwich_word(w)
 
 
 def is_wordwich_word(word: str) -> bool:
     """Real English word for Wordwich — reject slang/names/acronyms; allow broad common vocabulary."""
     w = word.lower().strip()
+    if is_sensitive_word(w) or is_rude_wordwich_word(w):
+        return False
     if len(w) < 3 or len(w) > 15 or not w.isalpha():
         return False
     if not any(c in VOWELS for c in w):
@@ -300,9 +364,108 @@ def is_wordwich_word(word: str) -> bool:
     return z >= min_zipf_wordwich(len(w))
 
 
+# UK English — reject American spellings when the UK form is also in the dictionary.
+AMERICAN_UK_SPELLING_PAIRS: tuple[tuple[str, str], ...] = (
+    ("analyze", "analyse"), ("analyzed", "analysed"), ("analyzes", "analyses"), ("analyzing", "analysing"),
+    ("analyzer", "analyser"), ("analyzers", "analysers"),
+    ("apologize", "apologise"), ("apologized", "apologised"), ("apologizes", "apologises"),
+    ("apologizing", "apologising"),
+    ("authorize", "authorise"), ("authorized", "authorised"), ("authorizes", "authorises"),
+    ("authorizing", "authorising"),
+    ("behavior", "behaviour"), ("behaviors", "behaviours"), ("behavioral", "behavioural"),
+    ("catalog", "catalogue"), ("catalogs", "catalogues"), ("cataloged", "catalogued"),
+    ("center", "centre"), ("centers", "centres"), ("centered", "centred"), ("centering", "centring"),
+    ("color", "colour"), ("colors", "colours"), ("colored", "coloured"), ("coloring", "colouring"),
+    ("defense", "defence"), ("defenses", "defences"),
+    ("dialog", "dialogue"), ("dialogs", "dialogues"),
+    ("favorite", "favourite"), ("favorites", "favourites"),
+    ("fiber", "fibre"), ("fibers", "fibres"),
+    ("flavor", "flavour"), ("flavors", "flavours"), ("flavored", "flavoured"),
+    ("fulfill", "fulfil"), ("fulfilled", "fulfilled"), ("fulfilling", "fulfilling"), ("fulfillment", "fulfilment"),
+    ("gray", "grey"), ("grays", "greys"), ("grayed", "greyed"), ("graying", "greying"),
+    ("honor", "honour"), ("honors", "honours"), ("honored", "honoured"), ("honoring", "honouring"),
+    ("humor", "humour"), ("humors", "humours"), ("humored", "humoured"),
+    ("jewelry", "jewellery"),
+    ("labor", "labour"), ("labors", "labours"), ("labored", "laboured"), ("laboring", "labouring"),
+    ("license", "licence"), ("licenses", "licences"),
+    ("liter", "litre"), ("liters", "litres"),
+    ("meter", "metre"), ("meters", "metres"),
+    ("neighbor", "neighbour"), ("neighbors", "neighbours"), ("neighborhood", "neighbourhood"),
+    ("offense", "offence"), ("offenses", "offences"),
+    ("organize", "organise"), ("organized", "organised"), ("organizes", "organises"), ("organizing", "organising"),
+    ("organization", "organisation"), ("organizations", "organisations"),
+    ("paralyze", "paralyse"), ("paralyzed", "paralysed"), ("paralyzes", "paralyses"),
+    ("program", "programme"), ("programs", "programmes"),
+    ("realize", "realise"), ("realized", "realised"), ("realizes", "realises"), ("realizing", "realising"),
+    ("recognize", "recognise"), ("recognized", "recognised"), ("recognizes", "recognises"), ("recognizing", "recognising"),
+    ("rumor", "rumour"), ("rumors", "rumours"),
+    ("savior", "saviour"), ("saviors", "saviours"),
+    ("specialize", "specialise"), ("specialized", "specialised"), ("specializes", "specialises"),
+    ("specializing", "specialising"),
+    ("theater", "theatre"), ("theaters", "theatres"),
+    ("traveling", "travelling"), ("traveler", "traveller"), ("travelers", "travellers"),
+    ("tumor", "tumour"), ("tumors", "tumours"),
+)
+
+# Distinct American words where UK uses a different word (not just spelling).
+AMERICAN_ONLY_IF_UK_EXISTS: tuple[tuple[str, str], ...] = (
+    ("gotten", "got"),
+    ("math", "maths"),
+    ("airplane", "aeroplane"),
+    ("airplanes", "aeroplanes"),
+    ("pajamas", "pyjamas"),
+    ("aluminum", "aluminium"),
+)
+
+
+def _uk_spelling_alternatives(word: str) -> list[str]:
+    """Generate possible UK spellings for automated -ize / -ization checks."""
+    w = word.lower()
+    alts: list[str] = []
+    if w.endswith("ize"):
+        alts.append(f"{w[:-3]}ise")
+    elif w.endswith("ized"):
+        alts.append(f"{w[:-4]}ised")
+    elif w.endswith("izes"):
+        alts.append(f"{w[:-4]}ises")
+    elif w.endswith("izing"):
+        alts.append(f"{w[:-5]}ising")
+    elif w.endswith("ization"):
+        alts.append(f"{w[:-7]}isation")
+    elif w.endswith("izations"):
+        alts.append(f"{w[:-8]}isations")
+    elif w.endswith("izer"):
+        alts.append(f"{w[:-4]}iser")
+    elif w.endswith("izers"):
+        alts.append(f"{w[:-5]}isers")
+    return alts
+
+
+def is_american_spelling_variant(word: str, words: set[str]) -> bool:
+    """True when a UK form of this word is in the dictionary — prefer UK for NFG Words."""
+    w = word.lower()
+    for american, british in AMERICAN_UK_SPELLING_PAIRS:
+        if w == american and british in words:
+            return True
+    for american, british in AMERICAN_ONLY_IF_UK_EXISTS:
+        if w == american and british in words:
+            return True
+    for alt in _uk_spelling_alternatives(w):
+        if alt in words:
+            return True
+    return False
+
+
+def prefer_uk_english(words: set[str]) -> set[str]:
+    """Drop American spellings / variants when a UK form is present."""
+    return {w for w in words if not is_american_spelling_variant(w, words)}
+
+
 def is_common_english_word(word: str) -> bool:
     """True only for everyday English words usable in a normal sentence."""
     w = word.lower().strip()
+    if is_sensitive_word(w):
+        return False
     if len(w) < 3 or len(w) > 15 or not w.isalpha():
         return False
     if w in EXTRA_REJECT_BLOCKLIST:
@@ -315,6 +478,26 @@ def is_common_english_word(word: str) -> bool:
     if len(w) == 3:
         return False
     return zipf_frequency(w, "en") >= min_zipf_for_length(len(w))
+
+
+def is_wordwheel_dictionary_word(word: str) -> bool:
+    """Slightly broader UK-friendly pool for level generation and bonus words."""
+    w = word.lower().strip()
+    if is_sensitive_word(w):
+        return False
+    if len(w) < 3 or len(w) > 12 or not w.isalpha():
+        return False
+    if w in EXTRA_REJECT_BLOCKLIST:
+        return False
+    if is_rejected_word(w):
+        return False
+    if w in SHORT_WORD_ALLOWLIST:
+        return True
+    if len(w) == 3:
+        return False
+    # Slightly lower frequency floor than everyday speech — still common UK vocabulary.
+    relaxed = max(2.35, min_zipf_for_length(len(w)) - 0.35)
+    return zipf_frequency(w, "en") >= relaxed
 
 
 # Geographic / toponym patterns (low-frequency place names leak in via wordfreq).
@@ -467,6 +650,7 @@ def write_rejections_file(extra_words: set[str] | None = None) -> set[str]:
         set(ACRONYM_BLOCKLIST)
         | set(INFORMAL_ABBREV_BLOCKLIST)
         | set(EXTRA_REJECT_BLOCKLIST)
+        | set(SENSITIVE_WORD_BLOCKLIST)
         | names
     )
     if extra_words:

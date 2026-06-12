@@ -2,22 +2,38 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var scores: ScoreStore
+    @EnvironmentObject private var themes: ThemeStore
     @Environment(\.scenePhase) private var scenePhase
     @State private var tab: AppTab = .games
 
     enum AppTab: Hashable {
-        case games, leaderboard, scores
+        case games, leaderboard, style, scores
     }
 
     var body: some View {
         Group {
-            if scores.needsUsername {
+            if scores.isRestoringSession {
+                restoringView
+            } else if scores.needsUsername {
                 UsernamePromptView()
             } else {
                 mainApp
             }
         }
         .tint(NFGTheme.accent)
+    }
+
+    private var restoringView: some View {
+        ZStack {
+            NFGAnimatedBackground(style: .hub)
+            VStack(spacing: 14) {
+                ProgressView()
+                    .tint(NFGTheme.accent)
+                Text("Signing you in…")
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .foregroundStyle(NFGTheme.muted)
+            }
+        }
     }
 
     private var mainApp: some View {
@@ -35,6 +51,10 @@ struct ContentView: View {
                         NavigationStack {
                             LeaderboardView()
                         }
+                    case .style:
+                        NavigationStack {
+                            StyleView()
+                        }
                     case .scores:
                         NavigationStack {
                             ScoresView()
@@ -45,17 +65,23 @@ struct ContentView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .animation(.smooth(duration: 0.22), value: tab)
+                .animation(.smooth(duration: 0.35), value: themes.equippedId)
 
                 tabBar
             }
         }
         .onAppear {
             scores.beginPeriodicServerSync()
+            themes.syncOwnerAccess(playerId: scores.state.player?.playerId)
+        }
+        .onChange(of: scores.state.player?.playerId) { _, playerId in
+            themes.syncOwnerAccess(playerId: playerId)
         }
         .onChange(of: scenePhase) { _, phase in
             switch phase {
             case .active:
                 scores.beginPeriodicServerSync()
+                scores.refreshDailyMissions()
             case .background, .inactive:
                 scores.endPeriodicServerSync()
             @unknown default:
@@ -63,13 +89,20 @@ struct ContentView: View {
             }
         }
         .overlay(alignment: .top) {
-            if let tier = scores.pendingUnlockCelebration {
-                RewardUnlockBanner(tier: tier) {
-                    withAnimation { scores.clearUnlockCelebration() }
+            VStack(spacing: 8) {
+                if scores.pendingDailyMissionCelebration {
+                    DailyMissionCompleteBanner(coinBonus: DailyMissions.completionCoinBonus) {
+                        withAnimation { scores.clearDailyMissionCelebration() }
+                    }
                 }
-                .padding(.top, 8)
-                .zIndex(20)
+                if let tier = scores.pendingUnlockCelebration {
+                    RewardUnlockBanner(tier: tier) {
+                        withAnimation { scores.clearUnlockCelebration() }
+                    }
+                }
             }
+            .padding(.top, 8)
+            .zIndex(20)
         }
     }
 
@@ -77,6 +110,7 @@ struct ContentView: View {
         HStack(spacing: 6) {
             tabButton(.games, label: "Games", icon: "gamecontroller.fill")
             tabButton(.leaderboard, label: "Ranks", icon: "list.number")
+            tabButton(.style, label: "Style", icon: "paintpalette.fill")
             tabButton(.scores, label: "Mine", icon: "trophy.fill")
         }
         .padding(.horizontal, 10)
@@ -127,5 +161,6 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(ScoreStore())
+        .environmentObject(ThemeStore())
         .preferredColorScheme(.dark)
 }

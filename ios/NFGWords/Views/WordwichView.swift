@@ -1,5 +1,19 @@
 import SwiftUI
 
+enum WordwichPlayMode: String, CaseIterable, Identifiable {
+    case solo
+    case online
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .solo: "Solo"
+        case .online: "Online"
+        }
+    }
+}
+
 enum WordwichReveal {
     /// Consecutive prefix matches from the start only.
     static func prefixMatchLength(guess: String, answer: String) -> Int {
@@ -36,6 +50,7 @@ final class WordwichSession: ObservableObject {
     @Published private(set) var status = "active"
     @Published private(set) var wonBy: WordwichAPI.Winner?
     @Published private(set) var isOnline = false
+    @Published var playMode: WordwichPlayMode = WordwichSession.loadPlayMode()
     @Published private(set) var feedback: String?
     @Published private(set) var roundScore = 0
     @Published private(set) var activeToast: WordToast?
@@ -46,33 +61,77 @@ final class WordwichSession: ObservableObject {
     private static let wonRoundPauseSeconds = 6
 
     private var awardPoints: ((Int) -> Void)?
+    private var onValidGuess: (() -> Void)?
     private var localAnswer: String?
     private var pollTask: Task<Void, Never>?
     private var autoAdvanceTask: Task<Void, Never>?
     private var scheduledWonRoundId: String?
     private var consecutivePollFailures = 0
+    private var soloUsedAnswers: Set<String> = []
     private var playerId: String?
     private var username = "Player"
+
+    private static let playModeKey = "nfg-wordwich-play-mode-v1"
+
+    static func loadPlayMode() -> WordwichPlayMode {
+        guard let raw = UserDefaults.standard.string(forKey: playModeKey),
+              let mode = WordwichPlayMode(rawValue: raw) else {
+            return .online
+        }
+        return mode
+    }
+
+    private func savePlayMode() {
+        UserDefaults.standard.set(playMode.rawValue, forKey: Self.playModeKey)
+    }
+
+    var canAdminReset: Bool {
+        AdminConfig.canResetWordwich(playerId: playerId)
+    }
 
     init(playerId: String? = nil, username: String = "Player") {
         self.playerId = playerId
         self.username = username
     }
 
-    func configure(player: PlayerProfile?, award: @escaping (Int) -> Void) {
+    func configure(player: PlayerProfile?, award: @escaping (Int) -> Void, onValidGuess: (() -> Void)? = nil) {
         playerId = player?.playerId
         username = player?.username ?? "Player"
         awardPoints = award
+        self.onValidGuess = onValidGuess
     }
 
     func start() {
         pollTask?.cancel()
+        if playMode == .solo {
+            isOnline = false
+            startLocalRoundIfNeeded()
+            return
+        }
         pollTask = Task { [weak self] in
             await self?.bootstrap()
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 2_000_000_000)
+                guard self?.playMode == .online else { return }
                 await self?.syncFromServer()
             }
+        }
+    }
+
+    func setPlayMode(_ mode: WordwichPlayMode) {
+        guard playMode != mode else { return }
+        playMode = mode
+        savePlayMode()
+        pollTask?.cancel()
+        pollTask = nil
+        clearAutoAdvance()
+        if mode == .solo {
+            isOnline = false
+            startNewLocalRound()
+        } else {
+            roundId = ""
+            localAnswer = nil
+            start()
         }
     }
 
@@ -118,7 +177,10 @@ final class WordwichSession: ObservableObject {
     }
 
     private func startNewLocalRound() {
-        localAnswer = WordwichDictionary.randomAnswer()
+        localAnswer = WordwichDictionary.randomAnswer(excluding: soloUsedAnswers)
+        if let answer = localAnswer {
+            soloUsedAnswers.insert(answer)
+        }
         roundId = UUID().uuidString
         roundScore = 0
         revealedPrefix = ""
@@ -186,6 +248,10 @@ final class WordwichSession: ObservableObject {
             feedback = "Not a valid Wordwich word."
             return
         }
+        guard WordwichWordPolicy.isAllowed(word) else {
+            feedback = "That word isn't allowed in Wordwich."
+            return
+        }
         guard !guesses.contains(where: { $0.word == word }) else {
             feedback = "Already guessed."
             return
@@ -196,12 +262,17 @@ final class WordwichSession: ObservableObject {
 
         let oldPrefixLen = revealedPrefix.count
 
-        if isOnline {
+        if playMode == .online {
+            guard isOnline else {
+                feedback = "Can't reach the server. Switch to Solo mode to keep playing."
+                return
+            }
             do {
                 let response = try await WordwichAPI.submitGuess(word: word, playerId: playerId, username: username)
                 if let round = response.round {
                     let won = response.correct == true
                     apply(round: round)
+                    onValidGuess?()
                     creditGuess(word: word, oldPrefixLen: oldPrefixLen, won: won)
                 }
             } catch {
@@ -210,7 +281,11 @@ final class WordwichSession: ObservableObject {
             return
         }
 
-        guard let answer = localAnswer else { return }
+        guard let answer = localAnswer else {
+            startNewLocalRound()
+            feedback = "Starting a new solo round — try again."
+            return
+        }
         let flags = WordwichReveal.prefixFlags(guess: word, answer: answer)
         let guess = WordwichAPI.Guess(
             id: UUID().uuidString,
@@ -223,6 +298,7 @@ final class WordwichSession: ObservableObject {
         guesses.append(guess)
         guessMatchLookup[word] = flags
         guessUserLookup[word] = username
+        onValidGuess?()
         let won = word == answer
         if won {
             status = "won"
@@ -295,6 +371,7 @@ final class WordwichSession: ObservableObject {
     }
 
     private func apply(round: WordwichAPI.RoundState) {
+        guard playMode == .online else { return }
         let previousRoundId = roundId
         if !roundId.isEmpty, round.roundId != roundId {
             roundScore = 0
@@ -317,20 +394,26 @@ final class WordwichSession: ObservableObject {
             clearAutoAdvance()
         }
     }
+
+    func adminResetRound() async {
+        guard canAdminReset, let playerId else { return }
+        feedback = nil
+        do {
+            let round = try await WordwichAPI.adminReset(playerId: playerId)
+            apply(round: round)
+            clearAutoAdvance()
+            feedback = "New Wordwich round started."
+        } catch {
+            feedback = UserFacingMessages.friendly(error)
+        }
+    }
 }
 
 struct WordwichView: View {
     @EnvironmentObject private var scores: ScoreStore
     @StateObject private var session = WordwichSession()
     @FocusState private var inputFocused: Bool
-
-    private var visibleBefore: [String] {
-        inputFocused ? Array(session.before.suffix(2)) : session.before
-    }
-
-    private var visibleAfter: [String] {
-        inputFocused ? Array(session.after.prefix(2)) : session.after
-    }
+    @State private var showResetConfirm = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -339,14 +422,14 @@ struct WordwichView: View {
             GeometryReader { geo in
                 ScrollView {
                     VStack(spacing: inputFocused ? 6 : 8) {
-                        guessStack(words: visibleBefore, matchesFor: session.guessMatchLookup, compact: inputFocused)
-                            .frame(maxHeight: inputFocused ? 72 : 160, alignment: .bottom)
+                        guessStack(words: session.before, matchesFor: session.guessMatchLookup, compact: inputFocused)
+                            .frame(maxHeight: inputFocused ? 100 : 160, alignment: .bottom)
 
                         centerWord
                             .frame(minHeight: inputFocused ? 56 : 88)
 
-                        guessStack(words: visibleAfter, matchesFor: session.guessMatchLookup, compact: inputFocused)
-                            .frame(maxHeight: inputFocused ? 72 : 160, alignment: .top)
+                        guessStack(words: session.after, matchesFor: session.guessMatchLookup, compact: inputFocused)
+                            .frame(maxHeight: inputFocused ? 100 : 160, alignment: .top)
                     }
                     .frame(minHeight: geo.size.height)
                     .padding(.horizontal, 14)
@@ -364,39 +447,83 @@ struct WordwichView: View {
         .navigationTitle("NFG Wordwich")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if session.canAdminReset {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Reset round") { showResetConfirm = true }
+                        .font(.caption.weight(.semibold))
+                }
+            }
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button("Done") { inputFocused = false }
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
             }
         }
+        .confirmationDialog(
+            "Start a new Wordwich round?",
+            isPresented: $showResetConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Reset round", role: .destructive) {
+                Task { await session.adminResetRound() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Everyone will get a fresh hidden word. Use this when the round is stuck.")
+        }
         .overlay {
             WordFeedbackToastView(toast: session.activeToast)
         }
         .onAppear {
-            session.configure(player: scores.state.player) { points in
-                scores.addWordwichPoints(points)
-            }
+            session.configure(
+                player: scores.state.player,
+                award: { points in scores.addWordwichPoints(points) },
+                onValidGuess: { scores.recordDailyWordwichGuess() }
+            )
             session.start()
         }
         .onDisappear { session.stop() }
     }
 
     private var header: some View {
-        HStack(spacing: 12) {
-            Label("\(session.guesses.count) guesses", systemImage: "text.word.spacing")
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(NFGTheme.muted)
-            Spacer()
-            HStack(spacing: 4) {
-                Text("Round")
+        VStack(spacing: 8) {
+            Picker("Mode", selection: Binding(
+                get: { session.playMode },
+                set: { session.setPlayMode($0) }
+            )) {
+                ForEach(WordwichPlayMode.allCases) { mode in
+                    Text(mode.title).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            HStack(spacing: 12) {
+                Label("\(session.guesses.count) guesses", systemImage: "text.word.spacing")
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(NFGTheme.muted)
-                NFGAnimatedScore(
-                    value: session.roundScore,
-                    font: .caption.weight(.bold),
-                    color: AnyShapeStyle(NFGTheme.purpleLight)
-                )
+
+                if session.playMode == .online {
+                    Text(session.isOnline ? "Live" : "Reconnecting…")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(session.isOnline ? NFGTheme.successGreen : NFGTheme.gold)
+                } else {
+                    Text("Solo")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(NFGTheme.purpleLight)
+                }
+
+                Spacer()
+
+                HStack(spacing: 4) {
+                    Text("Round")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(NFGTheme.muted)
+                    NFGAnimatedScore(
+                        value: session.roundScore,
+                        font: .caption.weight(.bold),
+                        color: AnyShapeStyle(NFGTheme.purpleLight)
+                    )
+                }
             }
         }
         .padding(.horizontal, 14)

@@ -98,4 +98,26 @@ enum WordwichAPI {
         let decoded = try JSONDecoder().decode(StateResponse.self, from: data)
         return decoded.round
     }
+
+    static func adminReset(playerId: String) async throws -> RoundState {
+        var request = URLRequest(url: endpoint("api/word-games/wordwich/reset"))
+        request.httpMethod = "POST"
+        request.timeoutInterval = 8
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: ["playerId": playerId])
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw LeaderboardAPI.APIError.invalidResponse
+        }
+        if http.statusCode == 403 {
+            throw LeaderboardAPI.APIError.server("Only the admin can reset this round.")
+        }
+        guard http.statusCode < 400 else {
+            throw LeaderboardAPI.APIError.invalidResponse
+        }
+        let decoded = try JSONDecoder().decode(StateResponse.self, from: data)
+        return decoded.round
+    }
 }

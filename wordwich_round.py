@@ -3,12 +3,16 @@ from __future__ import annotations
 
 import json
 import random
+import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "scripts"))
+from word_filters import is_sensitive_word, is_rude_wordwich_word  # noqa: E402
+
 DICT_FILE = ROOT / "data" / "wordwich-dictionary.json"
 ROUNDS_FILE = Path(__file__).resolve().parent / "data" / "wordwich-round.json"
 
@@ -49,6 +53,14 @@ class WordwichStore:
     def valid_words(self) -> set[str]:
         return {w.lower() for w in self._dict.get("words") or []}
 
+    def _is_family_friendly(self, word: str) -> bool:
+        w = word.lower().strip()
+        return not is_sensitive_word(w) and not is_rude_wordwich_word(w)
+
+    def _is_valid_answer(self, word: str) -> bool:
+        w = word.lower().strip()
+        return w in self.valid_words() and self._is_family_friendly(w)
+
     def _pick_answer(self) -> str:
         tiers = self._dict.get("tiers") or {}
         tier = random.choices(TIER_WEIGHTS, weights=TIER_PROBS, k=1)[0]
@@ -58,7 +70,13 @@ class WordwichStore:
         if not pool:
             return "horse"
         recent = {g["word"] for g in (self._round or {}).get("guesses", [])[-20:]}
-        candidates = [w for w in pool if w not in recent] or pool
+        candidates = [w for w in pool if w not in recent and self._is_valid_answer(w)]
+        if not candidates:
+            candidates = [w for w in pool if self._is_valid_answer(w)]
+        if not candidates:
+            candidates = [w for w in self._dict.get("words") or [] if self._is_valid_answer(w)]
+        if not candidates:
+            return "horse"
         return random.choice(candidates).lower()
 
     def _load_round(self) -> None:
@@ -69,6 +87,10 @@ class WordwichStore:
             except json.JSONDecodeError:
                 self._round = None
         if not self._round or self._round.get("status") != "active":
+            self._start_round()
+            return
+        answer = str(self._round.get("answer") or "").lower()
+        if not self._is_valid_answer(answer):
             self._start_round()
 
     def _migrate_round_format(self) -> None:
@@ -184,6 +206,9 @@ class WordwichStore:
         if not w.isalpha() or len(w) < 3:
             return {"ok": False, "error": "invalid_word", "message": "Enter a real word (3+ letters)."}
 
+        if not self._is_family_friendly(w):
+            return {"ok": False, "error": "not_allowed", "message": "That word isn't allowed in Wordwich."}
+
         if w not in self.valid_words():
             return {"ok": False, "error": "not_in_dictionary", "message": "Not in the Wordwich dictionary."}
 
@@ -224,6 +249,13 @@ class WordwichStore:
         return result
 
     def new_round(self) -> dict[str, Any]:
+        self._start_round()
+        return self.get_state()
+
+    def admin_reset(self, player_id: str | None, admin_ids: set[str]) -> dict[str, Any]:
+        pid = (player_id or "").strip()
+        if not pid or pid not in admin_ids:
+            return {"ok": False, "error": "forbidden", "message": "Only the Wordwich admin can reset the round."}
         self._start_round()
         return self.get_state()
 

@@ -6,15 +6,26 @@ struct WordWheelView: View {
 
     @State private var found: Set<String> = []
     @State private var bonusFound: Set<String> = []
+    @State private var hintedCells: Set<String> = []
     @State private var roundScore = 0
+    @State private var hintFeedback: String?
     @State private var shake = false
     @State private var activeToast: WordToast?
     @State private var showRoundCleared = false
+    @State private var showBonusOffer = false
+    @State private var showBonusRound = false
+    @State private var activeBonusPack: BonusRoundPack?
 
     private var levelId: Int { scores.state.wordwheelLevel }
     private var level: WordwheelLevel {
-        LevelStore.level(id: levelId) ?? LevelStore.level(id: 1)!
+        LevelStore.resolveLevel(
+            id: levelId,
+            excludingWords: scores.sessionUsedWords(),
+            roundsCleared: scores.state.wordwheelRoundsCleared
+        )
     }
+
+    private var isProceduralLevel: Bool { levelId > LevelStore.bundledLevelCount }
 
     private var puzzleWordList: [String] {
         level.words.map { $0.word.lowercased() }
@@ -24,14 +35,26 @@ struct WordWheelView: View {
         Set(puzzleWordList)
     }
 
+    private var maxBonusWordLength: Int {
+        puzzleWordList.map(\.count).max() ?? 5
+    }
+
     private var progress: Double {
         guard !puzzleWords.isEmpty else { return 0 }
         return Double(found.count) / Double(puzzleWords.count)
     }
 
+    private var hintsRemaining: Int {
+        WordwheelHintPolicy.hintsRemaining(used: hintedCells.count, forLevel: levelId)
+    }
+
+    private var canPurchaseHint: Bool {
+        hintsRemaining > 0 && scores.state.nfgCoins >= 1
+    }
+
     var body: some View {
         GeometryReader { geo in
-            let topH: CGFloat = 78
+            let topH: CGFloat = 88
             let foundH: CGFloat = 62
             let wheelH: CGFloat = min(geo.size.height * 0.34, 220)
             let puzzleH = max(100, geo.size.height - topH - foundH - wheelH - 24)
@@ -75,14 +98,45 @@ struct WordWheelView: View {
                         levelId: levelId,
                         score: roundScore,
                         bonusCount: bonusFound.count,
-                        hasNextLevel: levelId < LevelStore.totalLevels,
-                        onContinue: proceedToNextRound
+                        hasNextLevel: LevelStore.hasPlayableLevel(after: levelId),
+                        onContinue: handleRoundClearedContinue
+                    )
+                    .transition(.scale(scale: 0.9).combined(with: .opacity))
+                }
+                if showBonusOffer, let pack = activeBonusPack {
+                    BonusRoundOfferView(
+                        pack: pack,
+                        onPlay: {
+                            showBonusOffer = false
+                            showBonusRound = true
+                        },
+                        onSkip: skipBonusRound
                     )
                     .transition(.scale(scale: 0.9).combined(with: .opacity))
                 }
             }
             .animation(.spring(response: 0.35, dampingFraction: 0.8), value: activeToast?.id)
             .animation(.spring(response: 0.4, dampingFraction: 0.82), value: showRoundCleared)
+            .animation(.spring(response: 0.4, dampingFraction: 0.82), value: showBonusOffer)
+        }
+        .fullScreenCover(isPresented: $showBonusRound) {
+            if let pack = activeBonusPack {
+                WordWheelBonusView(
+                    pack: pack,
+                    onComplete: { coins in
+                        scores.finishBonusRoundWindow()
+                        scores.recordDailyBonusComplete()
+                        scores.addNfgCoins(coins)
+                        showBonusRound = false
+                        activeBonusPack = nil
+                        proceedToNextRound()
+                    },
+                    onSkip: {
+                        showBonusRound = false
+                        skipBonusRound()
+                    }
+                )
+            }
         }
         .onAppear { restoreRoundIfNeeded() }
         .onDisappear { persistRound() }
@@ -105,11 +159,11 @@ struct WordWheelView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 8) {
-                    Text("LEVEL \(levelId)")
+                    Text(isProceduralLevel ? "LEVEL \(levelId)+" : "LEVEL \(levelId)")
                         .font(.system(size: 22, weight: .black, design: .rounded))
                         .foregroundStyle(NFGTheme.heroGradient)
 
-                    Text("\(puzzleWords.count) words")
+                    Text("\(puzzleWords.count) words · \(level.wheelLetters.count)L")
                         .font(.system(size: 10, weight: .heavy, design: .rounded))
                         .foregroundStyle(NFGTheme.text)
                         .padding(.horizontal, 8)
@@ -130,20 +184,41 @@ struct WordWheelView: View {
                 .frame(height: 7)
             }
 
-            VStack(alignment: .trailing, spacing: 2) {
-                Text("\(roundScore)")
-                    .font(.system(size: 22, weight: .heavy, design: .rounded))
-                    .foregroundStyle(NFGTheme.gold)
-                Text("pts")
-                    .font(.system(size: 10, weight: .semibold))
+            VStack(alignment: .trailing, spacing: 4) {
+                HStack(spacing: 3) {
+                    NFGCoinIcon(size: 13)
+                    NFGAnimatedScore(
+                        value: scores.state.nfgCoins,
+                        font: .system(size: 13, weight: .heavy, design: .rounded),
+                        color: AnyShapeStyle(NFGTheme.gold)
+                    )
+                }
+                Text("\(roundScore) pts")
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundStyle(NFGTheme.muted)
             }
-            .frame(width: 52)
+            .frame(minWidth: 56)
+
+            Button(action: purchaseHint) {
+                VStack(spacing: 2) {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.system(size: 14, weight: .bold))
+                    Text("\(hintsRemaining)")
+                        .font(.system(size: 9, weight: .heavy, design: .rounded))
+                }
+                .foregroundStyle(canPurchaseHint ? NFGTheme.gold : NFGTheme.muted)
+                .frame(width: 38, height: 38)
+                .background(NFGTheme.panel2)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(NFGTheme.border))
+            }
+            .disabled(!canPurchaseHint)
+            .accessibilityLabel("Hint, \(hintsRemaining) remaining, 1 NFG Coin each")
         }
     }
 
     private var puzzleSection: some View {
-        PuzzleGridView(level: level, found: found, maxCellSize: 36)
+        PuzzleGridView(level: level, found: found, hintedCells: hintedCells, maxCellSize: 36)
             .padding(12)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
@@ -180,10 +255,15 @@ struct WordWheelView: View {
             fail()
             return
         }
+        if scores.sessionUsedWords().contains(word) {
+            fail()
+            return
+        }
 
         if puzzleWords.contains(word) {
             let pts = WordDictionary.score(word: word, isPuzzle: true, multiplier: level.bonusMultiplier)
             found.insert(word)
+            scores.markSessionWordsUsed([word])
             roundScore += pts
             persistRound()
             if found.count == puzzleWords.count {
@@ -209,13 +289,15 @@ struct WordWheelView: View {
             return
         }
 
-        if WordDictionary.isValidWord(word) {
+        if word.count <= maxBonusWordLength, WordDictionary.isValidWord(word) {
             let pts = WordDictionary.score(word: word, isPuzzle: false)
             bonusFound.insert(word)
+            scores.markSessionWordsUsed([word])
             roundScore += pts
+            scores.addNfgCoins(1)
             persistRound()
             showToast(
-                title: WordFeedback.random(from: WordFeedback.bonus),
+                title: WordFeedback.random(from: WordFeedback.bonus) + " +1 coin",
                 subtitle: word.uppercased(),
                 points: pts,
                 isBonus: true,
@@ -242,18 +324,67 @@ struct WordWheelView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { shake = false }
     }
 
+    private func handleRoundClearedContinue() {
+        showRoundCleared = false
+        activeToast = nil
+        if scores.recordWordwheelRoundClear(), let pack = BonusRoundStore.randomPack() {
+            activeBonusPack = pack
+            showBonusOffer = true
+        } else {
+            proceedToNextRound()
+        }
+    }
+
+    private func skipBonusRound() {
+        scores.finishBonusRoundWindow()
+        showBonusOffer = false
+        activeBonusPack = nil
+        proceedToNextRound()
+    }
+
     private func proceedToNextRound() {
+        scores.markSessionWordsUsed(puzzleWords)
         let total = roundScore
         scores.clearWordwheelRound()
         scores.addRoundScore(total, game: .wordwheel)
         showRoundCleared = false
+        showBonusOffer = false
         activeToast = nil
-        if levelId < LevelStore.totalLevels {
-            scores.advanceWordwheelLevel(to: levelId + 1)
-            resetRound(clearSaved: false)
-        } else {
-            dismiss()
+        let next = scores.nextWordwheelLevel(after: levelId)
+        scores.advanceWordwheelLevel(to: next)
+        resetRound(clearSaved: false)
+    }
+
+    private func purchaseHint() {
+        hintFeedback = nil
+        guard hintsRemaining > 0 else {
+            hintFeedback = WordwheelHintPolicy.limitReachedMessage(forLevel: levelId)
+            return
         }
+        guard scores.spendNfgCoins(1) else {
+            hintFeedback = "Need 1 NFG Coin for a hint."
+            return
+        }
+        var candidates: [String] = []
+        for entry in level.words {
+            let w = entry.word.lowercased()
+            guard !found.contains(w) else { continue }
+            for (i, _) in entry.word.enumerated() {
+                let row = entry.startRow + (entry.direction == "down" ? i : 0)
+                let col = entry.startCol + (entry.direction == "across" ? i : 0)
+                let key = "\(row),\(col)"
+                if !hintedCells.contains(key) {
+                    candidates.append(key)
+                }
+            }
+        }
+        guard let pick = candidates.randomElement() else {
+            scores.addNfgCoins(1)
+            hintFeedback = "Nothing left to hint."
+            return
+        }
+        hintedCells.insert(pick)
+        persistRound()
     }
 
     private func restoreRoundIfNeeded() {
@@ -265,6 +396,7 @@ struct WordWheelView: View {
         let validPuzzle = Set(puzzleWordList)
         found = Set(saved.foundWords.map { $0.lowercased() }.filter { validPuzzle.contains($0) })
         bonusFound = Set(saved.bonusWords.map { $0.lowercased() })
+        hintedCells = Set(saved.hintedCells)
         roundScore = recalculateRoundScore()
         activeToast = nil
         // If the round was finished before the app closed, show the cleared popup again.
@@ -272,7 +404,12 @@ struct WordWheelView: View {
     }
 
     private func persistRound() {
-        scores.saveWordwheelRound(found: found, bonusFound: bonusFound, roundScore: roundScore)
+        scores.saveWordwheelRound(
+            found: found,
+            bonusFound: bonusFound,
+            roundScore: roundScore,
+            hintedCells: hintedCells
+        )
     }
 
     private func recalculateRoundScore() -> Int {
@@ -289,7 +426,9 @@ struct WordWheelView: View {
     private func resetRound(clearSaved: Bool) {
         found = []
         bonusFound = []
+        hintedCells = []
         roundScore = 0
+        hintFeedback = nil
         activeToast = nil
         showRoundCleared = false
         if clearSaved {

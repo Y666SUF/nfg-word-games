@@ -1,18 +1,9 @@
 {
-  "roundId": "ffaf75b9-e016-4826-85c2-c173448dd9a2",
-  "answer": "punches",
-  "answerLength": 7,
-  "revealed": [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ],
+  "roundId": "20f45ef1-6fab-4de5-9cd6-7fdc3a2be64d",
+  "answer": "snotty",
+  "revealedPrefixLen": 0,
   "guesses": [],
   "status": "active",
   "wonBy": null,
-  "startedAt": "2026-06-08T21:04:20.477548+00:00"
+  "startedAt": "2026-06-09T23:16:08.852589+00:00"
 }
