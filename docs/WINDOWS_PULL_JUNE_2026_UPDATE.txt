@@ -1,0 +1,162 @@
+NFG WORD GAMES — Windows full update (paste into Cursor Agent on Windows)
+=========================================================================
+
+GitHub: https://github.com/Y666SUF/nfg-word-games
+Port: **19877** (standalone from NFG Crash :3847 and Hangman :19876)
+iOS build on Mac: **27** (com.yusufali.nfgwords)
+
+---
+
+## PROMPT START
+
+Pull and deploy the latest **NFG Word Games** on my Windows PC. Mac has pushed build **27** with all changes below.
+
+**Standalone repo** — work only in `nfg-word-games`, port **19877**. Do not touch NFG Crash.
+
+### What changed (Mac → GitHub)
+
+**WordWheel**
+- **2000 bundled levels** (`wordwheel-levels.json` v9) — levels 1–1000 globally unique puzzle words; 1001–2000 use spaced reuse
+- **Infinite progression** from level **2001+** via on-device procedural engine (iOS only; server still serves bundled JSON)
+- **10-letter wheel cap** — grows +1 every 150 lifetime clears (5→6→…→10)
+- **NFG Coins** — bonus real words award coins; 1 coin = reveal-letter hint
+- **2 hints/level**, drops to **1 from level 300+**
+- **Bonus rounds** — crossword grid layout (not word list)
+- **Timed WordWheel** — unlocks at 50 clears, 2:00 timer, separate `wordwheelTimed` leaderboard
+
+**Wordwich**
+- Solo / Online toggle
+- Family-friendly dictionary + offensive word filters
+- UK-preferred spellings (`word_filters.py`)
+
+**Server**
+- `wordwheelTimed` in `GAME_IDS` + leaderboard routes
+- Wordwich admin reset endpoint
+- Updated dictionaries and level data in `data/`
+
+**Data shipped in repo (do NOT regenerate unless files missing)**
+- `data/wordwheel-levels.json` — 2000 levels, v9
+- `data/english-dictionary.json` — ~42k UK-preferred words, v8
+- `data/wordwich-dictionary.json`
+- `data/sensitive-word-blocklist.json`
+- `data/bonus-round-packs.json`
+
+### 1) Pull latest
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+git fetch origin main
+git pull origin main
+git log -1 --oneline
+```
+
+First time? Clone instead:
+
+```powershell
+cd $env:USERPROFILE\Documents
+git clone https://github.com/Y666SUF/nfg-word-games.git
+cd nfg-word-games
+```
+
+### 2) Python venv + deps
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+if (-not (Test-Path .venv)) { py -3 -m venv .venv }
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 3) Rebuild web app (serves bundled levels + dictionaries at :19877)
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games\app
+npm install
+npm run build
+```
+
+**Skip level regeneration** — Mac already committed `data/wordwheel-levels.json` and dictionaries. Only run if pull failed to include them:
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+py scripts\build_dictionary.py
+py scripts\build_wordwich_dictionary.py
+node scripts\generate-levels.mjs
+copy data\wordwheel-levels.json app\src\data\wordwheel-levels.json
+cd app
+npm run build
+```
+
+### 4) Stop old server, start fresh on 19877
+
+Close any old uvicorn window on port 19877, then:
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+.\windows\run-server.bat
+```
+
+Or manual:
+
+```powershell
+.\.venv\Scripts\activate
+py -m uvicorn server:app --host 0.0.0.0 --port 19877
+```
+
+### 5) Verify correct server
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/health
+curl http://127.0.0.1:19877/api/word-games/leaderboard
+curl http://127.0.0.1:19877/api/word-games/leaderboard/wordwheelTimed
+curl http://127.0.0.1:19877/api/word-games/wordwheel/levels
+```
+
+Health must show `"app":"nfg-word-games"`. Levels endpoint should return `"count":2000`.
+
+Wordwich smoke test:
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/wordwich/state
+```
+
+Login smoke test:
+
+```powershell
+curl -Method POST http://127.0.0.1:19877/api/word-games/players/login -ContentType "application/json" -Body '{"username":"windows_test"}'
+```
+
+### 6) Firewall + iPhone API URL
+
+```powershell
+ipconfig
+```
+
+Allow **TCP 19877** on Private network. iPhone must use same Wi‑Fi and point API base to:
+
+```
+http://YOUR_WINDOWS_IPV4:19877
+```
+
+### 7) Optional: nfg-crash proxy (public HTTPS)
+
+If iPhone uses `https://y666suf.com/api/word-games/*`, ensure **nfg-crash** on Windows proxies to `http://127.0.0.1:19877`. Restart nfg-crash after pull if login/leaderboard fails remotely.
+
+### 8) Smoke checklist
+
+- [ ] Health + leaderboard return 200
+- [ ] WordWheel levels API shows count 2000
+- [ ] Wordwich state loads (no offensive target word stuck)
+- [ ] iPhone Ranks tab loads wordwheel + wordwheelTimed
+- [ ] Score sync works after playing a round
+
+---
+
+When done, reply with:
+1. `git log -1 --oneline`
+2. Health curl JSON
+3. WordWheel levels count from API
+4. Windows IPv4 for phone
+5. Any errors
+
+## PROMPT END

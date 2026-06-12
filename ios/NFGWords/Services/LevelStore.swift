@@ -1,7 +1,13 @@
 import Foundation
 
 enum LevelStore {
-    static let maxWheelLetters = 10
+    /// Letters on the outer ring (excluding the mandatory centre letter).
+    static let startingOuterLetters = 4
+    static let maxOuterLetters = 10
+    static let lettersPerTier = 150
+
+    /// Centre + outer ring (max 11 = 10 around + centre).
+    static var maxTotalWheelLetters: Int { maxOuterLetters + 1 }
 
     private static let file: WordwheelLevelFile? = {
         guard let url = Bundle.main.url(forResource: "wordwheel-levels", withExtension: "json"),
@@ -27,14 +33,39 @@ enum LevelStore {
         levels.first { $0.id == id }
     }
 
+    /// Outer letters around the centre for the player's current progression tier.
+    static func requiredOuterLetterCount(roundsCleared: Int) -> Int {
+        min(maxOuterLetters, startingOuterLetters + max(0, roundsCleared) / lettersPerTier)
+    }
+
+    /// Total wheel letters (centre + outer ring) for the current tier.
+    static func requiredTotalWheelLetterCount(roundsCleared: Int) -> Int {
+        requiredOuterLetterCount(roundsCleared: roundsCleared) + 1
+    }
+
     /// Bundled level or procedurally generated level (infinite progression).
     static func resolveLevel(
         id: Int,
         excludingWords: Set<String>,
         roundsCleared: Int
     ) -> WordwheelLevel {
-        if id <= bundledLevelCount, let bundled = level(id: id) {
-            return bundled
+        let targetSize = requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
+
+        if id <= bundledLevelCount,
+           let bundled = bundledLevel(
+               preferId: id,
+               totalLetters: targetSize,
+               excludingWords: excludingWords
+           ) {
+            return WordwheelLevel(
+                id: id,
+                centerLetter: bundled.centerLetter,
+                wheelLetters: bundled.wheelLetters,
+                bonusMultiplier: bundled.bonusMultiplier,
+                gridRows: bundled.gridRows,
+                gridCols: bundled.gridCols,
+                words: bundled.words
+            )
         }
         if let generated = ProceduralLevelEngine.generate(
             levelId: id,
@@ -81,27 +112,46 @@ enum LevelStore {
         return Set(level.words.map { $0.word.lowercased() })
     }
 
-    /// Wheel grows by one letter every 150 lifetime round clears (5 → 6 → … capped at 10).
-    static func requiredWheelSize(roundsCleared: Int) -> Int {
-        min(maxWheelLetters, 5 + max(0, roundsCleared) / 150)
-    }
-
     static func hasPlayableLevel(after currentId: Int) -> Bool {
         true
     }
 
-    /// Next bundled level whose puzzle words do not overlap `usedWords` and meets wheel-size band.
+    /// Bundled puzzle matching exact wheel size for the player's tier (prefers `preferId`).
+    static func bundledLevel(
+        preferId: Int,
+        totalLetters: Int,
+        excludingWords: Set<String>
+    ) -> WordwheelLevel? {
+        let sized = levels.filter { $0.wheelLetters.count == totalLetters }
+        guard !sized.isEmpty else { return nil }
+
+        let ordered = sized.sorted {
+            let da = abs($0.id - preferId)
+            let db = abs($1.id - preferId)
+            if da != db { return da < db }
+            return $0.id < $1.id
+        }
+
+        if let fresh = ordered.first(where: {
+            Set($0.words.map { $0.word.lowercased() }).isDisjoint(with: excludingWords)
+        }) {
+            return fresh
+        }
+        return ordered.first
+    }
+
+    /// Next bundled level whose puzzle words do not overlap `usedWords` and matches wheel tier exactly.
     static func nextBundledLevel(
         after currentId: Int,
         roundsCleared: Int,
         excludingWords usedWords: Set<String>
     ) -> Int {
-        let minWheel = requiredWheelSize(roundsCleared: roundsCleared)
+        let targetSize = requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
         var fallback = min(currentId + 1, bundledLevelCount)
 
         for id in (currentId + 1)...bundledLevelCount {
             guard let level = level(id: id) else { continue }
-            if level.wheelLetters.count < minWheel || level.wheelLetters.count > maxWheelLetters { continue }
+            if level.wheelLetters.count != targetSize { continue }
             let puzzleWords = Set(level.words.map { $0.word.lowercased() })
             if puzzleWords.isDisjoint(with: usedWords) {
                 return id
@@ -117,19 +167,16 @@ enum LevelStore {
         roundsCleared: Int,
         excludingWords usedWords: Set<String>
     ) -> WordwheelLevel {
-        let minWheel = requiredWheelSize(roundsCleared: roundsCleared)
+        let targetSize = requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
         let recent = Set(recentIds)
         var pool = levels.filter { level in
-            level.wheelLetters.count >= minWheel
-                && level.wheelLetters.count <= maxWheelLetters
+            level.wheelLetters.count == targetSize
                 && !recent.contains(level.id)
                 && Set(level.words.map { $0.word.lowercased() }).isDisjoint(with: usedWords)
         }
         if pool.isEmpty {
             pool = levels.filter { level in
-                level.wheelLetters.count >= minWheel
-                    && level.wheelLetters.count <= maxWheelLetters
-                    && !recent.contains(level.id)
+                level.wheelLetters.count == targetSize && !recent.contains(level.id)
             }
         }
         if let picked = pool.randomElement() {

@@ -163,7 +163,7 @@ struct WordWheelView: View {
                         .font(.system(size: 22, weight: .black, design: .rounded))
                         .foregroundStyle(NFGTheme.heroGradient)
 
-                    Text("\(puzzleWords.count) words · \(level.wheelLetters.count)L")
+                    Text("\(puzzleWords.count) words · \(max(0, level.wheelLetters.count - 1)) around")
                         .font(.system(size: 10, weight: .heavy, design: .rounded))
                         .foregroundStyle(NFGTheme.text)
                         .padding(.horizontal, 8)

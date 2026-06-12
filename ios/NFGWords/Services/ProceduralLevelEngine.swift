@@ -2,7 +2,6 @@ import Foundation
 
 /// On-device level builder — unique WordWheel levels beyond the bundled set (never repeats used words).
 enum ProceduralLevelEngine {
-    static let maxWheelLetters = 10
 
     private struct SeededRNG {
         private var state: UInt64
@@ -38,7 +37,8 @@ enum ProceduralLevelEngine {
         excludingWords: Set<String>,
         roundsCleared: Int
     ) -> WordwheelLevel? {
-        let minWheel = LevelStore.requiredWheelSize(roundsCleared: roundsCleared)
+        let targetTotal = LevelStore.requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
+        let targetOuter = LevelStore.requiredOuterLetterCount(roundsCleared: roundsCleared)
         let minWords = minWords(for: levelId)
         let target = targetWords(for: levelId)
         let multiplier = 1.0 + Double(levelId / 200) * 0.25
@@ -49,7 +49,7 @@ enum ProceduralLevelEngine {
             guard let wheelPack = wheelPack(
                 levelId: levelId,
                 attempt: attempt,
-                minWheel: minWheel,
+                outerLetters: targetOuter,
                 rng: &rng
             ) else { continue }
 
@@ -72,8 +72,7 @@ enum ProceduralLevelEngine {
             for _ in 0..<8 {
                 guard let layout = CrosswordPlacer.place(words: subset, minWords: minWords),
                       let wheel = CrosswordPlacer.deriveWheel(center: wheelPack.center, words: layout.words),
-                      wheel.count <= maxWheelLetters,
-                      wheel.count >= minWheel else { continue }
+                      wheel.count == targetTotal else { continue }
 
                 let valid = layout.words.allSatisfy {
                     WordDictionary.canForm(word: $0.word, wheel: wheel, center: wheelPack.center)
@@ -98,26 +97,29 @@ enum ProceduralLevelEngine {
     private static func wheelPack(
         levelId: Int,
         attempt: Int,
-        minWheel: Int,
+        outerLetters: Int,
         rng: inout SeededRNG
     ) -> (center: String, wheel: [String])? {
-        let words = WordDictionary.allWords.filter { $0.count >= minWheel && $0.count <= maxWheelLetters }
+        let targetTotal = outerLetters + 1
+        let words = WordDictionary.allWords.filter {
+            $0.count >= targetTotal && $0.count <= LevelStore.maxTotalWheelLetters
+        }
         guard !words.isEmpty else { return nil }
 
         let idx = (levelId &* 17 &+ attempt &* 997) % words.count
         let seed = words[idx]
         let unique = Array(Set(seed.map { String($0) }))
-        guard unique.count >= minWheel else { return nil }
+        guard unique.count >= targetTotal else { return nil }
 
         guard let center = CrosswordPlacer.pickCenter(from: Set(unique)) else { return nil }
         let others = unique.filter { $0 != center }.sorted()
-        guard others.count >= minWheel - 1 else { return nil }
+        guard others.count >= outerLetters else { return nil }
 
-        let outerCount = min(maxWheelLetters - 1, max(minWheel - 1, others.count))
-        let start = rng.int(max(1, others.count - outerCount + 1))
-        let outer = Array(others[start..<min(others.count, start + outerCount)])
+        let start = rng.int(max(1, others.count - outerLetters + 1))
+        let outer = Array(others[start..<min(others.count, start + outerLetters)])
+        guard outer.count == outerLetters else { return nil }
         let wheel = [center] + outer
-        guard wheel.count >= minWheel, wheel.count <= maxWheelLetters else { return nil }
+        guard wheel.count == targetTotal else { return nil }
         return (center, wheel)
     }
 
