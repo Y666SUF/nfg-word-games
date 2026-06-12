@@ -209,6 +209,17 @@ struct WordWheelView: View {
             }
             .frame(minWidth: 56)
 
+            Button(action: restartLevel) {
+                Image(systemName: "arrow.counterclockwise")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(NFGTheme.muted)
+                    .frame(width: 38, height: 38)
+                    .background(NFGTheme.panel2)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(NFGTheme.border))
+            }
+            .accessibilityLabel("Restart level")
+
             Button(action: purchaseHint) {
                 VStack(spacing: 2) {
                     Image(systemName: "lightbulb.fill")
@@ -265,7 +276,8 @@ struct WordWheelView: View {
             fail()
             return
         }
-        if scores.sessionUsedWords().contains(word) {
+        // Puzzle words on the current level are always allowed — lifetime dedup is for bonus words only.
+        if !puzzleWords.contains(word), scores.sessionUsedWords().contains(word) {
             fail()
             return
         }
@@ -396,6 +408,12 @@ struct WordWheelView: View {
         }
         hintedCells.insert(pick)
         persistRound()
+    }
+
+    private func restartLevel() {
+        resetRound(clearSaved: true)
+        loadActiveLevel()
+        hintFeedback = "Level restarted."
     }
 
     private func loadActiveLevel() {

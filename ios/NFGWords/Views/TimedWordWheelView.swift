@@ -285,7 +285,7 @@ struct TimedWordWheelView: View {
             return
         }
         guard !found.contains(word), !bonusFound.contains(word) else { fail(); return }
-        if scores.sessionUsedWords().contains(word) { fail(); return }
+        if !puzzleWords.contains(word), scores.sessionUsedWords().contains(word) { fail(); return }
 
         if puzzleWords.contains(word) {
             let pts = WordDictionary.score(word: word, isPuzzle: true, multiplier: level.bonusMultiplier)

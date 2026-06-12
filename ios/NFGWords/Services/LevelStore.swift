@@ -49,19 +49,8 @@ enum LevelStore {
         excludingWords: Set<String>,
         roundsCleared: Int
     ) -> WordwheelLevel {
-        let targetSize = requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
-
-        if id <= bundledLevelCount,
-           let bundled = bundledLevelForPlay(preferId: id, totalLetters: targetSize) {
-            return WordwheelLevel(
-                id: id,
-                centerLetter: bundled.centerLetter,
-                wheelLetters: bundled.wheelLetters,
-                bonusMultiplier: bundled.bonusMultiplier,
-                gridRows: bundled.gridRows,
-                gridCols: bundled.gridCols,
-                words: bundled.words
-            )
+        if id <= bundledLevelCount, let bundled = level(id: id) {
+            return bundled
         }
         if let generated = ProceduralLevelEngine.generate(
             levelId: id,
@@ -146,14 +135,13 @@ enum LevelStore {
         return ordered.first
     }
 
-    /// Next bundled level whose puzzle words do not overlap `usedWords` and matches wheel tier exactly.
+    /// Next bundled level id with a fresh puzzle at the player's current wheel tier.
     static func nextBundledLevel(
         after currentId: Int,
         roundsCleared: Int,
         excludingWords usedWords: Set<String>
     ) -> Int {
         let targetSize = requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
-        var fallback = min(currentId + 1, bundledLevelCount)
 
         for id in (currentId + 1)...bundledLevelCount {
             guard let level = level(id: id) else { continue }
@@ -162,9 +150,16 @@ enum LevelStore {
             if puzzleWords.isDisjoint(with: usedWords) {
                 return id
             }
-            fallback = id
         }
-        return fallback
+        for id in 1...bundledLevelCount {
+            guard let level = level(id: id) else { continue }
+            if level.wheelLetters.count != targetSize { continue }
+            let puzzleWords = Set(level.words.map { $0.word.lowercased() })
+            if puzzleWords.isDisjoint(with: usedWords) {
+                return id
+            }
+        }
+        return min(currentId + 1, bundledLevelCount)
     }
 
     /// Random bundled level for timed mode.
