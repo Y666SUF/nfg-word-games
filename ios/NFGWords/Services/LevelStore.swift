@@ -50,7 +50,7 @@ enum LevelStore {
         roundsCleared: Int
     ) -> WordwheelLevel {
         if id <= bundledLevelCount, let bundled = level(id: id) {
-            return bundled
+            return applyProgressiveWheel(to: bundled, roundsCleared: roundsCleared)
         }
         if let generated = ProceduralLevelEngine.generate(
             levelId: id,
@@ -99,6 +99,56 @@ enum LevelStore {
 
     static func hasPlayableLevel(after currentId: Int) -> Bool {
         true
+    }
+
+    /// Trim a bundled level's wheel to the player's progression tier (4 around → +1 / 150 clears, max 10 around).
+    static func applyProgressiveWheel(to level: WordwheelLevel, roundsCleared: Int) -> WordwheelLevel {
+        let center = level.centerLetter.lowercased()
+        let maxOuter = requiredOuterLetterCount(roundsCleared: roundsCleared)
+        let nativeWheel = level.wheelLetters.map { $0.lowercased() }
+        let nativeOuters = nativeWheel.filter { $0 != center }
+
+        guard nativeOuters.count > maxOuter else {
+            return level
+        }
+
+        let outerScores = nativeOuters.map { letter -> (String, Int) in
+            let score = level.words.reduce(0) { partial, entry in
+                partial + entry.word.lowercased().filter { $0 == Character(letter) }.count
+            }
+            return (letter, score)
+        }.sorted { lhs, rhs in
+            if lhs.1 != rhs.1 { return lhs.1 > rhs.1 }
+            return lhs.0 < rhs.0
+        }
+
+        func buildLevel(outerCount: Int) -> WordwheelLevel {
+            let picked = outerScores.prefix(outerCount).map(\.0).sorted()
+            let wheel = [center] + picked
+            let formable = level.words.filter {
+                WordDictionary.canForm(word: $0.word, wheel: wheel, center: center)
+            }
+            return WordwheelLevel(
+                id: level.id,
+                centerLetter: level.centerLetter,
+                wheelLetters: wheel,
+                bonusMultiplier: level.bonusMultiplier,
+                gridRows: level.gridRows,
+                gridCols: level.gridCols,
+                words: formable
+            )
+        }
+
+        // Prefer the largest wheel allowed at this tier that keeps every puzzle word formable.
+        for outer in stride(from: maxOuter, through: 1, by: -1) {
+            let candidate = buildLevel(outerCount: outer)
+            if candidate.words.count == level.words.count {
+                return candidate
+            }
+        }
+
+        // Tier is below this level's native wheel — play the formable subset at max tier.
+        return buildLevel(outerCount: maxOuter)
     }
 
     /// Stable bundled layout for the current level — does not change when words are found mid-round.
@@ -181,7 +231,7 @@ enum LevelStore {
             }
         }
         if let picked = pool.randomElement() {
-            return picked
+            return applyProgressiveWheel(to: picked, roundsCleared: roundsCleared)
         }
         let proceduralId = proceduralFromLevel + Int.random(in: 0..<50_000)
         return resolveLevel(
