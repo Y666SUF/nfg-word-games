@@ -3,6 +3,9 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var scores: ScoreStore
     @EnvironmentObject private var themes: ThemeStore
+    @EnvironmentObject private var progress: LevelProgressStore
+    @EnvironmentObject private var cosmetics: CosmeticStore
+    @EnvironmentObject private var achievements: AchievementStore
     @Environment(\.scenePhase) private var scenePhase
     @State private var tab: AppTab = .games
 
@@ -73,6 +76,8 @@ struct ContentView: View {
         .onAppear {
             scores.beginPeriodicServerSync()
             themes.syncOwnerAccess(playerId: scores.state.player?.playerId)
+            let context = achievements.buildContext(scores: scores, progress: progress, cosmetics: cosmetics)
+            achievements.evaluate(context: context, scores: scores, cosmetics: cosmetics)
         }
         .onChange(of: scores.state.player?.playerId) { _, playerId in
             themes.syncOwnerAccess(playerId: playerId)
@@ -90,6 +95,11 @@ struct ContentView: View {
         }
         .overlay(alignment: .top) {
             VStack(spacing: 8) {
+                if let achievement = achievements.pendingCelebration {
+                    AchievementUnlockBanner(achievement: achievement) {
+                        withAnimation { achievements.clearCelebration() }
+                    }
+                }
                 if scores.pendingDailyMissionCelebration {
                     DailyMissionCompleteBanner(coinBonus: DailyMissions.completionCoinBonus) {
                         withAnimation { scores.clearDailyMissionCelebration() }
@@ -162,5 +172,8 @@ struct ContentView: View {
     ContentView()
         .environmentObject(ScoreStore())
         .environmentObject(ThemeStore())
+        .environmentObject(LevelProgressStore())
+        .environmentObject(CosmeticStore())
+        .environmentObject(AchievementStore())
         .preferredColorScheme(.dark)
 }

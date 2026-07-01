@@ -60,8 +60,20 @@ Capture from **Simulator** or your iPhone (⌘S in Simulator saves to Desktop).
 
 | Device slot | Simulator to use | Size (pixels) |
 |-------------|------------------|---------------|
-| **6.5" iPhone** | iPhone 14 Plus or 15 Plus | 1284 × 2778 |
-| **13" iPad** | iPad Pro 13-inch (M4) | 2064 × 2752 |
+| **6.5" iPhone** | iPhone 17 Pro Max (scaled) | 1284 × 2778 |
+| **13" iPad** | iPad Pro 13-inch (M5) | 2064 × 2752 |
+
+### Auto-capture all 10 screenshots
+
+```bash
+./scripts/capture_app_store_screenshots.sh
+```
+
+Output folders:
+- `ios/AppStoreScreenshots/iphone-6.5/` — 10 PNGs (1284×2778)
+- `ios/AppStoreScreenshots/ipad-13/` — 10 PNGs (2064×2752)
+
+Screens: welcome, hub, wordwheel, journey, leaderboard, mine, style, wordwich, timed, profile.
 
 Suggested screens to capture:
 1. Login / welcome screen with logo

@@ -55,8 +55,10 @@ struct PuzzleGridView: View {
     var body: some View {
         GeometryReader { geo in
             let gap: CGFloat = 5
-            let cols = CGFloat(max(level.gridCols, 1))
-            let rows = CGFloat(max(level.gridRows, 1))
+            let cellRows = cells.map(\.row).max().map { $0 + 1 } ?? 1
+            let cellCols = cells.map(\.col).max().map { $0 + 1 } ?? 1
+            let rows = CGFloat(max(cellRows, 1))
+            let cols = CGFloat(max(cellCols, 1))
             let cellSize = min(
                 maxCellSize,
                 (geo.size.width - gap * (cols - 1)) / cols,

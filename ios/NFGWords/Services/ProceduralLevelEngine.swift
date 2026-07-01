@@ -1,6 +1,6 @@
 import Foundation
 
-/// On-device level builder — unique WordWheel levels beyond the bundled set (never repeats used words).
+/// On-device level builder — unique wheels and crosswords every round.
 enum ProceduralLevelEngine {
 
     private struct SeededRNG {
@@ -32,10 +32,14 @@ enum ProceduralLevelEngine {
         }
     }
 
+    private static let vowels = Array("aeiou")
+    private static let consonants = Array("bcdfghjklmnpqrstvwxyz")
+
     static func generate(
         levelId: Int,
-        excludingWords: Set<String>,
-        roundsCleared: Int
+        roundsCleared: Int,
+        playedRounds: Set<String>,
+        recentWheels: Set<String>
     ) -> WordwheelLevel? {
         let targetTotal = LevelStore.requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
         let targetOuter = LevelStore.requiredOuterLetterCount(roundsCleared: roundsCleared)
@@ -43,34 +47,48 @@ enum ProceduralLevelEngine {
         let target = targetWords(for: levelId)
         let multiplier = 1.0 + Double(levelId / 200) * 0.25
 
-        var rng = SeededRNG(seed: UInt64(bitPattern: Int64(levelId &* 1_000_003 &+ 0x5DEE_CE66)))
+        var rng = SeededRNG(seed: UInt64(bitPattern: Int64(levelId &* 1_000_003 &+ 0x5DEE_CE66 &+ roundsCleared &* 7919)))
 
-        for attempt in 0..<160 {
+        for attempt in 0..<320 {
+            let strictWheels = attempt < 240
+            let blockedWheels = strictWheels ? recentWheels : Set<String>()
+
             guard let wheelPack = wheelPack(
                 levelId: levelId,
                 attempt: attempt,
                 outerLetters: targetOuter,
+                blockedWheels: blockedWheels,
                 rng: &rng
             ) else { continue }
 
-            let candidates = WordDictionary.formableWords(
+            let wheelFP = WordwheelRoundFingerprint.wheel(center: wheelPack.center, wheelLetters: wheelPack.wheel)
+            if strictWheels, recentWheels.contains(wheelFP) { continue }
+
+            // Puzzle words only — bonus lifetime dedup is handled separately in the view.
+        let candidates = WordDictionary.formableWords(
                 wheel: wheelPack.wheel,
                 center: wheelPack.center,
                 maxLength: wheelPack.wheel.count,
-                excluding: excludingWords
-            ).sorted { $0.count > $1.count }
+                excluding: []
+            )
 
             guard candidates.count >= minWords else { continue }
 
-            let take = min(candidates.count, target + 2)
-            var subset = Array(candidates.prefix(take))
+            let balanced = WordLengthBalance.select(
+                candidates: candidates,
+                wheelSize: wheelPack.wheel.count,
+                targetCount: target + 2,
+                seed: levelId &* 997 &+ attempt
+            )
+            var subset = balanced
             if attempt > 0 {
                 rng.shuffle(&subset)
-                subset = Array(subset.prefix(target + 1))
             }
 
-            for _ in 0..<8 {
+            for shufflePass in 0..<10 {
+                if shufflePass > 0 { rng.shuffle(&subset) }
                 guard let layout = CrosswordPlacer.place(words: subset, minWords: minWords),
+                      CrosswordPlacer.isValidLayout(layout.words),
                       let wheel = CrosswordPlacer.deriveWheel(center: wheelPack.center, words: layout.words),
                       wheel.count == targetTotal else { continue }
 
@@ -79,7 +97,7 @@ enum ProceduralLevelEngine {
                 }
                 guard valid else { continue }
 
-                return WordwheelLevel(
+                let level = WordwheelLevel(
                     id: levelId,
                     centerLetter: wheelPack.center,
                     wheelLetters: wheel,
@@ -88,28 +106,57 @@ enum ProceduralLevelEngine {
                     gridCols: layout.gridCols,
                     words: layout.words
                 )
+
+                let roundFP = WordwheelRoundFingerprint.round(for: level)
+                if playedRounds.contains(roundFP) { continue }
+                if strictWheels, recentWheels.contains(WordwheelRoundFingerprint.wheel(for: level)) { continue }
+
+                return CrosswordPlacer.repairIfNeeded(level)
             }
         }
 
         return nil
     }
 
+    /// Deterministic layout for a single level id — no history-based substitution.
+    static func generateFixed(levelId: Int) -> WordwheelLevel? {
+        generate(
+            levelId: levelId,
+            roundsCleared: max(0, levelId - 1),
+            playedRounds: [],
+            recentWheels: []
+        )
+    }
+
     private static func wheelPack(
         levelId: Int,
         attempt: Int,
         outerLetters: Int,
+        blockedWheels: Set<String>,
         rng: inout SeededRNG
     ) -> (center: String, wheel: [String])? {
+        if attempt % 3 == 2, let random = randomWheelPack(
+            outerLetters: outerLetters,
+            blockedWheels: blockedWheels,
+            rng: &rng
+        ) {
+            return random
+        }
+
         let targetTotal = outerLetters + 1
         let words = WordDictionary.allWords.filter {
             $0.count >= targetTotal && $0.count <= LevelStore.maxTotalWheelLetters
         }
-        guard !words.isEmpty else { return nil }
+        guard !words.isEmpty else {
+            return randomWheelPack(outerLetters: outerLetters, blockedWheels: blockedWheels, rng: &rng)
+        }
 
-        let idx = (levelId &* 17 &+ attempt &* 997) % words.count
+        let idx = (levelId &* 17 &+ attempt &* 997 &+ rng.int(words.count)) % words.count
         let seed = words[idx]
         let unique = Array(Set(seed.map { String($0) }))
-        guard unique.count >= targetTotal else { return nil }
+        guard unique.count >= targetTotal else {
+            return randomWheelPack(outerLetters: outerLetters, blockedWheels: blockedWheels, rng: &rng)
+        }
 
         guard let center = CrosswordPlacer.pickCenter(from: Set(unique)) else { return nil }
         let others = unique.filter { $0 != center }.sorted()
@@ -119,8 +166,47 @@ enum ProceduralLevelEngine {
         let outer = Array(others[start..<min(others.count, start + outerLetters)])
         guard outer.count == outerLetters else { return nil }
         let wheel = [center] + outer
+        let fp = WordwheelRoundFingerprint.wheel(center: center, wheelLetters: wheel)
+        if blockedWheels.contains(fp) {
+            return randomWheelPack(outerLetters: outerLetters, blockedWheels: blockedWheels, rng: &rng)
+        }
         guard wheel.count == targetTotal else { return nil }
         return (center, wheel)
+    }
+
+    private static func randomWheelPack(
+        outerLetters: Int,
+        blockedWheels: Set<String>,
+        rng: inout SeededRNG
+    ) -> (center: String, wheel: [String])? {
+        let minFormable = max(4, outerLetters)
+
+        for _ in 0..<120 {
+            let center = String(vowels[rng.int(vowels.count)])
+            var bag = (consonants + vowels).filter { String($0) != center }
+            rng.shuffle(&bag)
+            var picked: [String] = []
+            for ch in bag where picked.count < outerLetters {
+                let s = String(ch)
+                if !picked.contains(s) { picked.append(s) }
+            }
+            guard picked.count == outerLetters else { continue }
+
+            let wheel = [center] + picked.sorted()
+            let fp = WordwheelRoundFingerprint.wheel(center: center, wheelLetters: wheel)
+            if blockedWheels.contains(fp) { continue }
+
+            let formable = WordDictionary.formableWords(
+                wheel: wheel,
+                center: center,
+                maxLength: wheel.count,
+                excluding: []
+            )
+            if formable.count >= minFormable {
+                return (center, wheel)
+            }
+        }
+        return nil
     }
 
     private static func minWords(for levelId: Int) -> Int {

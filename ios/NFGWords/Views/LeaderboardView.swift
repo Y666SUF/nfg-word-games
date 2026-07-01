@@ -7,6 +7,7 @@ struct LeaderboardView: View {
     @State private var entries: [LeaderboardEntry] = []
     @State private var isInitialLoad = true
     @State private var emptyMessage: String?
+    @State private var profileTarget: ProfileSheetTarget?
 
     private static let cacheKey = "nfg-words-leaderboard-cache-v1"
 
@@ -68,8 +69,19 @@ struct LeaderboardView: View {
         .navigationTitle("Leaderboards")
         .navigationBarTitleDisplayMode(.inline)
         .refreshable { await loadEntries(forceLive: true) }
-        .onAppear { scores.setWantsFrequentLeaderboardSync(true) }
-        .onDisappear { scores.setWantsFrequentLeaderboardSync(false) }
+        .onAppear {
+            if AppStoreScreenshotMode.isActive {
+                entries = AppStoreScreenshotSupport.demoLeaderboardEntries()
+                isInitialLoad = false
+                emptyMessage = nil
+                return
+            }
+            scores.setWantsFrequentLeaderboardSync(true)
+        }
+        .onDisappear {
+            guard !AppStoreScreenshotMode.isActive else { return }
+            scores.setWantsFrequentLeaderboardSync(false)
+        }
         .onChange(of: scope) { _, _ in
             applyCachedEntries(for: scope)
             Task { await loadEntries() }
@@ -86,6 +98,13 @@ struct LeaderboardView: View {
                 try? await Task.sleep(nanoseconds: 30_000_000_000)
                 await loadEntries(silent: true)
             }
+        }
+        .sheet(item: $profileTarget) { target in
+            PlayerProfileView(
+                playerId: target.id,
+                isYou: target.isYou,
+                seed: target.seed
+            )
         }
     }
 
@@ -140,88 +159,152 @@ struct LeaderboardView: View {
     @ViewBuilder
     private func yourProfilePanel(player: PlayerProfile) -> some View {
         let style = RewardUnlockStyle(totalScore: scores.state.totalScore)
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 6) {
-                    style.nameText(player.username, baseFont: .system(size: 16, weight: .bold, design: .rounded))
-                    if UsernameDisplay.showsCrown(username: player.username, rewardStyle: style) {
-                        Image(systemName: "crown.fill")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(NFGTheme.gold)
+        Button {
+            openProfile(
+                playerId: player.playerId,
+                entry: nil,
+                isYou: true
+            )
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        style.nameText(player.username, baseFont: .system(size: 16, weight: .bold, design: .rounded))
+                        if UsernameDisplay.showsCrown(username: player.username, rewardStyle: style) {
+                            Image(systemName: "crown.fill")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(NFGTheme.gold)
+                        }
                     }
+                    Text("Your rank · \(style.tier.title)")
+                        .font(.caption)
+                        .foregroundStyle(NFGTheme.muted)
+                    Text("Tap for full profile")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(NFGTheme.accent.opacity(0.85))
                 }
-                Text("Your rank · \(style.tier.title)")
-                    .font(.caption)
+                Spacer()
+                NFGAnimatedScore(
+                    value: scoreValue(for: scope),
+                    font: .system(size: 22, weight: .heavy, design: .rounded),
+                    color: AnyShapeStyle(LinearGradient(colors: style.tier.nameColors, startPoint: .leading, endPoint: .trailing))
+                )
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.bold))
                     .foregroundStyle(NFGTheme.muted)
             }
-            Spacer()
-            NFGAnimatedScore(
-                value: scoreValue(for: scope),
-                font: .system(size: 22, weight: .heavy, design: .rounded),
-                color: AnyShapeStyle(LinearGradient(colors: style.tier.nameColors, startPoint: .leading, endPoint: .trailing))
-            )
+            .padding(14)
+            .background(style.rowBackground(isYou: true))
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay { style.rowBorder(isYou: true) }
         }
-        .padding(14)
-        .background(style.rowBackground(isYou: true))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay { style.rowBorder(isYou: true) }
+        .buttonStyle(.plain)
     }
 
     @ViewBuilder
     private func leaderboardRow(_ entry: LeaderboardEntry) -> some View {
         let isYou = entry.playerId == scores.state.player?.playerId
         let style = RewardUnlockStyle(totalScore: rewardScore(for: entry, isYou: isYou))
-        HStack(spacing: 12) {
-            HStack(spacing: 4) {
-                if style.showsRankBadge && rewardScore(for: entry, isYou: isYou) > 0 {
-                    Image(systemName: style.tier.icon)
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(
-                            LinearGradient(colors: style.tier.nameColors, startPoint: .topLeading, endPoint: .bottomTrailing)
-                        )
-                }
-                Text("#\(entry.rank)")
-                    .font(.system(size: 15, weight: .heavy, design: .rounded))
-                    .foregroundStyle(NFGTheme.muted)
-            }
-            .frame(minWidth: 34, alignment: .leading)
+        let isPodium = entry.rank <= 3
+        Button {
+            openProfile(
+                playerId: entry.playerId,
+                entry: entry,
+                isYou: isYou
+            )
+        } label: {
+            HStack(spacing: 12) {
+                LeaderboardRankBadge(rank: entry.rank)
 
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 5) {
-                    if rewardScore(for: entry, isYou: isYou) > 0 && !style.tier.isStarter {
-                        style.nameText(entry.username, baseFont: .system(size: 16, weight: .bold, design: .rounded))
-                    } else {
-                        Text(UsernameDisplay.formatted(entry.username))
-                            .font(.system(size: 16, weight: .bold, design: .rounded))
-                            .foregroundStyle(isYou ? NFGTheme.accent : NFGTheme.text)
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 5) {
+                        if style.showsRankBadge && rewardScore(for: entry, isYou: isYou) > 0 && !isPodium {
+                            Image(systemName: style.tier.icon)
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: style.tier.nameColors,
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        }
+                        if rewardScore(for: entry, isYou: isYou) > 0 && !style.tier.isStarter {
+                            style.nameText(
+                                entry.username,
+                                baseFont: .system(size: isPodium ? 17 : 16, weight: .bold, design: .rounded)
+                            )
+                        } else {
+                            Text(UsernameDisplay.formatted(entry.username))
+                                .font(.system(size: isPodium ? 17 : 16, weight: .bold, design: .rounded))
+                                .foregroundStyle(isYou ? NFGTheme.accent : NFGTheme.text)
+                        }
+                        if UsernameDisplay.showsCrown(username: entry.username, rewardStyle: style) {
+                            Image(systemName: "crown.fill")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(NFGTheme.gold)
+                        }
                     }
-                    if UsernameDisplay.showsCrown(username: entry.username, rewardStyle: style) {
-                        Image(systemName: "crown.fill")
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(NFGTheme.gold)
+                    ProfileTitleBadge(titleId: entry.equippedTitleId)
+                    if scope == .wordwheel {
+                        Text("Level \(entry.wordwheelLevel)")
+                            .font(.caption)
+                            .foregroundStyle(NFGTheme.muted)
+                    } else if rewardScore(for: entry, isYou: isYou) > 0, !style.tier.isStarter, scope == .overall {
+                        Text(style.tier.title)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(NFGTheme.muted)
                     }
                 }
-                if scope == .wordwheel {
-                    Text("Level \(entry.wordwheelLevel)")
-                        .font(.caption)
-                        .foregroundStyle(NFGTheme.muted)
-                } else if rewardScore(for: entry, isYou: isYou) > 0, !style.tier.isStarter, scope == .overall {
-                    Text(style.tier.title)
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(NFGTheme.muted)
+
+                Spacer()
+
+                Text(displayScore(for: entry, isYou: isYou).formatted())
+                    .font(.system(size: isPodium ? 22 : 20, weight: .heavy, design: .rounded))
+                    .foregroundStyle(NFGTheme.text)
+
+                Image(systemName: "chevron.right")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(NFGTheme.muted.opacity(0.6))
+            }
+            .padding(.horizontal, isPodium ? 16 : 14)
+            .padding(.vertical, isPodium ? 16 : 14)
+            .background(style.rowBackground(isYou: isYou))
+            .clipShape(RoundedRectangle(cornerRadius: isPodium ? 16 : 14))
+            .overlay { style.rowBorder(isYou: isYou) }
+            .overlay {
+                if entry.rank == 1 {
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(NFGTheme.gold.opacity(0.35), lineWidth: 1.2)
                 }
             }
-
-            Spacer()
-
-            Text(displayScore(for: entry, isYou: isYou).formatted())
-                .font(.system(size: 20, weight: .heavy, design: .rounded))
-                .foregroundStyle(NFGTheme.text)
         }
-        .padding(14)
-        .background(style.rowBackground(isYou: isYou))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay { style.rowBorder(isYou: isYou) }
+        .buttonStyle(.plain)
+    }
+
+    private func openProfile(playerId: String, entry: LeaderboardEntry?, isYou: Bool) {
+        let seed: ProfileSheetSeed? = {
+            if let entry {
+                return ProfileSheetSeed(
+                    username: entry.username,
+                    displayedScore: isYou ? scoreValue(for: scope) : entry.score,
+                    wordwheelLevel: entry.wordwheelLevel,
+                    equippedTitleId: entry.equippedTitleId,
+                    listRank: entry.rank
+                )
+            }
+            if isYou, let player = scores.state.player {
+                return ProfileSheetSeed(
+                    username: player.username,
+                    displayedScore: scoreValue(for: scope),
+                    wordwheelLevel: scores.state.wordwheelLevel,
+                    equippedTitleId: nil,
+                    listRank: 0
+                )
+            }
+            return nil
+        }()
+        profileTarget = ProfileSheetTarget(id: playerId, isYou: isYou, seed: seed)
     }
 
     private func applyCachedEntries(for scope: LeaderboardScope) {

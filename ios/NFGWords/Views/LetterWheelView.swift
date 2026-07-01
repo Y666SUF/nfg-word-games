@@ -17,6 +17,7 @@ private struct OuterLetterToken: Identifiable, Equatable {
 struct LetterWheelView: View {
     let center: String
     let wheel: [String]
+    var wheelSkin: WheelSkin = .classic
     let onWordComplete: (String) -> Void
 
     @State private var nodes: [WheelNode] = []
@@ -64,7 +65,7 @@ struct LetterWheelView: View {
                 Circle()
                     .stroke(
                         AngularGradient(
-                            colors: [NFGTheme.purpleLight, NFGTheme.purple, NFGTheme.violet, NFGTheme.purpleDark, NFGTheme.purpleLight],
+                            colors: wheelSkin.ringGradient + [wheelSkin.ringGradient.first ?? NFGTheme.purpleLight],
                             center: .center
                         ),
                         lineWidth: 2.5
@@ -316,7 +317,9 @@ struct LetterWheelView: View {
         index: Int,
         shuffling: Bool
     ) -> some View {
-        let outerColors: [Color] = [NFGTheme.purpleLight, NFGTheme.purple, NFGTheme.violet, NFGTheme.lavender, NFGTheme.pink]
+        let outerColors: [Color] = wheelSkin.outerPalette.isEmpty
+            ? [NFGTheme.purpleLight, NFGTheme.purple, NFGTheme.violet, NFGTheme.lavender, NFGTheme.pink]
+            : wheelSkin.outerPalette
         Text(letter.uppercased())
             .font(.system(size: isCenter ? 26 : 19, weight: .heavy, design: .rounded))
             .foregroundStyle(isCenter ? Color(red: 4 / 255, green: 16 / 255, blue: 24 / 255) : NFGTheme.text)
@@ -326,12 +329,12 @@ struct LetterWheelView: View {
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: [NFGTheme.purpleLight, NFGTheme.purple],
+                                colors: wheelSkin.centerGradient,
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .shadow(color: NFGTheme.purple.opacity(0.5), radius: 8)
+                        .shadow(color: wheelSkin.centerGradient.first?.opacity(0.5) ?? NFGTheme.purple.opacity(0.5), radius: 8)
                 } else {
                     Circle()
                         .fill(

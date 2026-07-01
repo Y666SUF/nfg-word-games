@@ -3,6 +3,7 @@ import SwiftUI
 struct StyleView: View {
     @EnvironmentObject private var scores: ScoreStore
     @EnvironmentObject private var themes: ThemeStore
+    @EnvironmentObject private var cosmetics: CosmeticStore
 
     var body: some View {
         ScrollView {
@@ -11,6 +12,8 @@ struct StyleView: View {
                 equippedPreview
                 ownedSection
                 shopSection
+                wheelSkinSection
+                profileTitleSection
             }
             .padding(.horizontal, 16)
             .padding(.top, 12)
@@ -19,7 +22,7 @@ struct StyleView: View {
         .navigationTitle("Style & Shop")
         .navigationBarTitleDisplayMode(.inline)
         .overlay(alignment: .bottom) {
-            if let message = themes.shopMessage {
+            if let message = themes.shopMessage ?? cosmetics.shopMessage {
                 Text(message)
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
                     .foregroundStyle(NFGTheme.text)
@@ -34,12 +37,16 @@ struct StyleView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2.4) {
-                            withAnimation { themes.shopMessage = nil }
+                            withAnimation {
+                                themes.shopMessage = nil
+                                cosmetics.shopMessage = nil
+                            }
                         }
                     }
             }
         }
         .animation(.easeInOut(duration: 0.2), value: themes.shopMessage)
+        .animation(.easeInOut(duration: 0.2), value: cosmetics.shopMessage)
     }
 
     private var coinHeader: some View {
@@ -123,6 +130,55 @@ struct StyleView: View {
         }
     }
 
+    private var wheelSkinSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionTitle("Wheel skins", icon: "circle.hexagongrid.fill")
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(WheelSkin.catalog) { skin in
+                    WheelSkinCard(
+                        skin: skin,
+                        owned: cosmetics.ownsSkin(skin),
+                        equipped: cosmetics.equippedWheelSkinId == skin.id
+                    ) {
+                        if cosmetics.ownsSkin(skin) {
+                            cosmetics.equipSkin(skin)
+                            cosmetics.shopMessage = "\(skin.name) equipped."
+                        } else {
+                            _ = cosmetics.purchaseSkin(skin, scores: scores)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private var profileTitleSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionTitle("Profile titles", icon: "person.text.rectangle.fill")
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(ProfileTitle.catalog) { title in
+                    ProfileTitleCard(
+                        title: title,
+                        owned: cosmetics.ownsTitle(title) || title.id == "none",
+                        equipped: (cosmetics.equippedTitleId == title.id) || (title.id == "none" && cosmetics.equippedTitleId == nil)
+                    ) {
+                        if title.id == "none" {
+                            cosmetics.equipTitle(title)
+                            cosmetics.shopMessage = "Title cleared."
+                        } else if cosmetics.ownsTitle(title) {
+                            cosmetics.equipTitle(title)
+                            cosmetics.shopMessage = "\(title.name) equipped."
+                        } else if title.price == 0 {
+                            cosmetics.shopMessage = "Earn this through achievements."
+                        } else {
+                            _ = cosmetics.purchaseTitle(title, scores: scores)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private func sectionTitle(_ title: String, icon: String) -> some View {
         Label(title, systemImage: icon)
             .font(.system(size: 15, weight: .bold, design: .rounded))
@@ -180,6 +236,130 @@ private struct ThemePreviewCard: View {
         }
         .buttonStyle(NFGPressableStyle())
         .disabled(onEquip == nil && !equipped)
+    }
+}
+
+private struct WheelSkinCard: View {
+    let skin: WheelSkin
+    let owned: Bool
+    let equipped: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 8) {
+                ZStack {
+                    Circle()
+                        .stroke(
+                            AngularGradient(colors: skin.ringGradient + [skin.ringGradient.first ?? .purple], center: .center),
+                            lineWidth: 4
+                        )
+                        .frame(width: 56, height: 56)
+                    Circle()
+                        .fill(LinearGradient(colors: skin.centerGradient, startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(width: 28, height: 28)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 72)
+                .background(RoundedRectangle(cornerRadius: 10).fill(NFGTheme.panel2))
+
+                Text(skin.name)
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(NFGTheme.text)
+                Text(skin.tagline)
+                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .foregroundStyle(NFGTheme.muted)
+                    .lineLimit(2)
+                    .frame(height: 28, alignment: .topLeading)
+
+                if equipped {
+                    Label("Equipped", systemImage: "checkmark.circle.fill")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(NFGTheme.successGreen)
+                } else if owned {
+                    Text("Tap to equip")
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(NFGTheme.accent)
+                } else if skin.isFree {
+                    Text("Free")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(NFGTheme.muted)
+                } else {
+                    HStack(spacing: 4) {
+                        NFGCoinIcon(size: 12)
+                        Text("\(skin.price)")
+                    }
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(NFGTheme.gold)
+                }
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background {
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(NFGTheme.panel.opacity(0.9))
+                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(equipped ? NFGTheme.accent.opacity(0.5) : NFGTheme.border, lineWidth: 1))
+            }
+        }
+        .buttonStyle(NFGPressableStyle())
+    }
+}
+
+private struct ProfileTitleCard: View {
+    let title: ProfileTitle
+    let owned: Bool
+    let equipped: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 8) {
+                Image(systemName: title.icon)
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundStyle(NFGTheme.gold)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 72)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(NFGTheme.panel2))
+
+                Text(title.name)
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(NFGTheme.text)
+                Text(title.tagline)
+                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .foregroundStyle(NFGTheme.muted)
+                    .lineLimit(2)
+                    .frame(height: 28, alignment: .topLeading)
+
+                if equipped {
+                    Label("Equipped", systemImage: "checkmark.circle.fill")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(NFGTheme.successGreen)
+                } else if owned {
+                    Text("Tap to equip")
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(NFGTheme.accent)
+                } else if title.price == 0 {
+                    Text("Achievement")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(NFGTheme.muted)
+                } else {
+                    HStack(spacing: 4) {
+                        NFGCoinIcon(size: 12)
+                        Text("\(title.price)")
+                    }
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(NFGTheme.gold)
+                }
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background {
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(NFGTheme.panel.opacity(0.9))
+                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(equipped ? NFGTheme.accent.opacity(0.5) : NFGTheme.border, lineWidth: 1))
+            }
+        }
+        .buttonStyle(NFGPressableStyle())
     }
 }
 

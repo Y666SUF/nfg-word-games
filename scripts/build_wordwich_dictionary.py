@@ -72,26 +72,28 @@ def main() -> None:
     unique = sorted(words)
     easy_set: set[str] = set()
     medium_set: set[str] = set()
-    hard_set: set[str] = set()
+    answer_set: set[str] = set()
     for w in unique:
         z = zipf_frequency(w, "en")
         length = len(w)
-        if z >= 4.0 and 4 <= length <= 6:
+        # Hidden answers — everyday words only (iPhone-autocorrect territory).
+        if z >= 4.3 and 4 <= length <= 6:
             easy_set.add(w)
-        elif z >= 3.0 and 5 <= length <= 7:
+            answer_set.add(w)
+        elif z >= 3.6 and 5 <= length <= 7:
             medium_set.add(w)
-        elif z >= 2.3 and 6 <= length <= 8:
-            hard_set.add(w)
+            answer_set.add(w)
     payload = {
-        "version": 4,
-        "source": "wordfreq-en-wordwich-v4-family",
+        "version": 5,
+        "source": "wordfreq-en-wordwich-v5-common",
         "count": len(unique),
         "words": unique,
         "tiers": {
             "easy": sorted(easy_set),
             "medium": sorted(medium_set),
-            "hard": sorted(hard_set),
+            "hard": [],
         },
+        "answers": sorted(answer_set),
     }
     body = json.dumps(payload, separators=(",", ":"))
     OUT.write_text(body, encoding="utf-8")
@@ -101,7 +103,7 @@ def main() -> None:
         f"Wrote {payload['count']} words "
         f"(easy={len(payload['tiers']['easy'])}, "
         f"medium={len(payload['tiers']['medium'])}, "
-        f"hard={len(payload['tiers']['hard'])}) → {OUT}"
+        f"answers={len(payload['answers'])}) → {OUT}"
     )
 
 

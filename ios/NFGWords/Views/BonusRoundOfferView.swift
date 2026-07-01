@@ -17,7 +17,7 @@ struct BonusRoundOfferView: View {
                 .foregroundStyle(NFGTheme.heroGradient)
 
             VStack(spacing: 8) {
-                Text("Bigger wheel · \(pack.targetWords.count) long words")
+                Text("Extra wheel · \(pack.targetWords.count) common words")
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundStyle(NFGTheme.text)
 

@@ -12,6 +12,8 @@
 		B10000000000000000000003 /* NFGTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000013 /* NFGTheme.swift */; };
 		B100000000000000000000D0 /* NFGPolish.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000D1 /* NFGPolish.swift */; };
 		B10000000000000000000004 /* GameModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000014 /* GameModels.swift */; };
+		B100000000000000000000EE /* WordwheelLevelScored.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000EF /* WordwheelLevelScored.swift */; };
+		B100000000000000000000F3 /* WordwheelRoundHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F2 /* WordwheelRoundHistory.swift */; };
 		B10000000000000000000005 /* ScoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000015 /* ScoreStore.swift */; };
 		B100000000000000000000E0 /* PlayerKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000E1 /* PlayerKeychain.swift */; };
 		B10000000000000000000006 /* LevelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000016 /* LevelStore.swift */; };
@@ -20,6 +22,21 @@
 		B10000000000000000000009 /* ScoresView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000019 /* ScoresView.swift */; };
 		B1000000000000000000000A /* WordWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001A /* WordWheelView.swift */; };
 		B100000000000000000000F0 /* NFGAnimatedBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F1 /* NFGAnimatedBackground.swift */; };
+		B100000000000000000000F4 /* ProgressionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F5 /* ProgressionModels.swift */; };
+		B100000000000000000000F20 /* ChapterThemeCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F21 /* ChapterThemeCatalog.swift */; };
+		B100000000000000000000F6 /* CosmeticModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F7 /* CosmeticModels.swift */; };
+		B100000000000000000000F8 /* AchievementModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F9 /* AchievementModels.swift */; };
+		B100000000000000000000FA /* LevelProgressStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000FB /* LevelProgressStore.swift */; };
+		B100000000000000000000FC /* CosmeticStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000FD /* CosmeticStore.swift */; };
+		B100000000000000000000FE /* AchievementStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000FF /* AchievementStore.swift */; };
+		B10000000000000000000100 /* ChapterMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000101 /* ChapterMapView.swift */; };
+		B10000000000000000000102 /* AchievementsWallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000103 /* AchievementsWallView.swift */; };
+		B10000000000000000000106 /* ChapterAreaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000107 /* ChapterAreaTheme.swift */; };
+		B1000000000000000000010C /* JourneyChapterScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000010D /* JourneyChapterScene.swift */; };
+		B10000000000000000000110 /* ChapterMapAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000111 /* ChapterMapAssets.swift */; };
+		B10000000000000000000114 /* ChapterMapTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000115 /* ChapterMapTheme.swift */; };
+		B10000000000000000000113 /* ChapterMaps in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000112 /* ChapterMaps */; };
+		B10000000000000000000104 /* StarRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000105 /* StarRatingView.swift */; };
 		B1000000000000000000000B /* LetterWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001B /* LetterWheelView.swift */; };
 		B1000000000000000000000C /* PuzzleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001C /* PuzzleGridView.swift */; };
 		B1000000000000000000000D /* NFGWordsLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000001D /* NFGWordsLogo.swift */; };
@@ -28,6 +45,9 @@
 		B1000000000000000000003A /* RoundClearedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000003B /* RoundClearedView.swift */; };
 		B1000000000000000000003C /* AppLegalConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000003D /* AppLegalConfig.swift */; };
 		B100000000000000000000C3 /* AdminConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000C4 /* AdminConfig.swift */; };
+		B100000000000000000000F30 /* AppStoreScreenshotMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F31 /* AppStoreScreenshotMode.swift */; };
+		B100000000000000000000F32 /* AppStoreScreenshotSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F33 /* AppStoreScreenshotSupport.swift */; };
+		B100000000000000000000F34 /* AppStoreScreenshotHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F35 /* AppStoreScreenshotHost.swift */; };
 		B1000000000000000000003E /* LegalDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000003F /* LegalDocumentView.swift */; };
 		B100000000000000000000A1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000A2 /* PrivacyInfo.xcprivacy */; };
 		B10000000000000000000027 /* ProfanityFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000002A /* ProfanityFilter.swift */; };
@@ -65,6 +85,10 @@
 		B100000000000000000000E6 /* BonusRoundLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000E7 /* BonusRoundLayout.swift */; };
 		B100000000000000000000E8 /* TimedWordWheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000E9 /* TimedWordWheelView.swift */; };
 		B100000000000000000000EA /* ProceduralLevelEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000EB /* ProceduralLevelEngine.swift */; };
+		B100000000000000000000F22 /* WordLengthBalance.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F23 /* WordLengthBalance.swift */; };
+		B100000000000000000000F24 /* PlayerProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F25 /* PlayerProfileView.swift */; };
+		B100000000000000000000F26 /* ProfileTitleBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F27 /* ProfileTitleBadge.swift */; };
+		B100000000000000000000F28 /* LeaderboardRankBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F29 /* LeaderboardRankBadge.swift */; };
 		B100000000000000000000EC /* CrosswordPlacer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000ED /* CrosswordPlacer.swift */; };
 /* End PBXBuildFile section */
 
@@ -75,6 +99,8 @@
 		B10000000000000000000013 /* NFGTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGTheme.swift; sourceTree = "<group>"; };
 		B100000000000000000000D1 /* NFGPolish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGPolish.swift; sourceTree = "<group>"; };
 		B10000000000000000000014 /* GameModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModels.swift; sourceTree = "<group>"; };
+		B100000000000000000000EF /* WordwheelLevelScored.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordwheelLevelScored.swift; sourceTree = "<group>"; };
+		B100000000000000000000F2 /* WordwheelRoundHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordwheelRoundHistory.swift; sourceTree = "<group>"; };
 		B10000000000000000000015 /* ScoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreStore.swift; sourceTree = "<group>"; };
 		B100000000000000000000E1 /* PlayerKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerKeychain.swift; sourceTree = "<group>"; };
 		B10000000000000000000016 /* LevelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelStore.swift; sourceTree = "<group>"; };
@@ -100,6 +126,9 @@
 		B1000000000000000000003B /* RoundClearedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundClearedView.swift; sourceTree = "<group>"; };
 		B1000000000000000000003D /* AppLegalConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLegalConfig.swift; sourceTree = "<group>"; };
 		B100000000000000000000C4 /* AdminConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminConfig.swift; sourceTree = "<group>"; };
+		B100000000000000000000F31 /* AppStoreScreenshotMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreScreenshotMode.swift; sourceTree = "<group>"; };
+		B100000000000000000000F33 /* AppStoreScreenshotSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreScreenshotSupport.swift; sourceTree = "<group>"; };
+		B100000000000000000000F35 /* AppStoreScreenshotHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreScreenshotHost.swift; sourceTree = "<group>"; };
 		B1000000000000000000003F /* LegalDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalDocumentView.swift; sourceTree = "<group>"; };
 		B100000000000000000000A2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		B1000000000000000000002A /* ProfanityFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfanityFilter.swift; sourceTree = "<group>"; };
@@ -128,8 +157,27 @@
 		B100000000000000000000E5 /* WordwichWordPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordwichWordPolicy.swift; sourceTree = "<group>"; };
 		B100000000000000000000E7 /* BonusRoundLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusRoundLayout.swift; sourceTree = "<group>"; };
 		B100000000000000000000E9 /* TimedWordWheelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimedWordWheelView.swift; sourceTree = "<group>"; };
+		B100000000000000000000F23 /* WordLengthBalance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordLengthBalance.swift; sourceTree = "<group>"; };
+		B100000000000000000000F25 /* PlayerProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfileView.swift; sourceTree = "<group>"; };
+		B100000000000000000000F27 /* ProfileTitleBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTitleBadge.swift; sourceTree = "<group>"; };
+		B100000000000000000000F29 /* LeaderboardRankBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardRankBadge.swift; sourceTree = "<group>"; };
 		B100000000000000000000EB /* ProceduralLevelEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProceduralLevelEngine.swift; sourceTree = "<group>"; };
 		B100000000000000000000ED /* CrosswordPlacer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordPlacer.swift; sourceTree = "<group>"; };
+		B100000000000000000000F5 /* ProgressionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressionModels.swift; sourceTree = "<group>"; };
+		B100000000000000000000F21 /* ChapterThemeCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterThemeCatalog.swift; sourceTree = "<group>"; };
+		B100000000000000000000F7 /* CosmeticModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmeticModels.swift; sourceTree = "<group>"; };
+		B100000000000000000000F9 /* AchievementModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementModels.swift; sourceTree = "<group>"; };
+		B100000000000000000000FB /* LevelProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelProgressStore.swift; sourceTree = "<group>"; };
+		B100000000000000000000FD /* CosmeticStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmeticStore.swift; sourceTree = "<group>"; };
+		B100000000000000000000FF /* AchievementStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementStore.swift; sourceTree = "<group>"; };
+		B10000000000000000000101 /* ChapterMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterMapView.swift; sourceTree = "<group>"; };
+		B10000000000000000000103 /* AchievementsWallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsWallView.swift; sourceTree = "<group>"; };
+		B10000000000000000000105 /* StarRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarRatingView.swift; sourceTree = "<group>"; };
+		B10000000000000000000107 /* ChapterAreaTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterAreaTheme.swift; sourceTree = "<group>"; };
+		B1000000000000000000010D /* JourneyChapterScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyChapterScene.swift; sourceTree = "<group>"; };
+		B10000000000000000000111 /* ChapterMapAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterMapAssets.swift; sourceTree = "<group>"; };
+		B10000000000000000000115 /* ChapterMapTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterMapTheme.swift; sourceTree = "<group>"; };
+		B10000000000000000000112 /* ChapterMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ChapterMaps; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +241,8 @@
 				B10000000000000000000037 /* GameServerConfig.swift */,
 				B1000000000000000000003D /* AppLegalConfig.swift */,
 				B100000000000000000000C4 /* AdminConfig.swift */,
+				B100000000000000000000F31 /* AppStoreScreenshotMode.swift */,
+				B100000000000000000000F33 /* AppStoreScreenshotSupport.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -201,8 +251,17 @@
 			isa = PBXGroup;
 			children = (
 				B10000000000000000000014 /* GameModels.swift */,
+				B100000000000000000000EF /* WordwheelLevelScored.swift */,
+				B100000000000000000000F2 /* WordwheelRoundHistory.swift */,
 				B100000000000000000000BE /* RewardUnlocks.swift */,
 				B100000000000000000000D9 /* DailyMissions.swift */,
+				B100000000000000000000F5 /* ProgressionModels.swift */,
+				B100000000000000000000F21 /* ChapterThemeCatalog.swift */,
+				B100000000000000000000F7 /* CosmeticModels.swift */,
+				B100000000000000000000F9 /* AchievementModels.swift */,
+				B10000000000000000000107 /* ChapterAreaTheme.swift */,
+				B10000000000000000000111 /* ChapterMapAssets.swift */,
+				B10000000000000000000115 /* ChapterMapTheme.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -220,6 +279,7 @@
 				B100000000000000000000B3 /* WordwichDictionary.swift */,
 				B100000000000000000000E5 /* WordwichWordPolicy.swift */,
 				B100000000000000000000E7 /* BonusRoundLayout.swift */,
+				B100000000000000000000F23 /* WordLengthBalance.swift */,
 				B100000000000000000000EB /* ProceduralLevelEngine.swift */,
 				B100000000000000000000ED /* CrosswordPlacer.swift */,
 				B100000000000000000000B5 /* WordwichAPI.swift */,
@@ -230,6 +290,9 @@
 				B100000000000000000000D5 /* ThemeStore.swift */,
 				B100000000000000000000DB /* DailyMissionsVault.swift */,
 				B100000000000000000000E3 /* DeviceInstall.swift */,
+				B100000000000000000000FB /* LevelProgressStore.swift */,
+				B100000000000000000000FD /* CosmeticStore.swift */,
+				B100000000000000000000FF /* AchievementStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -252,6 +315,10 @@
 				B1000000000000000000002E /* UsernamePromptView.swift */,
 				B100000000000000000000BB /* EditUsernameSheet.swift */,
 				B10000000000000000000035 /* LeaderboardView.swift */,
+				B100000000000000000000F25 /* PlayerProfileView.swift */,
+				B100000000000000000000F35 /* AppStoreScreenshotHost.swift */,
+				B100000000000000000000F27 /* ProfileTitleBadge.swift */,
+				B100000000000000000000F29 /* LeaderboardRankBadge.swift */,
 				B100000000000000000000B1 /* WordwichView.swift */,
 				B100000000000000000000BF /* RewardUnlockViews.swift */,
 				B100000000000000000000C6 /* BonusRoundOfferView.swift */,
@@ -259,6 +326,10 @@
 				B100000000000000000000D7 /* StyleView.swift */,
 				B100000000000000000000DD /* DailyMissionsCard.swift */,
 				B100000000000000000000DF /* NFGCoinIcon.swift */,
+				B10000000000000000000101 /* ChapterMapView.swift */,
+				B10000000000000000000103 /* AchievementsWallView.swift */,
+				B10000000000000000000105 /* StarRatingView.swift */,
+				B1000000000000000000010D /* JourneyChapterScene.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -270,6 +341,7 @@
 				B10000000000000000000021 /* english-dictionary.json */,
 				B100000000000000000000B7 /* wordwich-dictionary.json */,
 				B100000000000000000000C8 /* bonus-round-packs.json */,
+				B10000000000000000000112 /* ChapterMaps */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -333,6 +405,7 @@
 				B100000000000000000000B6 /* wordwich-dictionary.json in Resources */,
 				B100000000000000000000A1 /* PrivacyInfo.xcprivacy in Resources */,
 				B100000000000000000000CC /* bonus-round-packs.json in Resources */,
+				B10000000000000000000113 /* ChapterMaps in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,6 +421,8 @@
 				B10000000000000000000003 /* NFGTheme.swift in Sources */,
 				B100000000000000000000D0 /* NFGPolish.swift in Sources */,
 				B10000000000000000000004 /* GameModels.swift in Sources */,
+				B100000000000000000000EE /* WordwheelLevelScored.swift in Sources */,
+				B100000000000000000000F3 /* WordwheelRoundHistory.swift in Sources */,
 				B10000000000000000000005 /* ScoreStore.swift in Sources */,
 				B100000000000000000000E0 /* PlayerKeychain.swift in Sources */,
 				B10000000000000000000006 /* LevelStore.swift in Sources */,
@@ -364,6 +439,9 @@
 				B1000000000000000000003A /* RoundClearedView.swift in Sources */,
 				B1000000000000000000003C /* AppLegalConfig.swift in Sources */,
 				B100000000000000000000C3 /* AdminConfig.swift in Sources */,
+				B100000000000000000000F30 /* AppStoreScreenshotMode.swift in Sources */,
+				B100000000000000000000F32 /* AppStoreScreenshotSupport.swift in Sources */,
+				B100000000000000000000F34 /* AppStoreScreenshotHost.swift in Sources */,
 				B1000000000000000000003E /* LegalDocumentView.swift in Sources */,
 				B10000000000000000000027 /* ProfanityFilter.swift in Sources */,
 				B10000000000000000000028 /* APIConfig.swift in Sources */,
@@ -394,8 +472,26 @@
 				B100000000000000000000E4 /* WordwichWordPolicy.swift in Sources */,
 				B100000000000000000000E6 /* BonusRoundLayout.swift in Sources */,
 				B100000000000000000000E8 /* TimedWordWheelView.swift in Sources */,
+				B100000000000000000000F24 /* PlayerProfileView.swift in Sources */,
+				B100000000000000000000F28 /* LeaderboardRankBadge.swift in Sources */,
+				B100000000000000000000F26 /* ProfileTitleBadge.swift in Sources */,
+				B100000000000000000000F22 /* WordLengthBalance.swift in Sources */,
 				B100000000000000000000EA /* ProceduralLevelEngine.swift in Sources */,
 				B100000000000000000000EC /* CrosswordPlacer.swift in Sources */,
+				B100000000000000000000F4 /* ProgressionModels.swift in Sources */,
+				B100000000000000000000F20 /* ChapterThemeCatalog.swift in Sources */,
+				B100000000000000000000F6 /* CosmeticModels.swift in Sources */,
+				B100000000000000000000F8 /* AchievementModels.swift in Sources */,
+				B100000000000000000000FA /* LevelProgressStore.swift in Sources */,
+				B100000000000000000000FC /* CosmeticStore.swift in Sources */,
+				B100000000000000000000FE /* AchievementStore.swift in Sources */,
+				B10000000000000000000100 /* ChapterMapView.swift in Sources */,
+				B10000000000000000000102 /* AchievementsWallView.swift in Sources */,
+				B10000000000000000000104 /* StarRatingView.swift in Sources */,
+				B10000000000000000000106 /* ChapterAreaTheme.swift in Sources */,
+				B10000000000000000000110 /* ChapterMapAssets.swift in Sources */,
+				B10000000000000000000114 /* ChapterMapTheme.swift in Sources */,
+				B1000000000000000000010C /* JourneyChapterScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,7 +538,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 51;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -452,7 +548,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yusufali.nfgwords;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -469,7 +565,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 51;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -479,7 +575,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yusufali.nfgwords;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

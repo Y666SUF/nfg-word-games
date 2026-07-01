@@ -10,8 +10,10 @@ enum BonusRoundStore {
         return file.packs
     }()
 
-    static func randomPack() -> BonusRoundPack? {
-        packs.randomElement()
+    static func randomPack(excludingIds recentIds: [Int] = []) -> BonusRoundPack? {
+        let recent = Set(recentIds)
+        let fresh = packs.filter { !recent.contains($0.id) }
+        return (fresh.isEmpty ? packs : fresh).randomElement()
     }
 }
 

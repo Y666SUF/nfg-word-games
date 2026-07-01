@@ -3,6 +3,7 @@ import SwiftUI
 /// Timed WordWheel — clear as many randomized rounds as possible; each clear resets the 2-minute clock.
 struct TimedWordWheelView: View {
     @EnvironmentObject private var scores: ScoreStore
+    @EnvironmentObject private var cosmetics: CosmeticStore
     @Environment(\.dismiss) private var dismiss
 
     private static let roundSeconds = 120
@@ -15,7 +16,7 @@ struct TimedWordWheelView: View {
     @State private var roundsCleared = 0
     @State private var secondsLeft = roundSeconds
     @State private var timerTask: Task<Void, Never>?
-    @State private var recentLevelIds: [Int] = []
+    @State private var runQueue: TimedWordwheelQueue?
     @State private var shake = false
     @State private var activeToast: WordToast?
     @State private var showGameOver = false
@@ -54,7 +55,8 @@ struct TimedWordWheelView: View {
             let puzzleH = max(100, geo.size.height - topH - foundH - wheelH - 24)
 
             ZStack {
-                NFGAnimatedBackground(style: .game)
+                JourneyBiomeBackground(levelId: level.id, style: .gameplay)
+                .ignoresSafeArea()
 
                 VStack(spacing: 10) {
                     topBar
@@ -70,7 +72,11 @@ struct TimedWordWheelView: View {
                     )
                     .frame(height: foundH)
 
-                    LetterWheelView(center: level.centerLetter, wheel: level.wheelLetters) { word in
+                    LetterWheelView(
+                        center: level.centerLetter,
+                        wheel: level.wheelLetters,
+                        wheelSkin: cosmetics.equippedWheelSkin
+                    ) { word in
                         submitWord(word)
                     }
                     .frame(height: wheelH)
@@ -95,6 +101,16 @@ struct TimedWordWheelView: View {
             }
         }
         .onAppear {
+            if AppStoreScreenshotMode.isActive {
+                level = LevelStore.playLevel(id: 12)
+                let partial = level.words.prefix(2).map { $0.word.lowercased() }
+                found = Set(partial)
+                roundScore = 320
+                roundsCleared = 4
+                secondsLeft = 94
+                return
+            }
+            runQueue = TimedWordwheelQueue(roundsCleared: scores.effectiveWordwheelRoundsCleared)
             pickNewLevel()
             startTimer()
         }
@@ -255,18 +271,14 @@ struct TimedWordWheelView: View {
     }
 
     private func pickNewLevel() {
-        level = LevelStore.randomTimedLevel(
-            excludingLevelIds: recentLevelIds,
-            roundsCleared: scores.state.wordwheelRoundsCleared,
-            excludingWords: scores.sessionUsedWords()
-        )
-        recentLevelIds.append(level.id)
-        if recentLevelIds.count > 12 {
-            recentLevelIds.removeFirst(recentLevelIds.count - 12)
-        }
+        guard var queue = runQueue else { return }
+        level = queue.nextLevel()
+        runQueue = queue
+        scores.noteWordwheelRoundSeen(level)
     }
 
     private func advanceAfterClear() {
+        scores.markWordwheelRoundCompleted(level)
         scores.markSessionWordsUsed(puzzleWords)
         roundsCleared += 1
         secondsLeft = Self.roundSeconds
@@ -312,17 +324,11 @@ struct TimedWordWheelView: View {
     private func purchaseHint() {
         guard hintsRemaining > 0 else { return }
         guard scores.spendNfgCoins(1) else { return }
-        var candidates: [String] = []
-        for entry in level.words {
-            let w = entry.word.lowercased()
-            guard !found.contains(w) else { continue }
-            for (i, _) in entry.word.enumerated() {
-                let row = entry.startRow + (entry.direction == "down" ? i : 0)
-                let col = entry.startCol + (entry.direction == "across" ? i : 0)
-                let key = "\(row),\(col)"
-                if !hintedCells.contains(key) { candidates.append(key) }
-            }
-        }
+        let candidates = WordwheelHintPolicy.hintCandidates(
+            level: level,
+            found: found,
+            hintedCells: hintedCells
+        )
         guard let pick = candidates.randomElement() else {
             scores.addNfgCoins(1)
             return

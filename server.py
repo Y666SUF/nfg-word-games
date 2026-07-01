@@ -45,16 +45,21 @@ LEVELS_FILE = ROOT / "data" / "wordwheel-levels.json"
 DIST_DIR = ROOT / "app" / "dist"
 BRIDGE_TOKEN = os.getenv("WORD_GAMES_BRIDGE_TOKEN", "change-me-to-a-long-secret")
 PORT = int(os.getenv("WORD_GAMES_PORT", "19877"))
-# Yusuf (yusuf) — iPhone 17 Pro Max player code; comma-separated for multiple admins.
+# Yusuf (17 Pro Max) + Nfg (15 Pro Max); comma-separated for multiple admins.
 WORD_GAMES_ADMIN_PLAYER_IDS = {
     p.strip()
     for p in os.getenv(
         "WORD_GAMES_ADMIN_PLAYER_ID",
-        "6a2dca48-c66d-4b48-b8e0-4245b846ee06",
+        "6a2dca48-c66d-4b48-b8e0-4245b846ee06,d9beba10-ac7c-420b-ae2a-f2979cb44b38",
     ).split(",")
     if p.strip()
 }
 GAME_IDS = ("wordwheel", "wordwheelTimed", "hangman", "wordwich")
+
+PROFILE_TITLE_IDS = frozenset(
+    {"none", "explorer", "solver", "speedster", "lexicon", "champion", "legend"}
+)
+WHEEL_SKIN_IDS = frozenset({"classic", "gold_rush", "ocean", "ember", "mint", "rose"})
 
 
 def _load_scores() -> dict[str, Any]:
@@ -184,11 +189,19 @@ def _reconciled_wordwheel_level(player: dict[str, Any]) -> int:
 
 
 def _player_payload(player: dict[str, Any]) -> dict[str, Any]:
+    title = str(player.get("equippedTitleId") or "").strip() or None
+    if title == "none":
+        title = None
+    skin = str(player.get("equippedWheelSkinId") or "classic").strip() or "classic"
+    if skin not in WHEEL_SKIN_IDS:
+        skin = "classic"
     return {
         "username": player.get("username", ""),
         "totalScore": int(player.get("totalScore") or 0),
         "gameHighScores": player.get("gameHighScores") or {},
         "wordwheelLevel": _reconciled_wordwheel_level(player),
+        "equippedTitleId": title,
+        "equippedWheelSkinId": skin,
         "updatedAt": player.get("updatedAt"),
     }
 
@@ -208,8 +221,43 @@ def _merge_scores(existing: dict[str, Any], incoming: dict[str, Any]) -> dict[st
     }
     if existing.get("devices") is not None:
         merged["devices"] = existing.get("devices")
+    if existing.get("equippedTitleId") is not None:
+        merged["equippedTitleId"] = existing.get("equippedTitleId")
+    if existing.get("equippedWheelSkinId") is not None:
+        merged["equippedWheelSkinId"] = existing.get("equippedWheelSkinId")
     reconcile_player_wordwheel(merged)
     return merged
+
+
+def _rank_for_player(rows: list[dict[str, Any]], player_id: str) -> Optional[int]:
+    for row in rows:
+        if row.get("playerId") == player_id:
+            return int(row.get("rank") or 0) or None
+    return None
+
+
+def _public_profile(data: dict[str, Any], player_id: str) -> Optional[dict[str, Any]]:
+    player = data["players"].get(player_id)
+    if not player:
+        return None
+    username = str(player.get("username") or "").strip()
+    if not username:
+        return None
+    overall_rows = _leaderboard_rows(data)
+    wordwheel_rows = _leaderboard_rows(data, game_id="wordwheel")
+    timed_rows = _leaderboard_rows(data, game_id="wordwheelTimed")
+    wordwich_rows = _leaderboard_rows(data, game_id="wordwich")
+    payload = _player_payload(player)
+    return {
+        "playerId": player_id,
+        **payload,
+        "ranks": {
+            "overall": _rank_for_player(overall_rows, player_id),
+            "wordwheel": _rank_for_player(wordwheel_rows, player_id),
+            "wordwheelTimed": _rank_for_player(timed_rows, player_id),
+            "wordwich": _rank_for_player(wordwich_rows, player_id),
+        },
+    }
 
 
 def _leaderboard_rows(data: dict[str, Any], game_id: Optional[str] = None) -> list[dict[str, Any]]:
@@ -227,6 +275,7 @@ def _leaderboard_rows(data: dict[str, Any], game_id: Optional[str] = None) -> li
             "username": username,
             "score": score,
             "wordwheelLevel": _reconciled_wordwheel_level(player),
+            "equippedTitleId": _player_payload(player).get("equippedTitleId"),
         })
     rows.sort(key=lambda row: (-row["score"], row["username"].lower()))
     for index, row in enumerate(rows, start=1):
@@ -257,6 +306,17 @@ def terms_page() -> FileResponse:
 @app.get("/support")
 def support_page() -> FileResponse:
     return FileResponse(LEGAL_DIR / "support.html")
+
+
+@app.get("/app-ads.txt")
+def app_ads_txt() -> FileResponse:
+    """AdMob app-ads.txt — must be at site root for mobile ad authorization."""
+    return FileResponse(LEGAL_DIR / "app-ads.txt", media_type="text/plain")
+
+
+@app.get("/ads.txt")
+def ads_txt() -> FileResponse:
+    return FileResponse(LEGAL_DIR / "ads.txt", media_type="text/plain")
 
 
 def _reconcile_all_players(data: dict[str, Any]) -> int:
@@ -422,6 +482,45 @@ def game_leaderboard(game_id: str, limit: int = 100) -> dict[str, Any]:
     data = _load_scores()
     rows = _leaderboard_rows(data, game_id=game_id)[: max(1, min(limit, 500))]
     return {"ok": True, "gameId": game_id, "entries": rows}
+
+
+@app.get("/api/word-games/players/{player_id}/profile")
+def get_player_profile(player_id: str) -> dict[str, Any]:
+    data = _load_scores()
+    profile = _public_profile(data, player_id)
+    if not profile:
+        raise HTTPException(status_code=404, detail="player_not_found")
+    return {"ok": True, "profile": profile}
+
+
+@app.put("/api/word-games/players/{player_id}/profile")
+def put_player_profile(player_id: str, body: dict[str, Any]) -> dict[str, Any]:
+    data = _load_scores()
+    player = data["players"].get(player_id)
+    if not player:
+        raise HTTPException(status_code=404, detail="player_not_found")
+
+    if "equippedTitleId" in body:
+        raw = body.get("equippedTitleId")
+        if raw is None or str(raw).strip() in ("", "none"):
+            player.pop("equippedTitleId", None)
+        else:
+            title_id = str(raw).strip()
+            if title_id not in PROFILE_TITLE_IDS:
+                raise HTTPException(status_code=400, detail="invalid_title")
+            player["equippedTitleId"] = title_id
+
+    if "equippedWheelSkinId" in body:
+        skin_id = str(body.get("equippedWheelSkinId") or "classic").strip()
+        if skin_id not in WHEEL_SKIN_IDS:
+            raise HTTPException(status_code=400, detail="invalid_skin")
+        player["equippedWheelSkinId"] = skin_id
+
+    player["updatedAt"] = _now()
+    data["players"][player_id] = player
+    _save_scores(data)
+    profile = _public_profile(data, player_id)
+    return {"ok": True, "profile": profile}
 
 
 @app.delete("/api/word-games/players/{player_id}")

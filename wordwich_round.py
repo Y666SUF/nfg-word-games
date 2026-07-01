@@ -16,8 +16,8 @@ from word_filters import is_sensitive_word, is_rude_wordwich_word  # noqa: E402
 DICT_FILE = ROOT / "data" / "wordwich-dictionary.json"
 ROUNDS_FILE = Path(__file__).resolve().parent / "data" / "wordwich-round.json"
 
-TIER_WEIGHTS = ("easy", "medium", "hard")
-TIER_PROBS = (0.6, 0.3, 0.1)
+TIER_WEIGHTS = ("easy", "medium")
+TIER_PROBS = (0.7, 0.3)
 NEW_ROUND_DELAY_SECONDS = 5
 
 
@@ -73,8 +73,14 @@ class WordwichStore:
 
     def _pick_answer(self) -> str:
         tiers = self._dict.get("tiers") or {}
-        tier = random.choices(TIER_WEIGHTS, weights=TIER_PROBS, k=1)[0]
-        pool = list(tiers.get(tier) or [])
+        answers = list(self._dict.get("answers") or [])
+        if answers:
+            pool = answers
+        else:
+            tier = random.choices(TIER_WEIGHTS, weights=TIER_PROBS, k=1)[0]
+            pool = list(tiers.get(tier) or [])
+            if not pool:
+                pool = list(tiers.get("easy") or []) + list(tiers.get("medium") or [])
         if not pool:
             pool = list(self._dict.get("words") or [])
         if not pool:

@@ -4,8 +4,19 @@ struct RoundClearedView: View {
     let levelId: Int
     let score: Int
     let bonusCount: Int
+    let starsEarned: Int
+    let previousBestStars: Int
     let hasNextLevel: Bool
+    var isReplay: Bool = false
     let onContinue: () -> Void
+
+    private var displayStars: Int {
+        max(starsEarned, previousBestStars)
+    }
+
+    private var improved: Bool {
+        starsEarned > previousBestStars
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -18,14 +29,28 @@ struct RoundClearedView: View {
                 .font(.system(size: 30, weight: .black, design: .rounded))
                 .foregroundStyle(NFGTheme.heroGradient)
 
-            VStack(spacing: 6) {
+            VStack(spacing: 8) {
                 Text("Level \(levelId) complete")
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundStyle(NFGTheme.muted)
 
+                StarRatingView(stars: displayStars, size: 22)
+
+                if improved {
+                    Text("New best — \(starsEarned) star\(starsEarned == 1 ? "" : "s")!")
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .foregroundStyle(NFGTheme.gold)
+                } else if starsEarned > 0 {
+                    Text(starHint)
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(NFGTheme.muted)
+                        .multilineTextAlignment(.center)
+                }
+
                 Text("\(score) pts")
-                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                    .font(.system(size: 36, weight: .heavy, design: .rounded))
                     .foregroundStyle(NFGTheme.gold)
+                    .padding(.top, 4)
 
                 if bonusCount > 0 {
                     Text("+\(bonusCount) bonus word\(bonusCount == 1 ? "" : "s")")
@@ -35,7 +60,7 @@ struct RoundClearedView: View {
             }
 
             Button(action: onContinue) {
-                Text(hasNextLevel ? "Next Round" : "Finish")
+                Text(continueLabel)
                     .font(.system(size: 18, weight: .heavy, design: .rounded))
                     .foregroundStyle(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
                     .frame(maxWidth: .infinity)
@@ -65,5 +90,16 @@ struct RoundClearedView: View {
                 .shadow(color: NFGTheme.purpleDark.opacity(0.5), radius: 24, y: 12)
         )
         .padding(.horizontal, 32)
+    }
+
+    private var continueLabel: String {
+        if isReplay { return "Done" }
+        return hasNextLevel ? "Next Round" : "Finish"
+    }
+
+    private var starHint: String {
+        if starsEarned >= 3 { return "Perfect run!" }
+        if starsEarned == 2 { return "Find bonus words with no hints for 3★" }
+        return "Find bonus words or skip hints for more stars"
     }
 }

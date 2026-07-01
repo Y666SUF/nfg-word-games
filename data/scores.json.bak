@@ -1,0 +1,43 @@
+{
+  "players": {
+    "2cc19731-f5d8-41c7-a393-a112c6293c39": {
+      "username": "cursor_test_user",
+      "totalScore": 150,
+      "gameHighScores": {
+        "wordwheel": 150
+      },
+      "wordwheelLevel": 3,
+      "updatedAt": "2026-06-10T23:14:51.537852+00:00"
+    },
+    "08789556-d5c7-4fd2-95d5-3e01fa46d5f2": {
+      "username": "test_runner",
+      "totalScore": 42,
+      "gameHighScores": {
+        "wordwheel": 42
+      },
+      "wordwheelLevel": 2,
+      "updatedAt": "2026-06-08T12:23:51.306728+00:00"
+    },
+    "c82bea85-989c-4899-853c-97299f51a636": {
+      "username": "testuser99",
+      "totalScore": 0,
+      "gameHighScores": {},
+      "wordwheelLevel": 1,
+      "updatedAt": "2026-06-08T12:26:26.360861+00:00"
+    },
+    "ed4a4db8-1546-4e2e-9191-a8332d8f25a1": {
+      "username": "LocalTest",
+      "totalScore": 0,
+      "gameHighScores": {},
+      "wordwheelLevel": 1,
+      "updatedAt": "2026-06-10T23:14:53.077906+00:00",
+      "devices": [
+        {
+          "id": "dev-local-1",
+          "registeredAt": "2026-06-10T23:14:53.078007+00:00",
+          "lastSeenAt": "2026-06-10T23:14:53.078010+00:00"
+        }
+      ]
+    }
+  }
+}

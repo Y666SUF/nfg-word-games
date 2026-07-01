@@ -2,7 +2,10 @@ import SwiftUI
 
 struct HubView: View {
     @EnvironmentObject private var scores: ScoreStore
+    @EnvironmentObject private var cosmetics: CosmeticStore
+    @EnvironmentObject private var progress: LevelProgressStore
     @State private var showEditUsername = false
+    @State private var showProfile = false
 
     private var rewardStyle: RewardUnlockStyle {
         RewardUnlockStyle(totalScore: scores.state.totalScore)
@@ -11,7 +14,7 @@ struct HubView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                NFGWordsLogo()
+                NFGWordsLogo(style: .hero)
                     .padding(.top, 8)
                     .padding(.bottom, 4)
 
@@ -66,13 +69,19 @@ struct HubView: View {
                 EditUsernameSheet(currentUsername: player.username)
             }
         }
+        .sheet(isPresented: $showProfile) {
+            if let player = scores.state.player {
+                PlayerProfileView(playerId: player.playerId, isYou: true)
+                    .id(player.playerId)
+            }
+        }
     }
 
     @ViewBuilder
     private var playerCorner: some View {
         if let player = scores.state.player {
             Button {
-                showEditUsername = true
+                showProfile = true
             } label: {
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Playing as")
@@ -82,6 +91,12 @@ struct HubView: View {
                         rewardStyle
                             .nameText(player.username, baseFont: .system(size: 15, weight: .heavy, design: .rounded))
                             .lineLimit(1)
+                        if let title = cosmetics.equippedTitle {
+                            Text("· \(title.name)")
+                                .font(.system(size: 11, weight: .bold, design: .rounded))
+                                .foregroundStyle(NFGTheme.gold)
+                                .lineLimit(1)
+                        }
                         if UsernameDisplay.showsCrown(username: player.username, rewardStyle: rewardStyle) {
                             Image(systemName: "crown.fill")
                                 .font(.caption2.weight(.bold))
@@ -91,7 +106,7 @@ struct HubView: View {
                 }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Playing as \(UsernameDisplay.formatted(player.username)). Tap to edit username.")
+            .accessibilityLabel("Playing as \(UsernameDisplay.formatted(player.username)). Tap for profile.")
         }
     }
 
@@ -137,7 +152,7 @@ struct HubView: View {
     private func destination(for game: GameId) -> some View {
         switch game {
         case .wordwheel:
-            WordWheelView()
+            ChapterMapView()
         case .wordwheelTimed:
             TimedWordWheelView()
         case .wordwich:
@@ -196,10 +211,10 @@ struct HubView: View {
                 Text("WordWheel Timed")
                     .font(.system(size: 18, weight: .heavy, design: .rounded))
                     .foregroundStyle(NFGTheme.muted)
-                Text("Clear \(GameId.timedUnlockClears) WordWheel rounds to unlock")
+                Text("Reach WordWheel level \(GameId.timedUnlockClears) or clear \(GameId.timedUnlockClears) rounds")
                     .font(.footnote)
                     .foregroundStyle(NFGTheme.muted)
-                Text("\(scores.state.wordwheelRoundsCleared)/\(GameId.timedUnlockClears)")
+                Text("\(min(GameId.timedUnlockClears, scores.effectiveWordwheelRoundsCleared))/\(GameId.timedUnlockClears)")
                     .font(.caption.weight(.bold))
                     .foregroundStyle(NFGTheme.accent)
             }
@@ -241,7 +256,7 @@ struct HubView: View {
                     .font(.footnote)
                     .foregroundStyle(NFGTheme.muted)
                 if game == .wordwheel {
-                    Text("Level \(scores.state.wordwheelLevel)")
+                    Text("Level \(scores.state.wordwheelLevel) · \(progress.totalStars())★")
                         .font(.caption.weight(.bold))
                         .foregroundStyle(NFGTheme.accent)
                 } else if game == .wordwich {

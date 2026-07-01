@@ -17,18 +17,32 @@ final class ScoreStore: ObservableObject {
 
     private let key = "nfg-words-scores-v2"
     private let roundKey = "nfg-words-wordwheel-round-v1"
+    private let levelScoredKey = "nfg-wordwheel-level-scored-v1"
+    private let playedPuzzlesKey = "nfg-wordwheel-played-puzzles-v1"
+    private let roundHistoryKey = "nfg-wordwheel-round-history-v2"
+    private let recentBonusPacksKey = "nfg-wordwheel-recent-bonus-packs-v1"
     private let lifetimeWordsKey = "nfg-words-lifetime-words-v1"
     private let legacySessionWordsKey = "nfg-words-session-words-v1"
     private let pendingSyncKey = "nfg-words-pending-sync-v1"
     private var periodicSyncTask: Task<Void, Never>?
     private var pendingSyncTask: Task<Void, Never>?
     private var wantsFrequentLeaderboardSync = false
+    weak var cosmetics: CosmeticStore?
     private static let syncIntervalNanoseconds: UInt64 = 3 * 60 * 1_000_000_000
     private static let leaderboardSyncIntervalNanoseconds: UInt64 = 30 * 1_000_000_000
     private static let offlineRetryIntervalNanoseconds: UInt64 = 20 * 1_000_000_000
 
     init() {
         APIConfig.applyBakedInServerIfNeeded()
+
+        if let scene = AppStoreScreenshotMode.scene {
+            hasPendingSync = false
+            state = scene == .welcome ? .empty : AppStoreScreenshotSupport.demoLoggedInState()
+            isRestoringSession = false
+            dailyMissions = DailyMissionsVault.load()
+            return
+        }
+
         hasPendingSync = UserDefaults.standard.bool(forKey: pendingSyncKey)
 
         if let data = UserDefaults.standard.data(forKey: key),
@@ -48,8 +62,9 @@ final class ScoreStore: ObservableObject {
         }
         NFGCoinsVault.migrateIfNeeded(from: coinSnapshot(from: state))
         applyCoinVault(NFGCoinsVault.load())
-        migrateWordwheelRoundsClearedIfNeeded()
         migrateLifetimeWordsIfNeeded()
+        migrateWordwheelRoundHistoryIfNeeded()
+        reconcileWordwheelRoundsCleared()
         recoverPeakFromLeaderboardCacheIfNeeded()
         reconcileWordwheelProgress()
         refreshDailyMissions()
@@ -109,6 +124,15 @@ final class ScoreStore: ObservableObject {
             wordwheelScore: state.highScore(for: .wordwheel),
             claimedLevel: state.wordwheelLevel
         )
+        reconcileWordwheelRoundsCleared()
+    }
+
+    /// Restore lifetime clear count from level after sign-out / server restore.
+    private func reconcileWordwheelRoundsCleared() {
+        let fromLevel = max(0, state.wordwheelLevel - 1)
+        if state.wordwheelRoundsCleared < fromLevel {
+            state.wordwheelRoundsCleared = fromLevel
+        }
     }
 
     /// Never lower lifetime points — fix per-game breakdown if it lags behind total.
@@ -383,7 +407,11 @@ final class ScoreStore: ObservableObject {
     }
 
     var wordwheelTimedUnlocked: Bool {
-        state.wordwheelRoundsCleared >= GameId.timedUnlockClears
+        state.timedModeUnlocked
+    }
+
+    var effectiveWordwheelRoundsCleared: Int {
+        state.effectiveWordwheelRoundsCleared
     }
 
     /// Puzzle and bonus words already played — avoids repeats across levels and modes.
@@ -399,6 +427,89 @@ final class ScoreStore: ObservableObject {
         UserDefaults.standard.set(Array(merged).sorted(), forKey: lifetimeWordsKey)
     }
 
+    /// Fingerprints of completed WordWheel crossword layouts — legacy; see wordwheelRoundHistory().
+    func playedWordwheelPuzzles() -> Set<String> {
+        Set(UserDefaults.standard.stringArray(forKey: playedPuzzlesKey) ?? [])
+    }
+
+    func wordwheelRoundHistory() -> WordwheelRoundHistory {
+        guard let data = UserDefaults.standard.data(forKey: roundHistoryKey),
+              let decoded = try? JSONDecoder().decode(WordwheelRoundHistory.self, from: data) else {
+            return WordwheelRoundHistory()
+        }
+        return decoded
+    }
+
+    private func saveWordwheelRoundHistory(_ history: WordwheelRoundHistory) {
+        guard let data = try? JSONEncoder().encode(history) else { return }
+        UserDefaults.standard.set(data, forKey: roundHistoryKey)
+    }
+
+    /// Called when a round is loaded — blocks the same wheel on the very next round.
+    func noteWordwheelRoundSeen(_ level: WordwheelLevel) {
+        var history = wordwheelRoundHistory()
+        let wheel = WordwheelRoundFingerprint.wheel(for: level)
+        history.recentWheels.removeAll { $0 == wheel }
+        history.recentWheels.append(wheel)
+        if history.recentWheels.count > WordwheelRoundHistory.maxRecentWheels {
+            history.recentWheels.removeFirst(history.recentWheels.count - WordwheelRoundHistory.maxRecentWheels)
+        }
+        saveWordwheelRoundHistory(history)
+    }
+
+    /// Called when a round is cleared — never offer this wheel + crossword again.
+    func markWordwheelRoundCompleted(_ level: WordwheelLevel) {
+        var history = wordwheelRoundHistory()
+        let round = WordwheelRoundFingerprint.round(for: level)
+        if !history.playedRounds.contains(round) {
+            history.playedRounds.append(round)
+        }
+        let wheel = WordwheelRoundFingerprint.wheel(for: level)
+        if !history.recentWheels.contains(wheel) {
+            history.recentWheels.append(wheel)
+        }
+        if history.playedRounds.count > WordwheelRoundHistory.maxPlayedRounds {
+            history.playedRounds.removeFirst(history.playedRounds.count - WordwheelRoundHistory.maxPlayedRounds)
+        }
+        if history.recentWheels.count > WordwheelRoundHistory.maxRecentWheels {
+            history.recentWheels.removeFirst(history.recentWheels.count - WordwheelRoundHistory.maxRecentWheels)
+        }
+        saveWordwheelRoundHistory(history)
+
+        let puzzleWords = Set(level.words.map { $0.word.lowercased() })
+        markWordwheelPuzzlePlayed(puzzleWords)
+    }
+
+    func markWordwheelPuzzlePlayed(_ puzzleWords: Set<String>) {
+        guard !puzzleWords.isEmpty else { return }
+        let fingerprint = LevelStore.puzzleFingerprint(words: puzzleWords)
+        var played = playedWordwheelPuzzles()
+        played.insert(fingerprint)
+        UserDefaults.standard.set(Array(played).sorted(), forKey: playedPuzzlesKey)
+    }
+
+    func recentBonusPackIds() -> [Int] {
+        UserDefaults.standard.array(forKey: recentBonusPacksKey) as? [Int] ?? []
+    }
+
+    func markBonusPackPlayed(_ packId: Int) {
+        var recent = recentBonusPackIds()
+        recent.append(packId)
+        if recent.count > 8 {
+            recent.removeFirst(recent.count - 8)
+        }
+        UserDefaults.standard.set(recent, forKey: recentBonusPacksKey)
+    }
+
+    private func migrateWordwheelRoundHistoryIfNeeded() {
+        guard UserDefaults.standard.data(forKey: roundHistoryKey) == nil else { return }
+        let legacy = playedWordwheelPuzzles()
+        guard !legacy.isEmpty else { return }
+        var history = WordwheelRoundHistory()
+        history.playedRounds = Array(legacy)
+        saveWordwheelRoundHistory(history)
+    }
+
     private func migrateLifetimeWordsIfNeeded() {
         guard UserDefaults.standard.stringArray(forKey: lifetimeWordsKey) == nil,
               let legacy = UserDefaults.standard.stringArray(forKey: legacySessionWordsKey) else {
@@ -408,20 +519,7 @@ final class ScoreStore: ObservableObject {
     }
 
     func nextWordwheelLevel(after currentId: Int) -> Int {
-        if currentId < LevelStore.bundledLevelCount {
-            return LevelStore.nextBundledLevel(
-                after: currentId,
-                roundsCleared: state.wordwheelRoundsCleared,
-                excludingWords: sessionUsedWords()
-            )
-        }
-        return currentId + 1
-    }
-
-    private func migrateWordwheelRoundsClearedIfNeeded() {
-        guard state.wordwheelRoundsCleared == 0, state.wordwheelLevel > 1 else { return }
-        state.wordwheelRoundsCleared = max(0, state.wordwheelLevel - 1)
-        persist()
+        currentId + 1
     }
 
     func wordwheelRoundProgress() -> WordwheelRoundProgress? {
@@ -433,6 +531,7 @@ final class ScoreStore: ObservableObject {
     }
 
     func saveWordwheelRound(
+        levelId: Int,
         found: Set<String>,
         bonusFound: Set<String>,
         roundScore: Int,
@@ -443,7 +542,7 @@ final class ScoreStore: ObservableObject {
             return
         }
         let progress = WordwheelRoundProgress(
-            levelId: state.wordwheelLevel,
+            levelId: levelId,
             foundWords: found.sorted(),
             bonusWords: bonusFound.sorted(),
             roundScore: roundScore,
@@ -455,6 +554,39 @@ final class ScoreStore: ObservableObject {
 
     func clearWordwheelRound() {
         UserDefaults.standard.removeObject(forKey: roundKey)
+    }
+
+    private func levelScoredStore() -> [String: WordwheelLevelScored] {
+        guard let data = UserDefaults.standard.data(forKey: levelScoredKey),
+              let decoded = try? JSONDecoder().decode([String: WordwheelLevelScored].self, from: data) else {
+            return [:]
+        }
+        return decoded
+    }
+
+    private func saveLevelScoredStore(_ store: [String: WordwheelLevelScored]) {
+        guard let data = try? JSONEncoder().encode(store) else { return }
+        UserDefaults.standard.set(data, forKey: levelScoredKey)
+    }
+
+    func hasWordwheelScoredWord(_ word: String, levelId: Int, bonus: Bool) -> Bool {
+        let entry = levelScoredStore()[String(levelId)] ?? WordwheelLevelScored()
+        let set = bonus ? Set(entry.bonus) : Set(entry.puzzle)
+        return set.contains(word.lowercased())
+    }
+
+    func markWordwheelScoredWord(_ word: String, levelId: Int, bonus: Bool) {
+        let key = String(levelId)
+        var store = levelScoredStore()
+        var entry = store[key] ?? WordwheelLevelScored()
+        let w = word.lowercased()
+        if bonus {
+            if !entry.bonus.contains(w) { entry.bonus.append(w) }
+        } else if !entry.puzzle.contains(w) {
+            entry.puzzle.append(w)
+        }
+        store[key] = entry
+        saveLevelScoredStore(store)
     }
 
     func syncToServer() async throws {
@@ -473,11 +605,19 @@ final class ScoreStore: ObservableObject {
     }
 
     @discardableResult
-    func flushPendingSync() async -> Bool {
+    func flushPendingSync(cosmetics cosmeticsOverride: CosmeticStore? = nil) async -> Bool {
         guard let player = state.player else { return false }
+        let cosmetics = cosmeticsOverride ?? cosmetics
         do {
             try await LeaderboardAPI.checkHealth()
             try await LeaderboardAPI.syncScores(playerId: player.playerId, state: state)
+            if let cosmetics {
+                try? await LeaderboardAPI.syncPublicProfile(
+                    playerId: player.playerId,
+                    equippedTitleId: cosmetics.equippedTitleId,
+                    equippedWheelSkinId: cosmetics.equippedWheelSkinId
+                )
+            }
             setPendingSync(false)
             isServerReachable = true
             leaderboardRefreshTick += 1
@@ -486,6 +626,20 @@ final class ScoreStore: ObservableObject {
             setPendingSync(true)
             isServerReachable = false
             return false
+        }
+    }
+
+    func syncPublicProfile(cosmetics: CosmeticStore) {
+        guard state.player != nil else { return }
+        Task {
+            guard let player = state.player else { return }
+            try? await LeaderboardAPI.checkHealth()
+            try? await LeaderboardAPI.syncPublicProfile(
+                playerId: player.playerId,
+                equippedTitleId: cosmetics.equippedTitleId,
+                equippedWheelSkinId: cosmetics.equippedWheelSkinId
+            )
+            leaderboardRefreshTick += 1
         }
     }
 
@@ -565,6 +719,7 @@ final class ScoreStore: ObservableObject {
             state.gameHighScores[gameId] = max(state.gameHighScores[gameId] ?? 0, score)
         }
         state.wordwheelLevel = max(state.wordwheelLevel, remote.wordwheelLevel)
+        reconcileWordwheelRoundsCleared()
         recordLifetimePeak()
         notePossibleUnlock(from: beforeTotal, to: state.totalScore)
         persist()
@@ -585,6 +740,10 @@ final class ScoreStore: ObservableObject {
         NFGCoinsVault.clear()
         UserDefaults.standard.removeObject(forKey: key)
         UserDefaults.standard.removeObject(forKey: roundKey)
+        UserDefaults.standard.removeObject(forKey: levelScoredKey)
+        UserDefaults.standard.removeObject(forKey: playedPuzzlesKey)
+        UserDefaults.standard.removeObject(forKey: roundHistoryKey)
+        UserDefaults.standard.removeObject(forKey: recentBonusPacksKey)
         UserDefaults.standard.removeObject(forKey: lifetimeWordsKey)
         UserDefaults.standard.removeObject(forKey: legacySessionWordsKey)
         UserDefaults.standard.removeObject(forKey: "nfg-words-scores-v1")
@@ -604,6 +763,10 @@ final class ScoreStore: ObservableObject {
         NFGCoinsVault.clear()
         UserDefaults.standard.removeObject(forKey: key)
         UserDefaults.standard.removeObject(forKey: roundKey)
+        UserDefaults.standard.removeObject(forKey: levelScoredKey)
+        UserDefaults.standard.removeObject(forKey: playedPuzzlesKey)
+        UserDefaults.standard.removeObject(forKey: roundHistoryKey)
+        UserDefaults.standard.removeObject(forKey: recentBonusPacksKey)
         UserDefaults.standard.removeObject(forKey: lifetimeWordsKey)
         UserDefaults.standard.removeObject(forKey: legacySessionWordsKey)
         UserDefaults.standard.removeObject(forKey: "nfg-words-scores-v1")

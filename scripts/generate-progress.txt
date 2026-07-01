@@ -1,0 +1,2007 @@
+Loading dictionary…
+Dictionary: 42,048 words
+Generating 2000 levels (unique wheels + puzzle sets)…
+Watch progress: tail -f scripts/generate-progress.txt
+[   1/2000] wheels=1 words=5 elapsed=0s eta=261s
+[   2/2000] wheels=2 words=11 elapsed=0s eta=161s
+[   3/2000] wheels=3 words=15 elapsed=0s eta=128s
+[   4/2000] wheels=4 words=20 elapsed=0s eta=112s
+[   5/2000] wheels=5 words=27 elapsed=0s eta=105s
+[   6/2000] wheels=6 words=31 elapsed=0s eta=93s
+[   7/2000] wheels=7 words=36 elapsed=0s eta=97s
+[   8/2000] wheels=8 words=42 elapsed=0s eta=99s
+[   9/2000] wheels=9 words=46 elapsed=0s eta=97s
+[  10/2000] wheels=10 words=52 elapsed=0s eta=95s
+[  11/2000] wheels=11 words=58 elapsed=1s eta=93s
+[  12/2000] wheels=12 words=62 elapsed=1s eta=90s
+[  13/2000] wheels=13 words=66 elapsed=1s eta=90s
+[  14/2000] wheels=14 words=72 elapsed=1s eta=93s
+[  15/2000] wheels=15 words=77 elapsed=1s eta=94s
+[  16/2000] wheels=16 words=82 elapsed=1s eta=93s
+[  17/2000] wheels=17 words=89 elapsed=1s eta=92s
+[  18/2000] wheels=18 words=94 elapsed=1s eta=90s
+[  19/2000] wheels=19 words=100 elapsed=1s eta=92s
+[  20/2000] wheels=20 words=107 elapsed=1s eta=91s
+[  21/2000] wheels=21 words=112 elapsed=1s eta=89s
+[  22/2000] wheels=22 words=118 elapsed=1s eta=88s
+[  23/2000] wheels=23 words=125 elapsed=1s eta=87s
+[  24/2000] wheels=24 words=130 elapsed=1s eta=87s
+[  25/2000] wheels=25 words=137 elapsed=1s eta=87s
+[  26/2000] wheels=26 words=144 elapsed=1s eta=89s
+[  27/2000] wheels=27 words=149 elapsed=1s eta=88s
+[  28/2000] wheels=28 words=153 elapsed=1s eta=87s
+[  29/2000] wheels=29 words=160 elapsed=1s eta=86s
+[  30/2000] wheels=30 words=166 elapsed=1s eta=85s
+[  31/2000] wheels=31 words=172 elapsed=1s eta=84s
+[  32/2000] wheels=32 words=177 elapsed=1s eta=84s
+[  33/2000] wheels=33 words=182 elapsed=1s eta=83s
+[  34/2000] wheels=34 words=188 elapsed=1s eta=83s
+[  35/2000] wheels=35 words=193 elapsed=1s eta=82s
+[  36/2000] wheels=36 words=198 elapsed=2s eta=82s
+[  37/2000] wheels=37 words=204 elapsed=2s eta=81s
+[  38/2000] wheels=38 words=211 elapsed=2s eta=84s
+[  39/2000] wheels=39 words=216 elapsed=2s eta=85s
+[  40/2000] wheels=40 words=223 elapsed=2s eta=84s
+[  41/2000] wheels=41 words=230 elapsed=2s eta=84s
+[  42/2000] wheels=42 words=233 elapsed=2s eta=84s
+[  43/2000] wheels=43 words=239 elapsed=2s eta=84s
+[  44/2000] wheels=44 words=246 elapsed=2s eta=84s
+[  45/2000] wheels=45 words=251 elapsed=2s eta=84s
+[  46/2000] wheels=46 words=251 elapsed=2s eta=86s
+[  47/2000] wheels=47 words=258 elapsed=2s eta=86s
+[  48/2000] wheels=48 words=263 elapsed=2s eta=85s
+[  49/2000] wheels=49 words=269 elapsed=2s eta=85s
+[  50/2000] wheels=50 words=277 elapsed=2s eta=84s
+[  51/2000] wheels=51 words=282 elapsed=2s eta=84s
+[  52/2000] wheels=52 words=287 elapsed=2s eta=84s
+[  53/2000] wheels=53 words=294 elapsed=2s eta=84s
+[  54/2000] wheels=54 words=299 elapsed=2s eta=84s
+[  55/2000] wheels=55 words=306 elapsed=2s eta=83s
+[  56/2000] wheels=56 words=313 elapsed=2s eta=84s
+[  57/2000] wheels=57 words=317 elapsed=2s eta=83s
+[  58/2000] wheels=58 words=323 elapsed=2s eta=83s
+[  59/2000] wheels=59 words=330 elapsed=3s eta=84s
+[  60/2000] wheels=60 words=336 elapsed=3s eta=84s
+[  61/2000] wheels=61 words=342 elapsed=3s eta=84s
+[  62/2000] wheels=62 words=349 elapsed=3s eta=84s
+[  63/2000] wheels=63 words=353 elapsed=3s eta=83s
+[  64/2000] wheels=64 words=358 elapsed=3s eta=83s
+[  65/2000] wheels=65 words=363 elapsed=3s eta=83s
+[  66/2000] wheels=66 words=367 elapsed=3s eta=83s
+[  67/2000] wheels=67 words=372 elapsed=3s eta=82s
+[  68/2000] wheels=68 words=379 elapsed=3s eta=84s
+[  69/2000] wheels=69 words=384 elapsed=3s eta=84s
+[  70/2000] wheels=70 words=385 elapsed=3s eta=84s
+[  71/2000] wheels=71 words=392 elapsed=3s eta=85s
+[  72/2000] wheels=72 words=397 elapsed=3s eta=85s
+[  73/2000] wheels=73 words=403 elapsed=3s eta=85s
+[  74/2000] wheels=74 words=410 elapsed=3s eta=85s
+[  75/2000] wheels=75 words=410 elapsed=3s eta=84s
+[  76/2000] wheels=76 words=416 elapsed=3s eta=84s
+[  77/2000] wheels=77 words=423 elapsed=3s eta=84s
+[  78/2000] wheels=78 words=428 elapsed=3s eta=84s
+[  79/2000] wheels=79 words=433 elapsed=3s eta=85s
+[  80/2000] wheels=80 words=441 elapsed=4s eta=84s
+[  81/2000] wheels=81 words=447 elapsed=4s eta=84s
+[  82/2000] wheels=82 words=454 elapsed=4s eta=84s
+[  83/2000] wheels=83 words=460 elapsed=4s eta=83s
+[  84/2000] wheels=84 words=464 elapsed=4s eta=83s
+[  85/2000] wheels=85 words=470 elapsed=4s eta=83s
+[  86/2000] wheels=86 words=476 elapsed=4s eta=83s
+[  87/2000] wheels=87 words=482 elapsed=4s eta=84s
+[  88/2000] wheels=88 words=488 elapsed=4s eta=83s
+[  89/2000] wheels=89 words=496 elapsed=4s eta=83s
+[  90/2000] wheels=90 words=502 elapsed=4s eta=83s
+[  91/2000] wheels=91 words=505 elapsed=4s eta=83s
+[  92/2000] wheels=92 words=512 elapsed=4s eta=83s
+[  93/2000] wheels=93 words=515 elapsed=4s eta=83s
+[  94/2000] wheels=94 words=520 elapsed=4s eta=83s
+[  95/2000] wheels=95 words=527 elapsed=4s eta=84s
+[  96/2000] wheels=96 words=528 elapsed=4s eta=84s
+[  97/2000] wheels=97 words=535 elapsed=4s eta=84s
+[  98/2000] wheels=98 words=543 elapsed=4s eta=85s
+[  99/2000] wheels=99 words=548 elapsed=4s eta=84s
+[ 100/2000] wheels=100 words=556 elapsed=4s eta=85s
+[ 101/2000] wheels=101 words=563 elapsed=5s eta=86s
+[ 102/2000] wheels=102 words=567 elapsed=5s eta=86s
+[ 103/2000] wheels=103 words=574 elapsed=5s eta=85s
+[ 104/2000] wheels=104 words=582 elapsed=5s eta=86s
+[ 105/2000] wheels=105 words=588 elapsed=5s eta=85s
+[ 106/2000] wheels=106 words=594 elapsed=5s eta=85s
+[ 107/2000] wheels=107 words=602 elapsed=5s eta=86s
+[ 108/2000] wheels=108 words=608 elapsed=5s eta=86s
+[ 109/2000] wheels=109 words=611 elapsed=5s eta=85s
+[ 110/2000] wheels=110 words=618 elapsed=5s eta=85s
+[ 111/2000] wheels=111 words=623 elapsed=5s eta=85s
+[ 112/2000] wheels=112 words=630 elapsed=5s eta=85s
+[ 113/2000] wheels=113 words=637 elapsed=5s eta=86s
+[ 114/2000] wheels=114 words=643 elapsed=5s eta=86s
+[ 115/2000] wheels=115 words=650 elapsed=5s eta=86s
+[ 116/2000] wheels=116 words=656 elapsed=5s eta=86s
+[ 117/2000] wheels=117 words=661 elapsed=5s eta=87s
+[ 118/2000] wheels=118 words=668 elapsed=5s eta=87s
+[ 119/2000] wheels=119 words=674 elapsed=6s eta=87s
+[ 120/2000] wheels=120 words=680 elapsed=6s eta=87s
+[ 121/2000] wheels=121 words=687 elapsed=6s eta=87s
+[ 122/2000] wheels=122 words=695 elapsed=6s eta=87s
+[ 123/2000] wheels=123 words=700 elapsed=6s eta=87s
+[ 124/2000] wheels=124 words=707 elapsed=6s eta=87s
+[ 125/2000] wheels=125 words=712 elapsed=6s eta=87s
+[ 126/2000] wheels=126 words=717 elapsed=6s eta=87s
+[ 127/2000] wheels=127 words=721 elapsed=6s eta=86s
+[ 128/2000] wheels=128 words=728 elapsed=6s eta=87s
+[ 129/2000] wheels=129 words=733 elapsed=6s eta=87s
+[ 130/2000] wheels=130 words=738 elapsed=6s eta=86s
+[ 131/2000] wheels=131 words=744 elapsed=6s eta=86s
+[ 132/2000] wheels=132 words=748 elapsed=6s eta=87s
+[ 133/2000] wheels=133 words=755 elapsed=6s eta=86s
+[ 134/2000] wheels=134 words=762 elapsed=6s eta=86s
+[ 135/2000] wheels=135 words=768 elapsed=6s eta=86s
+[ 136/2000] wheels=136 words=773 elapsed=6s eta=86s
+[ 137/2000] wheels=137 words=777 elapsed=6s eta=87s
+[ 138/2000] wheels=138 words=782 elapsed=7s eta=92s
+[ 139/2000] wheels=139 words=787 elapsed=7s eta=92s
+[ 140/2000] wheels=140 words=793 elapsed=7s eta=93s
+[ 141/2000] wheels=141 words=799 elapsed=7s eta=94s
+[ 142/2000] wheels=142 words=806 elapsed=7s eta=93s
+[ 143/2000] wheels=143 words=813 elapsed=7s eta=94s
+[ 144/2000] wheels=144 words=819 elapsed=7s eta=94s
+[ 145/2000] wheels=145 words=823 elapsed=8s eta=100s
+[ 146/2000] wheels=146 words=830 elapsed=8s eta=99s
+[ 147/2000] wheels=147 words=835 elapsed=8s eta=99s
+[ 148/2000] wheels=148 words=841 elapsed=8s eta=99s
+[ 149/2000] wheels=149 words=846 elapsed=8s eta=99s
+[ 150/2000] wheels=150 words=853 elapsed=8s eta=99s
+[ 151/2000] wheels=151 words=858 elapsed=8s eta=99s
+[ 152/2000] wheels=152 words=863 elapsed=8s eta=99s
+[ 153/2000] wheels=153 words=867 elapsed=8s eta=99s
+[ 154/2000] wheels=154 words=872 elapsed=8s eta=99s
+[ 155/2000] wheels=155 words=880 elapsed=8s eta=99s
+[ 156/2000] wheels=156 words=886 elapsed=8s eta=99s
+[ 157/2000] wheels=157 words=892 elapsed=8s eta=99s
+[ 158/2000] wheels=158 words=898 elapsed=8s eta=99s
+[ 159/2000] wheels=159 words=904 elapsed=9s eta=99s
+[ 160/2000] wheels=160 words=912 elapsed=9s eta=99s
+[ 161/2000] wheels=161 words=918 elapsed=9s eta=99s
+[ 162/2000] wheels=162 words=924 elapsed=9s eta=99s
+[ 163/2000] wheels=163 words=931 elapsed=9s eta=99s
+[ 164/2000] wheels=164 words=937 elapsed=9s eta=99s
+[ 165/2000] wheels=165 words=944 elapsed=9s eta=99s
+[ 166/2000] wheels=166 words=948 elapsed=9s eta=99s
+[ 167/2000] wheels=167 words=954 elapsed=9s eta=99s
+[ 168/2000] wheels=168 words=957 elapsed=9s eta=99s
+[ 169/2000] wheels=169 words=961 elapsed=9s eta=99s
+[ 170/2000] wheels=170 words=966 elapsed=9s eta=99s
+[ 171/2000] wheels=171 words=973 elapsed=9s eta=100s
+[ 172/2000] wheels=172 words=980 elapsed=9s eta=100s
+[ 173/2000] wheels=173 words=987 elapsed=9s eta=100s
+[ 174/2000] wheels=174 words=994 elapsed=10s eta=100s
+[ 175/2000] wheels=175 words=1002 elapsed=10s eta=100s
+[ 176/2000] wheels=176 words=1009 elapsed=10s eta=100s
+[ 177/2000] wheels=177 words=1015 elapsed=10s eta=100s
+[ 178/2000] wheels=178 words=1021 elapsed=10s eta=100s
+[ 179/2000] wheels=179 words=1025 elapsed=10s eta=100s
+[ 180/2000] wheels=180 words=1033 elapsed=10s eta=100s
+[ 181/2000] wheels=181 words=1038 elapsed=10s eta=100s
+[ 182/2000] wheels=182 words=1044 elapsed=10s eta=100s
+[ 183/2000] wheels=183 words=1050 elapsed=10s eta=100s
+[ 184/2000] wheels=184 words=1058 elapsed=10s eta=100s
+[ 185/2000] wheels=185 words=1063 elapsed=10s eta=100s
+[ 186/2000] wheels=186 words=1066 elapsed=10s eta=100s
+[ 187/2000] wheels=187 words=1073 elapsed=10s eta=100s
+[ 188/2000] wheels=188 words=1081 elapsed=10s eta=100s
+[ 189/2000] wheels=189 words=1085 elapsed=10s eta=100s
+[ 190/2000] wheels=190 words=1090 elapsed=10s eta=100s
+[ 191/2000] wheels=191 words=1094 elapsed=11s eta=100s
+[ 192/2000] wheels=192 words=1100 elapsed=11s eta=100s
+[ 193/2000] wheels=193 words=1106 elapsed=11s eta=99s
+[ 194/2000] wheels=194 words=1113 elapsed=11s eta=99s
+[ 195/2000] wheels=195 words=1117 elapsed=11s eta=99s
+[ 196/2000] wheels=196 words=1123 elapsed=11s eta=99s
+[ 197/2000] wheels=197 words=1128 elapsed=11s eta=99s
+[ 198/2000] wheels=198 words=1134 elapsed=11s eta=99s
+[ 199/2000] wheels=199 words=1141 elapsed=11s eta=99s
+[ 200/2000] wheels=200 words=1146 elapsed=11s eta=99s
+[ 201/2000] wheels=201 words=1151 elapsed=11s eta=99s
+[ 202/2000] wheels=202 words=1154 elapsed=11s eta=99s
+[ 203/2000] wheels=203 words=1162 elapsed=11s eta=99s
+[ 204/2000] wheels=204 words=1169 elapsed=11s eta=99s
+[ 205/2000] wheels=205 words=1176 elapsed=11s eta=99s
+[ 206/2000] wheels=206 words=1181 elapsed=11s eta=99s
+[ 207/2000] wheels=207 words=1189 elapsed=11s eta=99s
+[ 208/2000] wheels=208 words=1192 elapsed=12s eta=102s
+[ 209/2000] wheels=209 words=1192 elapsed=12s eta=102s
+[ 210/2000] wheels=210 words=1200 elapsed=12s eta=102s
+[ 211/2000] wheels=211 words=1206 elapsed=12s eta=102s
+[ 212/2000] wheels=212 words=1209 elapsed=12s eta=102s
+[ 213/2000] wheels=213 words=1216 elapsed=12s eta=102s
+[ 214/2000] wheels=214 words=1224 elapsed=12s eta=102s
+[ 215/2000] wheels=215 words=1230 elapsed=12s eta=102s
+[ 216/2000] wheels=216 words=1234 elapsed=12s eta=102s
+[ 217/2000] wheels=217 words=1239 elapsed=12s eta=102s
+[ 218/2000] wheels=218 words=1244 elapsed=12s eta=102s
+[ 219/2000] wheels=219 words=1251 elapsed=13s eta=102s
+[ 220/2000] wheels=220 words=1255 elapsed=13s eta=102s
+[ 221/2000] wheels=221 words=1255 elapsed=13s eta=102s
+[ 222/2000] wheels=222 words=1261 elapsed=13s eta=102s
+[ 223/2000] wheels=223 words=1264 elapsed=13s eta=102s
+[ 224/2000] wheels=224 words=1267 elapsed=13s eta=101s
+[ 225/2000] wheels=225 words=1275 elapsed=13s eta=101s
+[ 226/2000] wheels=226 words=1283 elapsed=13s eta=101s
+[ 227/2000] wheels=227 words=1291 elapsed=13s eta=101s
+[ 228/2000] wheels=228 words=1296 elapsed=13s eta=101s
+[ 229/2000] wheels=229 words=1300 elapsed=13s eta=101s
+[ 230/2000] wheels=230 words=1303 elapsed=13s eta=101s
+[ 231/2000] wheels=231 words=1307 elapsed=13s eta=101s
+[ 232/2000] wheels=232 words=1312 elapsed=13s eta=101s
+[ 233/2000] wheels=233 words=1320 elapsed=13s eta=101s
+[ 234/2000] wheels=234 words=1327 elapsed=13s eta=101s
+[ 235/2000] wheels=235 words=1332 elapsed=13s eta=101s
+[ 236/2000] wheels=236 words=1336 elapsed=14s eta=101s
+[ 237/2000] wheels=237 words=1341 elapsed=14s eta=101s
+[ 238/2000] wheels=238 words=1348 elapsed=14s eta=101s
+[ 239/2000] wheels=239 words=1352 elapsed=14s eta=101s
+[ 240/2000] wheels=240 words=1356 elapsed=14s eta=101s
+[ 241/2000] wheels=241 words=1361 elapsed=14s eta=101s
+[ 242/2000] wheels=242 words=1365 elapsed=14s eta=101s
+[ 243/2000] wheels=243 words=1371 elapsed=14s eta=101s
+[ 244/2000] wheels=244 words=1374 elapsed=14s eta=101s
+[ 245/2000] wheels=245 words=1376 elapsed=14s eta=101s
+[ 246/2000] wheels=246 words=1379 elapsed=14s eta=101s
+[ 247/2000] wheels=247 words=1386 elapsed=14s eta=101s
+[ 248/2000] wheels=248 words=1390 elapsed=14s eta=101s
+[ 249/2000] wheels=249 words=1391 elapsed=14s eta=101s
+[ 250/2000] wheels=250 words=1396 elapsed=14s eta=101s
+[ 251/2000] wheels=251 words=1399 elapsed=14s eta=101s
+[ 252/2000] wheels=252 words=1403 elapsed=15s eta=101s
+[ 253/2000] wheels=253 words=1408 elapsed=15s eta=101s
+[ 254/2000] wheels=254 words=1414 elapsed=15s eta=100s
+[ 255/2000] wheels=255 words=1420 elapsed=15s eta=100s
+[ 256/2000] wheels=256 words=1422 elapsed=15s eta=100s
+[ 257/2000] wheels=257 words=1427 elapsed=15s eta=100s
+[ 258/2000] wheels=258 words=1435 elapsed=15s eta=100s
+[ 259/2000] wheels=259 words=1442 elapsed=15s eta=100s
+[ 260/2000] wheels=260 words=1447 elapsed=15s eta=100s
+[ 261/2000] wheels=261 words=1454 elapsed=15s eta=100s
+[ 262/2000] wheels=262 words=1460 elapsed=15s eta=100s
+[ 263/2000] wheels=263 words=1467 elapsed=15s eta=100s
+[ 264/2000] wheels=264 words=1469 elapsed=15s eta=100s
+[ 265/2000] wheels=265 words=1472 elapsed=15s eta=100s
+[ 266/2000] wheels=266 words=1480 elapsed=15s eta=100s
+[ 267/2000] wheels=267 words=1484 elapsed=15s eta=100s
+[ 268/2000] wheels=268 words=1490 elapsed=15s eta=100s
+[ 269/2000] wheels=269 words=1493 elapsed=15s eta=99s
+[ 270/2000] wheels=270 words=1498 elapsed=16s eta=100s
+[ 271/2000] wheels=271 words=1504 elapsed=16s eta=100s
+[ 272/2000] wheels=272 words=1507 elapsed=16s eta=101s
+[ 273/2000] wheels=273 words=1513 elapsed=16s eta=101s
+[ 274/2000] wheels=274 words=1514 elapsed=16s eta=102s
+[ 275/2000] wheels=275 words=1521 elapsed=16s eta=102s
+[ 276/2000] wheels=276 words=1527 elapsed=16s eta=102s
+[ 277/2000] wheels=277 words=1529 elapsed=16s eta=102s
+[ 278/2000] wheels=278 words=1535 elapsed=16s eta=102s
+[ 279/2000] wheels=279 words=1540 elapsed=16s eta=102s
+[ 280/2000] wheels=280 words=1542 elapsed=17s eta=102s
+[ 281/2000] wheels=281 words=1547 elapsed=17s eta=102s
+[ 282/2000] wheels=282 words=1553 elapsed=17s eta=102s
+[ 283/2000] wheels=283 words=1556 elapsed=17s eta=102s
+[ 284/2000] wheels=284 words=1563 elapsed=17s eta=102s
+[ 285/2000] wheels=285 words=1569 elapsed=17s eta=102s
+[ 286/2000] wheels=286 words=1576 elapsed=17s eta=102s
+[ 287/2000] wheels=287 words=1580 elapsed=17s eta=101s
+[ 288/2000] wheels=288 words=1585 elapsed=17s eta=101s
+[ 289/2000] wheels=289 words=1588 elapsed=17s eta=101s
+[ 290/2000] wheels=290 words=1591 elapsed=17s eta=101s
+[ 291/2000] wheels=291 words=1598 elapsed=17s eta=101s
+[ 292/2000] wheels=292 words=1604 elapsed=17s eta=101s
+[ 293/2000] wheels=293 words=1610 elapsed=17s eta=101s
+[ 294/2000] wheels=294 words=1615 elapsed=17s eta=101s
+[ 295/2000] wheels=295 words=1619 elapsed=18s eta=101s
+[ 296/2000] wheels=296 words=1624 elapsed=18s eta=102s
+[ 297/2000] wheels=297 words=1628 elapsed=18s eta=102s
+[ 298/2000] wheels=298 words=1633 elapsed=18s eta=102s
+[ 299/2000] wheels=299 words=1634 elapsed=18s eta=102s
+[ 300/2000] wheels=300 words=1640 elapsed=18s eta=102s
+[ 301/2000] wheels=301 words=1647 elapsed=18s eta=102s
+[ 302/2000] wheels=302 words=1655 elapsed=18s eta=102s
+[ 303/2000] wheels=303 words=1662 elapsed=18s eta=101s
+[ 304/2000] wheels=304 words=1668 elapsed=18s eta=101s
+[ 305/2000] wheels=305 words=1672 elapsed=18s eta=101s
+[ 306/2000] wheels=306 words=1679 elapsed=18s eta=101s
+[ 307/2000] wheels=307 words=1683 elapsed=18s eta=101s
+[ 308/2000] wheels=308 words=1689 elapsed=18s eta=101s
+[ 309/2000] wheels=309 words=1689 elapsed=19s eta=101s
+[ 310/2000] wheels=310 words=1691 elapsed=19s eta=101s
+[ 311/2000] wheels=311 words=1697 elapsed=19s eta=101s
+[ 312/2000] wheels=312 words=1704 elapsed=19s eta=101s
+[ 313/2000] wheels=313 words=1706 elapsed=19s eta=101s
+[ 314/2000] wheels=314 words=1712 elapsed=19s eta=102s
+[ 315/2000] wheels=315 words=1716 elapsed=19s eta=102s
+[ 316/2000] wheels=316 words=1720 elapsed=19s eta=102s
+[ 317/2000] wheels=317 words=1722 elapsed=20s eta=106s
+[ 318/2000] wheels=318 words=1728 elapsed=20s eta=106s
+[ 319/2000] wheels=319 words=1732 elapsed=20s eta=107s
+[ 320/2000] wheels=320 words=1735 elapsed=20s eta=107s
+[ 321/2000] wheels=321 words=1742 elapsed=20s eta=107s
+[ 322/2000] wheels=322 words=1747 elapsed=21s eta=107s
+[ 323/2000] wheels=323 words=1755 elapsed=21s eta=107s
+[ 324/2000] wheels=324 words=1763 elapsed=21s eta=107s
+[ 325/2000] wheels=325 words=1767 elapsed=21s eta=107s
+[ 326/2000] wheels=326 words=1772 elapsed=21s eta=107s
+[ 327/2000] wheels=327 words=1778 elapsed=21s eta=107s
+[ 328/2000] wheels=328 words=1781 elapsed=21s eta=107s
+[ 329/2000] wheels=329 words=1788 elapsed=21s eta=107s
+[ 330/2000] wheels=330 words=1795 elapsed=21s eta=107s
+[ 331/2000] wheels=331 words=1799 elapsed=21s eta=107s
+[ 332/2000] wheels=332 words=1805 elapsed=21s eta=107s
+[ 333/2000] wheels=333 words=1809 elapsed=21s eta=106s
+[ 334/2000] wheels=334 words=1813 elapsed=21s eta=106s
+[ 335/2000] wheels=335 words=1820 elapsed=21s eta=106s
+[ 336/2000] wheels=336 words=1828 elapsed=21s eta=106s
+[ 337/2000] wheels=337 words=1832 elapsed=21s eta=106s
+[ 338/2000] wheels=338 words=1840 elapsed=22s eta=106s
+[ 339/2000] wheels=339 words=1847 elapsed=22s eta=106s
+[ 340/2000] wheels=340 words=1851 elapsed=22s eta=106s
+[ 341/2000] wheels=341 words=1854 elapsed=22s eta=106s
+[ 342/2000] wheels=342 words=1854 elapsed=22s eta=106s
+[ 343/2000] wheels=343 words=1862 elapsed=22s eta=106s
+[ 344/2000] wheels=344 words=1867 elapsed=22s eta=106s
+[ 345/2000] wheels=345 words=1874 elapsed=22s eta=105s
+[ 346/2000] wheels=346 words=1882 elapsed=22s eta=105s
+[ 347/2000] wheels=347 words=1888 elapsed=22s eta=105s
+[ 348/2000] wheels=348 words=1892 elapsed=22s eta=105s
+[ 349/2000] wheels=349 words=1898 elapsed=22s eta=105s
+[ 350/2000] wheels=350 words=1904 elapsed=22s eta=105s
+[ 351/2000] wheels=351 words=1907 elapsed=22s eta=105s
+[ 352/2000] wheels=352 words=1910 elapsed=22s eta=105s
+[ 353/2000] wheels=353 words=1914 elapsed=23s eta=105s
+[ 354/2000] wheels=354 words=1918 elapsed=23s eta=105s
+[ 355/2000] wheels=355 words=1923 elapsed=23s eta=105s
+[ 356/2000] wheels=356 words=1927 elapsed=23s eta=105s
+[ 357/2000] wheels=357 words=1932 elapsed=23s eta=105s
+[ 358/2000] wheels=358 words=1937 elapsed=23s eta=105s
+[ 359/2000] wheels=359 words=1943 elapsed=23s eta=105s
+[ 360/2000] wheels=360 words=1948 elapsed=23s eta=105s
+[ 361/2000] wheels=361 words=1950 elapsed=23s eta=105s
+[ 362/2000] wheels=362 words=1952 elapsed=23s eta=105s
+[ 363/2000] wheels=363 words=1958 elapsed=23s eta=105s
+[ 364/2000] wheels=364 words=1963 elapsed=23s eta=104s
+[ 365/2000] wheels=365 words=1967 elapsed=23s eta=104s
+[ 366/2000] wheels=366 words=1973 elapsed=23s eta=104s
+[ 367/2000] wheels=367 words=1981 elapsed=24s eta=106s
+[ 368/2000] wheels=368 words=1984 elapsed=24s eta=106s
+[ 369/2000] wheels=369 words=1990 elapsed=24s eta=106s
+[ 370/2000] wheels=370 words=1998 elapsed=24s eta=106s
+[ 371/2000] wheels=371 words=2004 elapsed=24s eta=106s
+[ 372/2000] wheels=372 words=2007 elapsed=24s eta=106s
+[ 373/2000] wheels=373 words=2010 elapsed=24s eta=106s
+[ 374/2000] wheels=374 words=2015 elapsed=24s eta=106s
+[ 375/2000] wheels=375 words=2021 elapsed=24s eta=106s
+[ 376/2000] wheels=376 words=2023 elapsed=25s eta=106s
+[ 377/2000] wheels=377 words=2028 elapsed=25s eta=106s
+[ 378/2000] wheels=378 words=2034 elapsed=25s eta=106s
+[ 379/2000] wheels=379 words=2039 elapsed=25s eta=106s
+[ 380/2000] wheels=380 words=2039 elapsed=25s eta=106s
+[ 381/2000] wheels=381 words=2043 elapsed=25s eta=106s
+[ 382/2000] wheels=382 words=2049 elapsed=25s eta=106s
+[ 383/2000] wheels=383 words=2053 elapsed=25s eta=106s
+[ 384/2000] wheels=384 words=2055 elapsed=25s eta=106s
+[ 385/2000] wheels=385 words=2055 elapsed=25s eta=106s
+[ 386/2000] wheels=386 words=2058 elapsed=25s eta=106s
+[ 387/2000] wheels=387 words=2059 elapsed=25s eta=106s
+[ 388/2000] wheels=388 words=2065 elapsed=25s eta=106s
+[ 389/2000] wheels=389 words=2069 elapsed=25s eta=105s
+[ 390/2000] wheels=390 words=2074 elapsed=26s eta=105s
+[ 391/2000] wheels=391 words=2077 elapsed=26s eta=105s
+[ 392/2000] wheels=392 words=2082 elapsed=26s eta=105s
+[ 393/2000] wheels=393 words=2087 elapsed=26s eta=105s
+[ 394/2000] wheels=394 words=2092 elapsed=26s eta=105s
+[ 395/2000] wheels=395 words=2097 elapsed=26s eta=105s
+[ 396/2000] wheels=396 words=2103 elapsed=26s eta=105s
+[ 397/2000] wheels=397 words=2110 elapsed=26s eta=105s
+[ 398/2000] wheels=398 words=2111 elapsed=26s eta=105s
+[ 399/2000] wheels=399 words=2116 elapsed=26s eta=105s
+[ 400/2000] wheels=400 words=2116 elapsed=26s eta=105s
+[ 401/2000] wheels=401 words=2120 elapsed=26s eta=105s
+[ 402/2000] wheels=402 words=2126 elapsed=26s eta=105s
+[ 403/2000] wheels=403 words=2130 elapsed=26s eta=104s
+[ 404/2000] wheels=404 words=2133 elapsed=26s eta=104s
+[ 405/2000] wheels=405 words=2133 elapsed=26s eta=104s
+[ 406/2000] wheels=406 words=2139 elapsed=27s eta=104s
+[ 407/2000] wheels=407 words=2144 elapsed=27s eta=104s
+[ 408/2000] wheels=408 words=2148 elapsed=27s eta=104s
+[ 409/2000] wheels=409 words=2151 elapsed=27s eta=104s
+[ 410/2000] wheels=410 words=2155 elapsed=27s eta=104s
+[ 411/2000] wheels=411 words=2161 elapsed=27s eta=104s
+[ 412/2000] wheels=412 words=2165 elapsed=27s eta=104s
+[ 413/2000] wheels=413 words=2168 elapsed=27s eta=104s
+[ 414/2000] wheels=414 words=2174 elapsed=27s eta=104s
+[ 415/2000] wheels=415 words=2178 elapsed=27s eta=104s
+[ 416/2000] wheels=416 words=2184 elapsed=27s eta=104s
+[ 417/2000] wheels=417 words=2187 elapsed=27s eta=104s
+[ 418/2000] wheels=418 words=2192 elapsed=27s eta=103s
+[ 419/2000] wheels=419 words=2192 elapsed=27s eta=103s
+[ 420/2000] wheels=420 words=2196 elapsed=27s eta=103s
+[ 421/2000] wheels=421 words=2199 elapsed=27s eta=103s
+[ 422/2000] wheels=422 words=2206 elapsed=28s eta=103s
+[ 423/2000] wheels=423 words=2213 elapsed=28s eta=103s
+[ 424/2000] wheels=424 words=2218 elapsed=28s eta=103s
+[ 425/2000] wheels=425 words=2221 elapsed=28s eta=103s
+[ 426/2000] wheels=426 words=2222 elapsed=28s eta=103s
+[ 427/2000] wheels=427 words=2223 elapsed=28s eta=103s
+[ 428/2000] wheels=428 words=2230 elapsed=28s eta=103s
+[ 429/2000] wheels=429 words=2233 elapsed=28s eta=103s
+[ 430/2000] wheels=430 words=2236 elapsed=28s eta=103s
+[ 431/2000] wheels=431 words=2240 elapsed=28s eta=103s
+[ 432/2000] wheels=432 words=2246 elapsed=28s eta=102s
+[ 433/2000] wheels=433 words=2252 elapsed=28s eta=102s
+[ 434/2000] wheels=434 words=2256 elapsed=28s eta=102s
+[ 435/2000] wheels=435 words=2263 elapsed=28s eta=102s
+[ 436/2000] wheels=436 words=2271 elapsed=28s eta=102s
+[ 437/2000] wheels=437 words=2274 elapsed=29s eta=102s
+[ 438/2000] wheels=438 words=2278 elapsed=29s eta=102s
+[ 439/2000] wheels=439 words=2281 elapsed=29s eta=102s
+[ 440/2000] wheels=440 words=2284 elapsed=29s eta=102s
+[ 441/2000] wheels=441 words=2287 elapsed=29s eta=102s
+[ 442/2000] wheels=442 words=2290 elapsed=29s eta=102s
+[ 443/2000] wheels=443 words=2297 elapsed=29s eta=102s
+[ 444/2000] wheels=444 words=2304 elapsed=29s eta=101s
+[ 445/2000] wheels=445 words=2308 elapsed=29s eta=101s
+[ 446/2000] wheels=446 words=2315 elapsed=29s eta=101s
+[ 447/2000] wheels=447 words=2321 elapsed=29s eta=101s
+[ 448/2000] wheels=448 words=2327 elapsed=29s eta=101s
+[ 449/2000] wheels=449 words=2333 elapsed=30s eta=102s
+[ 450/2000] wheels=450 words=2335 elapsed=30s eta=102s
+[ 451/2000] wheels=451 words=2339 elapsed=30s eta=103s
+[ 452/2000] wheels=452 words=2344 elapsed=30s eta=103s
+[ 453/2000] wheels=453 words=2347 elapsed=30s eta=103s
+[ 454/2000] wheels=454 words=2350 elapsed=30s eta=103s
+[ 455/2000] wheels=455 words=2356 elapsed=30s eta=103s
+[ 456/2000] wheels=456 words=2362 elapsed=30s eta=103s
+[ 457/2000] wheels=457 words=2369 elapsed=30s eta=103s
+[ 458/2000] wheels=458 words=2374 elapsed=31s eta=103s
+[ 459/2000] wheels=459 words=2378 elapsed=31s eta=103s
+[ 460/2000] wheels=460 words=2379 elapsed=31s eta=103s
+[ 461/2000] wheels=461 words=2382 elapsed=31s eta=103s
+[ 462/2000] wheels=462 words=2386 elapsed=31s eta=103s
+[ 463/2000] wheels=463 words=2389 elapsed=31s eta=103s
+[ 464/2000] wheels=464 words=2394 elapsed=31s eta=102s
+[ 465/2000] wheels=465 words=2402 elapsed=31s eta=102s
+[ 466/2000] wheels=466 words=2408 elapsed=31s eta=102s
+[ 467/2000] wheels=467 words=2413 elapsed=31s eta=103s
+[ 468/2000] wheels=468 words=2417 elapsed=31s eta=102s
+[ 469/2000] wheels=469 words=2423 elapsed=31s eta=102s
+[ 470/2000] wheels=470 words=2429 elapsed=31s eta=102s
+[ 471/2000] wheels=471 words=2434 elapsed=32s eta=102s
+[ 472/2000] wheels=472 words=2438 elapsed=32s eta=103s
+[ 473/2000] wheels=473 words=2443 elapsed=32s eta=102s
+[ 474/2000] wheels=474 words=2450 elapsed=32s eta=102s
+[ 475/2000] wheels=475 words=2451 elapsed=32s eta=102s
+[ 476/2000] wheels=476 words=2454 elapsed=32s eta=102s
+[ 477/2000] wheels=477 words=2458 elapsed=32s eta=102s
+[ 478/2000] wheels=478 words=2462 elapsed=32s eta=102s
+[ 479/2000] wheels=479 words=2466 elapsed=32s eta=102s
+[ 480/2000] wheels=480 words=2471 elapsed=32s eta=102s
+[ 481/2000] wheels=481 words=2475 elapsed=32s eta=102s
+[ 482/2000] wheels=482 words=2478 elapsed=32s eta=102s
+[ 483/2000] wheels=483 words=2485 elapsed=33s eta=102s
+[ 484/2000] wheels=484 words=2490 elapsed=33s eta=102s
+[ 485/2000] wheels=485 words=2492 elapsed=33s eta=102s
+[ 486/2000] wheels=486 words=2498 elapsed=33s eta=102s
+[ 487/2000] wheels=487 words=2504 elapsed=33s eta=102s
+[ 488/2000] wheels=488 words=2510 elapsed=33s eta=102s
+[ 489/2000] wheels=489 words=2514 elapsed=33s eta=102s
+[ 490/2000] wheels=490 words=2516 elapsed=33s eta=102s
+[ 491/2000] wheels=491 words=2520 elapsed=33s eta=102s
+[ 492/2000] wheels=492 words=2526 elapsed=34s eta=104s
+[ 493/2000] wheels=493 words=2528 elapsed=34s eta=104s
+[ 494/2000] wheels=494 words=2529 elapsed=34s eta=104s
+[ 495/2000] wheels=495 words=2535 elapsed=34s eta=104s
+[ 496/2000] wheels=496 words=2537 elapsed=34s eta=104s
+[ 497/2000] wheels=497 words=2543 elapsed=34s eta=104s
+[ 498/2000] wheels=498 words=2543 elapsed=35s eta=104s
+[ 499/2000] wheels=499 words=2547 elapsed=35s eta=104s
+[ 500/2000] wheels=500 words=2551 elapsed=35s eta=104s
+[ 501/2000] wheels=501 words=2554 elapsed=35s eta=104s
+[ 502/2000] wheels=502 words=2555 elapsed=35s eta=104s
+[ 503/2000] wheels=503 words=2557 elapsed=35s eta=104s
+[ 504/2000] wheels=504 words=2563 elapsed=35s eta=104s
+[ 505/2000] wheels=505 words=2564 elapsed=35s eta=104s
+[ 506/2000] wheels=506 words=2566 elapsed=35s eta=104s
+[ 507/2000] wheels=507 words=2569 elapsed=35s eta=104s
+[ 508/2000] wheels=508 words=2570 elapsed=35s eta=104s
+[ 509/2000] wheels=509 words=2575 elapsed=35s eta=104s
+[ 510/2000] wheels=510 words=2579 elapsed=35s eta=104s
+[ 511/2000] wheels=511 words=2583 elapsed=36s eta=104s
+[ 512/2000] wheels=512 words=2587 elapsed=36s eta=103s
+[ 513/2000] wheels=513 words=2590 elapsed=36s eta=103s
+[ 514/2000] wheels=514 words=2598 elapsed=36s eta=103s
+[ 515/2000] wheels=515 words=2600 elapsed=36s eta=103s
+[ 516/2000] wheels=516 words=2602 elapsed=36s eta=103s
+[ 517/2000] wheels=517 words=2606 elapsed=36s eta=103s
+[ 518/2000] wheels=518 words=2610 elapsed=36s eta=103s
+[ 519/2000] wheels=519 words=2611 elapsed=36s eta=103s
+[ 520/2000] wheels=520 words=2612 elapsed=36s eta=103s
+[ 521/2000] wheels=521 words=2618 elapsed=36s eta=103s
+[ 522/2000] wheels=522 words=2622 elapsed=36s eta=103s
+[ 523/2000] wheels=523 words=2629 elapsed=36s eta=103s
+[ 524/2000] wheels=524 words=2632 elapsed=36s eta=103s
+[ 525/2000] wheels=525 words=2636 elapsed=36s eta=103s
+[ 526/2000] wheels=526 words=2637 elapsed=37s eta=102s
+[ 527/2000] wheels=527 words=2641 elapsed=37s eta=103s
+[ 528/2000] wheels=528 words=2649 elapsed=37s eta=103s
+[ 529/2000] wheels=529 words=2653 elapsed=37s eta=103s
+[ 530/2000] wheels=530 words=2654 elapsed=37s eta=103s
+[ 531/2000] wheels=531 words=2662 elapsed=37s eta=102s
+[ 532/2000] wheels=532 words=2666 elapsed=37s eta=103s
+[ 533/2000] wheels=533 words=2670 elapsed=37s eta=102s
+[ 534/2000] wheels=534 words=2673 elapsed=37s eta=102s
+[ 535/2000] wheels=535 words=2679 elapsed=37s eta=102s
+[ 536/2000] wheels=536 words=2683 elapsed=37s eta=102s
+[ 537/2000] wheels=537 words=2687 elapsed=37s eta=102s
+[ 538/2000] wheels=538 words=2693 elapsed=38s eta=102s
+[ 539/2000] wheels=539 words=2697 elapsed=38s eta=102s
+[ 540/2000] wheels=540 words=2705 elapsed=38s eta=102s
+[ 541/2000] wheels=541 words=2709 elapsed=38s eta=103s
+[ 542/2000] wheels=542 words=2712 elapsed=38s eta=103s
+[ 543/2000] wheels=543 words=2715 elapsed=38s eta=103s
+[ 544/2000] wheels=544 words=2715 elapsed=38s eta=103s
+[ 545/2000] wheels=545 words=2719 elapsed=38s eta=103s
+[ 546/2000] wheels=546 words=2719 elapsed=39s eta=103s
+[ 547/2000] wheels=547 words=2723 elapsed=39s eta=103s
+[ 548/2000] wheels=548 words=2728 elapsed=39s eta=102s
+[ 549/2000] wheels=549 words=2731 elapsed=39s eta=103s
+[ 550/2000] wheels=550 words=2734 elapsed=39s eta=103s
+[ 551/2000] wheels=551 words=2736 elapsed=39s eta=103s
+[ 552/2000] wheels=552 words=2743 elapsed=39s eta=103s
+[ 553/2000] wheels=553 words=2748 elapsed=39s eta=103s
+[ 554/2000] wheels=554 words=2751 elapsed=39s eta=103s
+[ 555/2000] wheels=555 words=2757 elapsed=39s eta=103s
+[ 556/2000] wheels=556 words=2764 elapsed=40s eta=103s
+[ 557/2000] wheels=557 words=2771 elapsed=40s eta=103s
+[ 558/2000] wheels=558 words=2774 elapsed=40s eta=102s
+[ 559/2000] wheels=559 words=2777 elapsed=40s eta=102s
+[ 560/2000] wheels=560 words=2782 elapsed=40s eta=102s
+[ 561/2000] wheels=561 words=2788 elapsed=40s eta=102s
+[ 562/2000] wheels=562 words=2793 elapsed=40s eta=102s
+[ 563/2000] wheels=563 words=2794 elapsed=40s eta=102s
+[ 564/2000] wheels=564 words=2799 elapsed=40s eta=102s
+[ 565/2000] wheels=565 words=2804 elapsed=40s eta=102s
+[ 566/2000] wheels=566 words=2804 elapsed=40s eta=102s
+[ 567/2000] wheels=567 words=2807 elapsed=40s eta=102s
+[ 568/2000] wheels=568 words=2809 elapsed=40s eta=102s
+[ 569/2000] wheels=569 words=2814 elapsed=40s eta=102s
+[ 570/2000] wheels=570 words=2818 elapsed=41s eta=102s
+[ 571/2000] wheels=571 words=2822 elapsed=41s eta=102s
+[ 572/2000] wheels=572 words=2829 elapsed=41s eta=101s
+[ 573/2000] wheels=573 words=2834 elapsed=41s eta=101s
+[ 574/2000] wheels=574 words=2839 elapsed=41s eta=101s
+[ 575/2000] wheels=575 words=2846 elapsed=41s eta=101s
+[ 576/2000] wheels=576 words=2848 elapsed=41s eta=101s
+[ 577/2000] wheels=577 words=2850 elapsed=41s eta=101s
+[ 578/2000] wheels=578 words=2851 elapsed=41s eta=101s
+[ 579/2000] wheels=579 words=2853 elapsed=41s eta=101s
+[ 580/2000] wheels=580 words=2856 elapsed=41s eta=101s
+[ 581/2000] wheels=581 words=2857 elapsed=41s eta=101s
+[ 582/2000] wheels=582 words=2861 elapsed=41s eta=100s
+[ 583/2000] wheels=583 words=2865 elapsed=41s eta=100s
+[ 584/2000] wheels=584 words=2866 elapsed=41s eta=100s
+[ 585/2000] wheels=585 words=2867 elapsed=41s eta=100s
+[ 586/2000] wheels=586 words=2873 elapsed=41s eta=100s
+[ 587/2000] wheels=587 words=2878 elapsed=42s eta=100s
+[ 588/2000] wheels=588 words=2880 elapsed=42s eta=100s
+[ 589/2000] wheels=589 words=2886 elapsed=42s eta=100s
+[ 590/2000] wheels=590 words=2888 elapsed=42s eta=100s
+[ 591/2000] wheels=591 words=2892 elapsed=42s eta=99s
+[ 592/2000] wheels=592 words=2897 elapsed=42s eta=99s
+[ 593/2000] wheels=593 words=2900 elapsed=42s eta=99s
+[ 594/2000] wheels=594 words=2905 elapsed=42s eta=99s
+[ 595/2000] wheels=595 words=2909 elapsed=42s eta=99s
+[ 596/2000] wheels=596 words=2909 elapsed=42s eta=99s
+[ 597/2000] wheels=597 words=2912 elapsed=42s eta=99s
+[ 598/2000] wheels=598 words=2915 elapsed=42s eta=99s
+[ 599/2000] wheels=599 words=2921 elapsed=42s eta=99s
+[ 600/2000] wheels=600 words=2926 elapsed=42s eta=99s
+[ 601/2000] wheels=601 words=2929 elapsed=42s eta=99s
+[ 602/2000] wheels=602 words=2936 elapsed=43s eta=99s
+[ 603/2000] wheels=603 words=2941 elapsed=43s eta=99s
+[ 604/2000] wheels=604 words=2944 elapsed=43s eta=99s
+[ 605/2000] wheels=605 words=2947 elapsed=43s eta=99s
+[ 606/2000] wheels=606 words=2952 elapsed=43s eta=99s
+[ 607/2000] wheels=607 words=2959 elapsed=43s eta=99s
+[ 608/2000] wheels=608 words=2964 elapsed=43s eta=99s
+[ 609/2000] wheels=609 words=2969 elapsed=43s eta=98s
+[ 610/2000] wheels=610 words=2972 elapsed=43s eta=98s
+[ 611/2000] wheels=611 words=2977 elapsed=43s eta=98s
+[ 612/2000] wheels=612 words=2981 elapsed=43s eta=98s
+[ 613/2000] wheels=613 words=2984 elapsed=43s eta=98s
+[ 614/2000] wheels=614 words=2986 elapsed=44s eta=98s
+[ 615/2000] wheels=615 words=2992 elapsed=44s eta=98s
+[ 616/2000] wheels=616 words=2996 elapsed=44s eta=98s
+[ 617/2000] wheels=617 words=2998 elapsed=44s eta=98s
+[ 618/2000] wheels=618 words=3001 elapsed=44s eta=98s
+[ 619/2000] wheels=619 words=3005 elapsed=44s eta=98s
+[ 620/2000] wheels=620 words=3009 elapsed=44s eta=98s
+[ 621/2000] wheels=621 words=3012 elapsed=44s eta=98s
+[ 622/2000] wheels=622 words=3015 elapsed=44s eta=98s
+[ 623/2000] wheels=623 words=3020 elapsed=44s eta=98s
+[ 624/2000] wheels=624 words=3022 elapsed=44s eta=98s
+[ 625/2000] wheels=625 words=3026 elapsed=44s eta=98s
+[ 626/2000] wheels=626 words=3029 elapsed=45s eta=98s
+[ 627/2000] wheels=627 words=3036 elapsed=45s eta=98s
+[ 628/2000] wheels=628 words=3037 elapsed=45s eta=98s
+[ 629/2000] wheels=629 words=3040 elapsed=45s eta=98s
+[ 630/2000] wheels=630 words=3047 elapsed=45s eta=98s
+[ 631/2000] wheels=631 words=3050 elapsed=45s eta=98s
+[ 632/2000] wheels=632 words=3057 elapsed=45s eta=98s
+[ 633/2000] wheels=633 words=3062 elapsed=45s eta=98s
+[ 634/2000] wheels=634 words=3064 elapsed=45s eta=98s
+[ 635/2000] wheels=635 words=3067 elapsed=45s eta=97s
+[ 636/2000] wheels=636 words=3069 elapsed=45s eta=97s
+[ 637/2000] wheels=637 words=3073 elapsed=45s eta=97s
+[ 638/2000] wheels=638 words=3075 elapsed=46s eta=97s
+[ 639/2000] wheels=639 words=3080 elapsed=46s eta=97s
+[ 640/2000] wheels=640 words=3083 elapsed=46s eta=97s
+[ 641/2000] wheels=641 words=3086 elapsed=46s eta=97s
+[ 642/2000] wheels=642 words=3088 elapsed=46s eta=97s
+[ 643/2000] wheels=643 words=3092 elapsed=46s eta=97s
+[ 644/2000] wheels=644 words=3095 elapsed=46s eta=97s
+[ 645/2000] wheels=645 words=3100 elapsed=46s eta=97s
+[ 646/2000] wheels=646 words=3105 elapsed=46s eta=97s
+[ 647/2000] wheels=647 words=3106 elapsed=46s eta=97s
+[ 648/2000] wheels=648 words=3114 elapsed=46s eta=97s
+[ 649/2000] wheels=649 words=3118 elapsed=46s eta=97s
+[ 650/2000] wheels=650 words=3119 elapsed=47s eta=97s
+[ 651/2000] wheels=651 words=3122 elapsed=47s eta=97s
+[ 652/2000] wheels=652 words=3125 elapsed=47s eta=97s
+[ 653/2000] wheels=653 words=3129 elapsed=47s eta=96s
+[ 654/2000] wheels=654 words=3129 elapsed=47s eta=96s
+[ 655/2000] wheels=655 words=3131 elapsed=47s eta=96s
+[ 656/2000] wheels=656 words=3137 elapsed=47s eta=96s
+[ 657/2000] wheels=657 words=3142 elapsed=47s eta=96s
+[ 658/2000] wheels=658 words=3148 elapsed=47s eta=96s
+[ 659/2000] wheels=659 words=3154 elapsed=47s eta=96s
+[ 660/2000] wheels=660 words=3159 elapsed=47s eta=96s
+[ 661/2000] wheels=661 words=3163 elapsed=47s eta=96s
+[ 662/2000] wheels=662 words=3166 elapsed=47s eta=96s
+[ 663/2000] wheels=663 words=3172 elapsed=47s eta=96s
+[ 664/2000] wheels=664 words=3176 elapsed=48s eta=96s
+[ 665/2000] wheels=665 words=3179 elapsed=48s eta=96s
+[ 666/2000] wheels=666 words=3183 elapsed=48s eta=95s
+[ 667/2000] wheels=667 words=3186 elapsed=48s eta=95s
+[ 668/2000] wheels=668 words=3191 elapsed=48s eta=95s
+[ 669/2000] wheels=669 words=3193 elapsed=48s eta=95s
+[ 670/2000] wheels=670 words=3196 elapsed=48s eta=95s
+[ 671/2000] wheels=671 words=3197 elapsed=48s eta=95s
+[ 672/2000] wheels=672 words=3199 elapsed=48s eta=95s
+[ 673/2000] wheels=673 words=3199 elapsed=48s eta=95s
+[ 674/2000] wheels=674 words=3201 elapsed=48s eta=95s
+[ 675/2000] wheels=675 words=3201 elapsed=48s eta=95s
+[ 676/2000] wheels=676 words=3204 elapsed=49s eta=95s
+[ 677/2000] wheels=677 words=3207 elapsed=50s eta=97s
+[ 678/2000] wheels=678 words=3214 elapsed=50s eta=97s
+[ 679/2000] wheels=679 words=3219 elapsed=50s eta=97s
+[ 680/2000] wheels=680 words=3223 elapsed=50s eta=97s
+[ 681/2000] wheels=681 words=3227 elapsed=50s eta=97s
+[ 682/2000] wheels=682 words=3231 elapsed=50s eta=97s
+[ 683/2000] wheels=683 words=3235 elapsed=50s eta=97s
+[ 684/2000] wheels=684 words=3240 elapsed=50s eta=97s
+[ 685/2000] wheels=685 words=3242 elapsed=50s eta=97s
+[ 686/2000] wheels=686 words=3246 elapsed=51s eta=97s
+[ 687/2000] wheels=687 words=3250 elapsed=51s eta=97s
+[ 688/2000] wheels=688 words=3251 elapsed=51s eta=97s
+[ 689/2000] wheels=689 words=3255 elapsed=51s eta=97s
+[ 690/2000] wheels=690 words=3257 elapsed=51s eta=97s
+[ 691/2000] wheels=691 words=3261 elapsed=51s eta=97s
+[ 692/2000] wheels=692 words=3263 elapsed=51s eta=97s
+[ 693/2000] wheels=693 words=3267 elapsed=51s eta=97s
+[ 694/2000] wheels=694 words=3268 elapsed=51s eta=97s
+[ 695/2000] wheels=695 words=3272 elapsed=52s eta=97s
+[ 696/2000] wheels=696 words=3278 elapsed=52s eta=97s
+[ 697/2000] wheels=697 words=3279 elapsed=52s eta=97s
+[ 698/2000] wheels=698 words=3284 elapsed=52s eta=97s
+[ 699/2000] wheels=699 words=3288 elapsed=52s eta=97s
+[ 700/2000] wheels=700 words=3293 elapsed=52s eta=97s
+[ 701/2000] wheels=701 words=3297 elapsed=52s eta=97s
+[ 702/2000] wheels=702 words=3298 elapsed=52s eta=97s
+[ 703/2000] wheels=703 words=3300 elapsed=52s eta=97s
+[ 704/2000] wheels=704 words=3305 elapsed=52s eta=96s
+[ 705/2000] wheels=705 words=3309 elapsed=52s eta=96s
+[ 706/2000] wheels=706 words=3312 elapsed=53s eta=96s
+[ 707/2000] wheels=707 words=3318 elapsed=53s eta=96s
+[ 708/2000] wheels=708 words=3323 elapsed=53s eta=96s
+[ 709/2000] wheels=709 words=3326 elapsed=53s eta=96s
+[ 710/2000] wheels=710 words=3332 elapsed=53s eta=96s
+[ 711/2000] wheels=711 words=3334 elapsed=53s eta=96s
+[ 712/2000] wheels=712 words=3337 elapsed=53s eta=96s
+[ 713/2000] wheels=713 words=3340 elapsed=53s eta=96s
+[ 714/2000] wheels=714 words=3343 elapsed=53s eta=96s
+[ 715/2000] wheels=715 words=3348 elapsed=53s eta=96s
+[ 716/2000] wheels=716 words=3352 elapsed=54s eta=96s
+[ 717/2000] wheels=717 words=3355 elapsed=54s eta=96s
+[ 718/2000] wheels=718 words=3361 elapsed=54s eta=96s
+[ 719/2000] wheels=719 words=3364 elapsed=54s eta=96s
+[ 720/2000] wheels=720 words=3367 elapsed=54s eta=96s
+[ 721/2000] wheels=721 words=3372 elapsed=54s eta=96s
+[ 722/2000] wheels=722 words=3377 elapsed=54s eta=96s
+[ 723/2000] wheels=723 words=3384 elapsed=54s eta=96s
+[ 724/2000] wheels=724 words=3387 elapsed=54s eta=96s
+[ 725/2000] wheels=725 words=3391 elapsed=54s eta=96s
+[ 726/2000] wheels=726 words=3393 elapsed=54s eta=96s
+[ 727/2000] wheels=727 words=3395 elapsed=55s eta=95s
+[ 728/2000] wheels=728 words=3400 elapsed=55s eta=95s
+[ 729/2000] wheels=729 words=3405 elapsed=55s eta=95s
+[ 730/2000] wheels=730 words=3407 elapsed=55s eta=95s
+[ 731/2000] wheels=731 words=3411 elapsed=55s eta=95s
+[ 732/2000] wheels=732 words=3411 elapsed=55s eta=95s
+[ 733/2000] wheels=733 words=3416 elapsed=55s eta=95s
+[ 734/2000] wheels=734 words=3419 elapsed=55s eta=95s
+[ 735/2000] wheels=735 words=3421 elapsed=55s eta=95s
+[ 736/2000] wheels=736 words=3425 elapsed=55s eta=95s
+[ 737/2000] wheels=737 words=3427 elapsed=55s eta=95s
+[ 738/2000] wheels=738 words=3430 elapsed=56s eta=95s
+[ 739/2000] wheels=739 words=3436 elapsed=56s eta=95s
+[ 740/2000] wheels=740 words=3440 elapsed=56s eta=95s
+[ 741/2000] wheels=741 words=3443 elapsed=56s eta=95s
+[ 742/2000] wheels=742 words=3443 elapsed=56s eta=95s
+[ 743/2000] wheels=743 words=3446 elapsed=56s eta=95s
+[ 744/2000] wheels=744 words=3450 elapsed=56s eta=95s
+[ 745/2000] wheels=745 words=3456 elapsed=56s eta=95s
+[ 746/2000] wheels=746 words=3461 elapsed=56s eta=95s
+[ 747/2000] wheels=747 words=3465 elapsed=56s eta=94s
+[ 748/2000] wheels=748 words=3471 elapsed=56s eta=94s
+[ 749/2000] wheels=749 words=3474 elapsed=56s eta=94s
+[ 750/2000] wheels=750 words=3478 elapsed=57s eta=94s
+[ 751/2000] wheels=751 words=3482 elapsed=57s eta=94s
+[ 752/2000] wheels=752 words=3486 elapsed=57s eta=94s
+[ 753/2000] wheels=753 words=3488 elapsed=57s eta=94s
+[ 754/2000] wheels=754 words=3493 elapsed=57s eta=94s
+[ 755/2000] wheels=755 words=3496 elapsed=57s eta=94s
+[ 756/2000] wheels=756 words=3499 elapsed=57s eta=94s
+[ 757/2000] wheels=757 words=3501 elapsed=57s eta=94s
+[ 758/2000] wheels=758 words=3505 elapsed=57s eta=94s
+[ 759/2000] wheels=759 words=3508 elapsed=58s eta=94s
+[ 760/2000] wheels=760 words=3511 elapsed=58s eta=94s
+[ 761/2000] wheels=761 words=3516 elapsed=58s eta=95s
+[ 762/2000] wheels=762 words=3518 elapsed=58s eta=95s
+[ 763/2000] wheels=763 words=3521 elapsed=58s eta=95s
+[ 764/2000] wheels=764 words=3526 elapsed=58s eta=94s
+[ 765/2000] wheels=765 words=3529 elapsed=59s eta=95s
+[ 766/2000] wheels=766 words=3535 elapsed=59s eta=95s
+[ 767/2000] wheels=767 words=3538 elapsed=59s eta=94s
+[ 768/2000] wheels=768 words=3542 elapsed=59s eta=94s
+[ 769/2000] wheels=769 words=3545 elapsed=59s eta=94s
+[ 770/2000] wheels=770 words=3550 elapsed=59s eta=94s
+[ 771/2000] wheels=771 words=3551 elapsed=59s eta=94s
+[ 772/2000] wheels=772 words=3553 elapsed=59s eta=94s
+[ 773/2000] wheels=773 words=3559 elapsed=59s eta=94s
+[ 774/2000] wheels=774 words=3565 elapsed=60s eta=94s
+[ 775/2000] wheels=775 words=3571 elapsed=60s eta=94s
+[ 776/2000] wheels=776 words=3574 elapsed=60s eta=94s
+[ 777/2000] wheels=777 words=3575 elapsed=60s eta=94s
+[ 778/2000] wheels=778 words=3579 elapsed=60s eta=94s
+[ 779/2000] wheels=779 words=3584 elapsed=60s eta=94s
+[ 780/2000] wheels=780 words=3588 elapsed=60s eta=94s
+[ 781/2000] wheels=781 words=3590 elapsed=60s eta=94s
+[ 782/2000] wheels=782 words=3594 elapsed=60s eta=94s
+[ 783/2000] wheels=783 words=3596 elapsed=61s eta=94s
+[ 784/2000] wheels=784 words=3598 elapsed=61s eta=94s
+[ 785/2000] wheels=785 words=3599 elapsed=61s eta=94s
+[ 786/2000] wheels=786 words=3603 elapsed=61s eta=94s
+[ 787/2000] wheels=787 words=3606 elapsed=61s eta=94s
+[ 788/2000] wheels=788 words=3609 elapsed=61s eta=94s
+[ 789/2000] wheels=789 words=3612 elapsed=61s eta=94s
+[ 790/2000] wheels=790 words=3616 elapsed=61s eta=94s
+[ 791/2000] wheels=791 words=3617 elapsed=61s eta=94s
+[ 792/2000] wheels=792 words=3622 elapsed=61s eta=94s
+[ 793/2000] wheels=793 words=3629 elapsed=61s eta=94s
+[ 794/2000] wheels=794 words=3629 elapsed=62s eta=94s
+[ 795/2000] wheels=795 words=3635 elapsed=62s eta=94s
+[ 796/2000] wheels=796 words=3641 elapsed=62s eta=94s
+[ 797/2000] wheels=797 words=3645 elapsed=62s eta=93s
+[ 798/2000] wheels=798 words=3646 elapsed=62s eta=94s
+[ 799/2000] wheels=799 words=3651 elapsed=63s eta=94s
+[ 800/2000] wheels=800 words=3653 elapsed=63s eta=94s
+[ 801/2000] wheels=801 words=3657 elapsed=63s eta=94s
+[ 802/2000] wheels=802 words=3660 elapsed=63s eta=94s
+[ 803/2000] wheels=803 words=3663 elapsed=63s eta=94s
+[ 804/2000] wheels=804 words=3668 elapsed=63s eta=94s
+[ 805/2000] wheels=805 words=3673 elapsed=63s eta=94s
+[ 806/2000] wheels=806 words=3676 elapsed=63s eta=94s
+[ 807/2000] wheels=807 words=3679 elapsed=63s eta=94s
+[ 808/2000] wheels=808 words=3682 elapsed=64s eta=94s
+[ 809/2000] wheels=809 words=3686 elapsed=64s eta=94s
+[ 810/2000] wheels=810 words=3693 elapsed=64s eta=94s
+[ 811/2000] wheels=811 words=3697 elapsed=64s eta=94s
+[ 812/2000] wheels=812 words=3699 elapsed=64s eta=94s
+[ 813/2000] wheels=813 words=3705 elapsed=64s eta=93s
+[ 814/2000] wheels=814 words=3708 elapsed=64s eta=93s
+[ 815/2000] wheels=815 words=3710 elapsed=64s eta=93s
+[ 816/2000] wheels=816 words=3715 elapsed=65s eta=94s
+[ 817/2000] wheels=817 words=3716 elapsed=65s eta=94s
+[ 818/2000] wheels=818 words=3721 elapsed=65s eta=94s
+[ 819/2000] wheels=819 words=3726 elapsed=65s eta=94s
+[ 820/2000] wheels=820 words=3733 elapsed=65s eta=94s
+[ 821/2000] wheels=821 words=3738 elapsed=65s eta=94s
+[ 822/2000] wheels=822 words=3740 elapsed=65s eta=94s
+[ 823/2000] wheels=823 words=3746 elapsed=65s eta=94s
+[ 824/2000] wheels=824 words=3749 elapsed=67s eta=96s
+[ 825/2000] wheels=825 words=3752 elapsed=68s eta=96s
+[ 826/2000] wheels=826 words=3754 elapsed=68s eta=97s
+[ 827/2000] wheels=827 words=3758 elapsed=68s eta=97s
+[ 828/2000] wheels=828 words=3762 elapsed=68s eta=97s
+[ 829/2000] wheels=829 words=3766 elapsed=69s eta=97s
+[ 830/2000] wheels=830 words=3770 elapsed=69s eta=97s
+[ 831/2000] wheels=831 words=3773 elapsed=69s eta=97s
+[ 832/2000] wheels=832 words=3773 elapsed=69s eta=97s
+[ 833/2000] wheels=833 words=3779 elapsed=69s eta=97s
+[ 834/2000] wheels=834 words=3779 elapsed=69s eta=97s
+[ 835/2000] wheels=835 words=3783 elapsed=69s eta=97s
+[ 836/2000] wheels=836 words=3787 elapsed=69s eta=97s
+[ 837/2000] wheels=837 words=3790 elapsed=69s eta=96s
+[ 838/2000] wheels=838 words=3791 elapsed=70s eta=96s
+[ 839/2000] wheels=839 words=3794 elapsed=70s eta=96s
+[ 840/2000] wheels=840 words=3796 elapsed=70s eta=96s
+[ 841/2000] wheels=841 words=3797 elapsed=70s eta=97s
+[ 842/2000] wheels=842 words=3799 elapsed=71s eta=97s
+[ 843/2000] wheels=843 words=3800 elapsed=71s eta=97s
+[ 844/2000] wheels=844 words=3805 elapsed=71s eta=97s
+[ 845/2000] wheels=845 words=3809 elapsed=71s eta=97s
+[ 846/2000] wheels=846 words=3813 elapsed=72s eta=98s
+[ 847/2000] wheels=847 words=3816 elapsed=72s eta=97s
+[ 848/2000] wheels=848 words=3822 elapsed=72s eta=97s
+[ 849/2000] wheels=849 words=3825 elapsed=72s eta=97s
+[ 850/2000] wheels=850 words=3829 elapsed=72s eta=97s
+[ 851/2000] wheels=851 words=3834 elapsed=72s eta=97s
+[ 852/2000] wheels=852 words=3837 elapsed=72s eta=97s
+[ 853/2000] wheels=853 words=3842 elapsed=72s eta=97s
+[ 854/2000] wheels=854 words=3845 elapsed=73s eta=97s
+[ 855/2000] wheels=855 words=3847 elapsed=73s eta=97s
+[ 856/2000] wheels=856 words=3851 elapsed=73s eta=97s
+[ 857/2000] wheels=857 words=3853 elapsed=73s eta=97s
+[ 858/2000] wheels=858 words=3856 elapsed=73s eta=97s
+[ 859/2000] wheels=859 words=3861 elapsed=73s eta=97s
+[ 860/2000] wheels=860 words=3863 elapsed=73s eta=97s
+[ 861/2000] wheels=861 words=3865 elapsed=73s eta=97s
+[ 862/2000] wheels=862 words=3868 elapsed=74s eta=97s
+[ 863/2000] wheels=863 words=3872 elapsed=74s eta=97s
+[ 864/2000] wheels=864 words=3875 elapsed=74s eta=97s
+[ 865/2000] wheels=865 words=3877 elapsed=74s eta=97s
+[ 866/2000] wheels=866 words=3880 elapsed=74s eta=97s
+[ 867/2000] wheels=867 words=3883 elapsed=74s eta=97s
+[ 868/2000] wheels=868 words=3886 elapsed=74s eta=97s
+[ 869/2000] wheels=869 words=3886 elapsed=75s eta=97s
+[ 870/2000] wheels=870 words=3890 elapsed=75s eta=97s
+[ 871/2000] wheels=871 words=3896 elapsed=75s eta=97s
+[ 872/2000] wheels=872 words=3900 elapsed=75s eta=97s
+[ 873/2000] wheels=873 words=3904 elapsed=75s eta=97s
+[ 874/2000] wheels=874 words=3908 elapsed=75s eta=97s
+[ 875/2000] wheels=875 words=3911 elapsed=75s eta=97s
+[ 876/2000] wheels=876 words=3915 elapsed=76s eta=97s
+[ 877/2000] wheels=877 words=3921 elapsed=76s eta=97s
+[ 878/2000] wheels=878 words=3923 elapsed=76s eta=97s
+[ 879/2000] wheels=879 words=3926 elapsed=76s eta=97s
+[ 880/2000] wheels=880 words=3929 elapsed=77s eta=98s
+[ 881/2000] wheels=881 words=3932 elapsed=77s eta=98s
+[ 882/2000] wheels=882 words=3933 elapsed=77s eta=98s
+[ 883/2000] wheels=883 words=3939 elapsed=77s eta=98s
+[ 884/2000] wheels=884 words=3943 elapsed=77s eta=97s
+[ 885/2000] wheels=885 words=3946 elapsed=77s eta=97s
+[ 886/2000] wheels=886 words=3949 elapsed=77s eta=97s
+[ 887/2000] wheels=887 words=3952 elapsed=78s eta=97s
+[ 888/2000] wheels=888 words=3958 elapsed=78s eta=97s
+[ 889/2000] wheels=889 words=3964 elapsed=78s eta=97s
+[ 890/2000] wheels=890 words=3965 elapsed=78s eta=97s
+[ 891/2000] wheels=891 words=3968 elapsed=78s eta=97s
+[ 892/2000] wheels=892 words=3971 elapsed=78s eta=97s
+[ 893/2000] wheels=893 words=3971 elapsed=78s eta=97s
+[ 894/2000] wheels=894 words=3974 elapsed=78s eta=97s
+[ 895/2000] wheels=895 words=3976 elapsed=78s eta=97s
+[ 896/2000] wheels=896 words=3981 elapsed=79s eta=97s
+[ 897/2000] wheels=897 words=3981 elapsed=79s eta=97s
+[ 898/2000] wheels=898 words=3983 elapsed=79s eta=97s
+[ 899/2000] wheels=899 words=3985 elapsed=79s eta=97s
+[ 900/2000] wheels=900 words=3987 elapsed=79s eta=97s
+[ 901/2000] wheels=901 words=3991 elapsed=80s eta=97s
+[ 902/2000] wheels=902 words=3994 elapsed=80s eta=97s
+[ 903/2000] wheels=903 words=4000 elapsed=80s eta=97s
+[ 904/2000] wheels=904 words=4005 elapsed=80s eta=97s
+[ 905/2000] wheels=905 words=4011 elapsed=80s eta=97s
+[ 906/2000] wheels=906 words=4015 elapsed=80s eta=97s
+[ 907/2000] wheels=907 words=4021 elapsed=80s eta=97s
+[ 908/2000] wheels=908 words=4021 elapsed=80s eta=96s
+[ 909/2000] wheels=909 words=4026 elapsed=80s eta=96s
+[ 910/2000] wheels=910 words=4028 elapsed=80s eta=96s
+[ 911/2000] wheels=911 words=4032 elapsed=81s eta=96s
+[ 912/2000] wheels=912 words=4034 elapsed=81s eta=96s
+[ 913/2000] wheels=913 words=4038 elapsed=81s eta=96s
+[ 914/2000] wheels=914 words=4040 elapsed=81s eta=96s
+[ 915/2000] wheels=915 words=4042 elapsed=81s eta=96s
+[ 916/2000] wheels=916 words=4045 elapsed=81s eta=96s
+[ 917/2000] wheels=917 words=4048 elapsed=81s eta=96s
+[ 918/2000] wheels=918 words=4051 elapsed=82s eta=96s
+[ 919/2000] wheels=919 words=4053 elapsed=82s eta=96s
+[ 920/2000] wheels=920 words=4054 elapsed=82s eta=96s
+[ 921/2000] wheels=921 words=4055 elapsed=82s eta=96s
+[ 922/2000] wheels=922 words=4060 elapsed=82s eta=96s
+[ 923/2000] wheels=923 words=4064 elapsed=82s eta=96s
+[ 924/2000] wheels=924 words=4067 elapsed=82s eta=96s
+[ 925/2000] wheels=925 words=4073 elapsed=82s eta=96s
+[ 926/2000] wheels=926 words=4074 elapsed=82s eta=96s
+[ 927/2000] wheels=927 words=4077 elapsed=82s eta=95s
+[ 928/2000] wheels=928 words=4079 elapsed=83s eta=95s
+[ 929/2000] wheels=929 words=4080 elapsed=83s eta=95s
+[ 930/2000] wheels=930 words=4086 elapsed=83s eta=95s
+[ 931/2000] wheels=931 words=4090 elapsed=83s eta=95s
+[ 932/2000] wheels=932 words=4092 elapsed=83s eta=95s
+[ 933/2000] wheels=933 words=4096 elapsed=83s eta=95s
+[ 934/2000] wheels=934 words=4100 elapsed=83s eta=95s
+[ 935/2000] wheels=935 words=4102 elapsed=83s eta=95s
+[ 936/2000] wheels=936 words=4106 elapsed=84s eta=95s
+[ 937/2000] wheels=937 words=4108 elapsed=84s eta=95s
+[ 938/2000] wheels=938 words=4114 elapsed=84s eta=95s
+[ 939/2000] wheels=939 words=4118 elapsed=84s eta=95s
+[ 940/2000] wheels=940 words=4120 elapsed=84s eta=95s
+[ 941/2000] wheels=941 words=4123 elapsed=84s eta=95s
+[ 942/2000] wheels=942 words=4126 elapsed=84s eta=95s
+[ 943/2000] wheels=943 words=4129 elapsed=84s eta=95s
+[ 944/2000] wheels=944 words=4133 elapsed=84s eta=94s
+[ 945/2000] wheels=945 words=4139 elapsed=84s eta=94s
+[ 946/2000] wheels=946 words=4142 elapsed=85s eta=94s
+[ 947/2000] wheels=947 words=4144 elapsed=85s eta=94s
+[ 948/2000] wheels=948 words=4147 elapsed=85s eta=94s
+[ 949/2000] wheels=949 words=4148 elapsed=85s eta=94s
+[ 950/2000] wheels=950 words=4154 elapsed=85s eta=94s
+[ 951/2000] wheels=951 words=4155 elapsed=85s eta=94s
+[ 952/2000] wheels=952 words=4157 elapsed=85s eta=94s
+[ 953/2000] wheels=953 words=4158 elapsed=85s eta=94s
+[ 954/2000] wheels=954 words=4161 elapsed=86s eta=94s
+[ 955/2000] wheels=955 words=4166 elapsed=86s eta=94s
+[ 956/2000] wheels=956 words=4170 elapsed=86s eta=94s
+[ 957/2000] wheels=957 words=4175 elapsed=86s eta=94s
+[ 958/2000] wheels=958 words=4177 elapsed=86s eta=94s
+[ 959/2000] wheels=959 words=4178 elapsed=86s eta=94s
+[ 960/2000] wheels=960 words=4181 elapsed=86s eta=93s
+[ 961/2000] wheels=961 words=4183 elapsed=86s eta=93s
+[ 962/2000] wheels=962 words=4183 elapsed=86s eta=93s
+[ 963/2000] wheels=963 words=4186 elapsed=87s eta=93s
+[ 964/2000] wheels=964 words=4188 elapsed=87s eta=93s
+[ 965/2000] wheels=965 words=4189 elapsed=87s eta=93s
+[ 966/2000] wheels=966 words=4195 elapsed=87s eta=93s
+[ 967/2000] wheels=967 words=4196 elapsed=87s eta=93s
+[ 968/2000] wheels=968 words=4197 elapsed=87s eta=93s
+[ 969/2000] wheels=969 words=4201 elapsed=87s eta=93s
+[ 970/2000] wheels=970 words=4202 elapsed=87s eta=93s
+[ 971/2000] wheels=971 words=4207 elapsed=87s eta=93s
+[ 972/2000] wheels=972 words=4210 elapsed=87s eta=93s
+[ 973/2000] wheels=973 words=4213 elapsed=88s eta=92s
+[ 974/2000] wheels=974 words=4215 elapsed=88s eta=92s
+[ 975/2000] wheels=975 words=4218 elapsed=88s eta=93s
+[ 976/2000] wheels=976 words=4220 elapsed=88s eta=93s
+[ 977/2000] wheels=977 words=4224 elapsed=89s eta=93s
+[ 978/2000] wheels=978 words=4226 elapsed=89s eta=93s
+[ 979/2000] wheels=979 words=4229 elapsed=89s eta=93s
+[ 980/2000] wheels=980 words=4233 elapsed=89s eta=93s
+[ 981/2000] wheels=981 words=4236 elapsed=89s eta=92s
+[ 982/2000] wheels=982 words=4240 elapsed=89s eta=92s
+[ 983/2000] wheels=983 words=4243 elapsed=89s eta=92s
+[ 984/2000] wheels=984 words=4246 elapsed=89s eta=92s
+[ 985/2000] wheels=985 words=4246 elapsed=89s eta=92s
+[ 986/2000] wheels=986 words=4249 elapsed=90s eta=92s
+[ 987/2000] wheels=987 words=4251 elapsed=90s eta=92s
+[ 988/2000] wheels=988 words=4253 elapsed=90s eta=92s
+[ 989/2000] wheels=989 words=4256 elapsed=90s eta=92s
+[ 990/2000] wheels=990 words=4259 elapsed=90s eta=92s
+[ 991/2000] wheels=991 words=4265 elapsed=90s eta=92s
+[ 992/2000] wheels=992 words=4269 elapsed=91s eta=92s
+[ 993/2000] wheels=993 words=4269 elapsed=91s eta=92s
+[ 994/2000] wheels=994 words=4271 elapsed=91s eta=92s
+[ 995/2000] wheels=995 words=4272 elapsed=91s eta=92s
+[ 996/2000] wheels=996 words=4274 elapsed=91s eta=92s
+[ 997/2000] wheels=997 words=4276 elapsed=91s eta=92s
+[ 998/2000] wheels=998 words=4276 elapsed=91s eta=92s
+[ 999/2000] wheels=999 words=4277 elapsed=91s eta=92s
+[1000/2000] wheels=1000 words=4280 elapsed=92s eta=92s
+[1001/2000] wheels=1001 words=4281 elapsed=92s eta=92s
+[1002/2000] wheels=1002 words=4283 elapsed=92s eta=92s
+[1003/2000] wheels=1003 words=4286 elapsed=92s eta=91s
+[1004/2000] wheels=1004 words=4287 elapsed=92s eta=91s
+[1005/2000] wheels=1005 words=4291 elapsed=92s eta=91s
+[1006/2000] wheels=1006 words=4296 elapsed=92s eta=91s
+[1007/2000] wheels=1007 words=4299 elapsed=92s eta=91s
+[1008/2000] wheels=1008 words=4301 elapsed=92s eta=91s
+[1009/2000] wheels=1009 words=4302 elapsed=93s eta=91s
+[1010/2000] wheels=1010 words=4304 elapsed=93s eta=91s
+[1011/2000] wheels=1011 words=4306 elapsed=93s eta=91s
+[1012/2000] wheels=1012 words=4310 elapsed=93s eta=91s
+[1013/2000] wheels=1013 words=4313 elapsed=93s eta=91s
+[1014/2000] wheels=1014 words=4316 elapsed=93s eta=91s
+[1015/2000] wheels=1015 words=4319 elapsed=93s eta=90s
+[1016/2000] wheels=1016 words=4321 elapsed=93s eta=90s
+[1017/2000] wheels=1017 words=4323 elapsed=93s eta=90s
+[1018/2000] wheels=1018 words=4326 elapsed=94s eta=90s
+[1019/2000] wheels=1019 words=4331 elapsed=94s eta=90s
+[1020/2000] wheels=1020 words=4332 elapsed=94s eta=90s
+[1021/2000] wheels=1021 words=4333 elapsed=94s eta=90s
+[1022/2000] wheels=1022 words=4333 elapsed=94s eta=90s
+[1023/2000] wheels=1023 words=4336 elapsed=95s eta=90s
+[1024/2000] wheels=1024 words=4339 elapsed=95s eta=90s
+[1025/2000] wheels=1025 words=4341 elapsed=95s eta=90s
+[1026/2000] wheels=1026 words=4341 elapsed=95s eta=90s
+[1027/2000] wheels=1027 words=4345 elapsed=95s eta=90s
+[1028/2000] wheels=1028 words=4348 elapsed=95s eta=90s
+[1029/2000] wheels=1029 words=4351 elapsed=95s eta=90s
+[1030/2000] wheels=1030 words=4352 elapsed=95s eta=90s
+[1031/2000] wheels=1031 words=4354 elapsed=95s eta=90s
+[1032/2000] wheels=1032 words=4357 elapsed=96s eta=90s
+[1033/2000] wheels=1033 words=4359 elapsed=96s eta=90s
+[1034/2000] wheels=1034 words=4362 elapsed=96s eta=89s
+[1035/2000] wheels=1035 words=4366 elapsed=96s eta=89s
+[1036/2000] wheels=1036 words=4367 elapsed=96s eta=89s
+[1037/2000] wheels=1037 words=4368 elapsed=96s eta=89s
+[1038/2000] wheels=1038 words=4373 elapsed=96s eta=89s
+[1039/2000] wheels=1039 words=4375 elapsed=96s eta=89s
+[1040/2000] wheels=1040 words=4378 elapsed=96s eta=89s
+[1041/2000] wheels=1041 words=4381 elapsed=97s eta=89s
+[1042/2000] wheels=1042 words=4382 elapsed=97s eta=89s
+[1043/2000] wheels=1043 words=4386 elapsed=97s eta=89s
+[1044/2000] wheels=1044 words=4389 elapsed=97s eta=89s
+[1045/2000] wheels=1045 words=4391 elapsed=97s eta=89s
+[1046/2000] wheels=1046 words=4393 elapsed=97s eta=89s
+[1047/2000] wheels=1047 words=4393 elapsed=97s eta=88s
+[1048/2000] wheels=1048 words=4395 elapsed=97s eta=88s
+[1049/2000] wheels=1049 words=4397 elapsed=97s eta=88s
+[1050/2000] wheels=1050 words=4397 elapsed=97s eta=88s
+[1051/2000] wheels=1051 words=4402 elapsed=98s eta=88s
+[1052/2000] wheels=1052 words=4403 elapsed=98s eta=88s
+[1053/2000] wheels=1053 words=4404 elapsed=98s eta=88s
+[1054/2000] wheels=1054 words=4404 elapsed=98s eta=88s
+[1055/2000] wheels=1055 words=4405 elapsed=98s eta=88s
+[1056/2000] wheels=1056 words=4407 elapsed=98s eta=88s
+[1057/2000] wheels=1057 words=4408 elapsed=98s eta=87s
+[1058/2000] wheels=1058 words=4410 elapsed=98s eta=87s
+[1059/2000] wheels=1059 words=4411 elapsed=98s eta=87s
+[1060/2000] wheels=1060 words=4413 elapsed=98s eta=87s
+[1061/2000] wheels=1061 words=4416 elapsed=98s eta=87s
+[1062/2000] wheels=1062 words=4418 elapsed=98s eta=87s
+[1063/2000] wheels=1063 words=4420 elapsed=99s eta=87s
+[1064/2000] wheels=1064 words=4423 elapsed=99s eta=87s
+[1065/2000] wheels=1065 words=4427 elapsed=99s eta=87s
+[1066/2000] wheels=1066 words=4428 elapsed=99s eta=87s
+[1067/2000] wheels=1067 words=4432 elapsed=99s eta=87s
+[1068/2000] wheels=1068 words=4434 elapsed=99s eta=87s
+[1069/2000] wheels=1069 words=4435 elapsed=99s eta=86s
+[1070/2000] wheels=1070 words=4438 elapsed=99s eta=86s
+[1071/2000] wheels=1071 words=4441 elapsed=100s eta=86s
+[1072/2000] wheels=1072 words=4446 elapsed=100s eta=86s
+[1073/2000] wheels=1073 words=4451 elapsed=100s eta=86s
+[1074/2000] wheels=1074 words=4455 elapsed=100s eta=86s
+[1075/2000] wheels=1075 words=4455 elapsed=100s eta=86s
+[1076/2000] wheels=1076 words=4457 elapsed=100s eta=86s
+[1077/2000] wheels=1077 words=4460 elapsed=100s eta=86s
+[1078/2000] wheels=1078 words=4463 elapsed=100s eta=86s
+[1079/2000] wheels=1079 words=4465 elapsed=101s eta=86s
+[1080/2000] wheels=1080 words=4466 elapsed=101s eta=86s
+[1081/2000] wheels=1081 words=4469 elapsed=101s eta=86s
+[1082/2000] wheels=1082 words=4471 elapsed=101s eta=86s
+[1083/2000] wheels=1083 words=4473 elapsed=101s eta=86s
+[1084/2000] wheels=1084 words=4475 elapsed=101s eta=86s
+[1085/2000] wheels=1085 words=4479 elapsed=102s eta=86s
+[1086/2000] wheels=1086 words=4482 elapsed=102s eta=86s
+[1087/2000] wheels=1087 words=4485 elapsed=102s eta=85s
+[1088/2000] wheels=1088 words=4489 elapsed=102s eta=85s
+[1089/2000] wheels=1089 words=4490 elapsed=102s eta=85s
+[1090/2000] wheels=1090 words=4493 elapsed=102s eta=85s
+[1091/2000] wheels=1091 words=4493 elapsed=102s eta=85s
+[1092/2000] wheels=1092 words=4496 elapsed=102s eta=85s
+[1093/2000] wheels=1093 words=4498 elapsed=102s eta=85s
+[1094/2000] wheels=1094 words=4499 elapsed=102s eta=85s
+[1095/2000] wheels=1095 words=4503 elapsed=103s eta=85s
+[1096/2000] wheels=1096 words=4504 elapsed=103s eta=85s
+[1097/2000] wheels=1097 words=4510 elapsed=103s eta=85s
+[1098/2000] wheels=1098 words=4514 elapsed=103s eta=85s
+[1099/2000] wheels=1099 words=4516 elapsed=103s eta=84s
+[1100/2000] wheels=1100 words=4518 elapsed=103s eta=84s
+[1101/2000] wheels=1101 words=4522 elapsed=103s eta=84s
+[1102/2000] wheels=1102 words=4523 elapsed=103s eta=84s
+[1103/2000] wheels=1103 words=4527 elapsed=103s eta=84s
+[1104/2000] wheels=1104 words=4531 elapsed=104s eta=84s
+[1105/2000] wheels=1105 words=4534 elapsed=104s eta=84s
+[1106/2000] wheels=1106 words=4539 elapsed=104s eta=84s
+[1107/2000] wheels=1107 words=4541 elapsed=104s eta=84s
+[1108/2000] wheels=1108 words=4541 elapsed=104s eta=84s
+[1109/2000] wheels=1109 words=4543 elapsed=104s eta=84s
+[1110/2000] wheels=1110 words=4547 elapsed=104s eta=83s
+[1111/2000] wheels=1111 words=4553 elapsed=104s eta=83s
+[1112/2000] wheels=1112 words=4553 elapsed=104s eta=83s
+[1113/2000] wheels=1113 words=4556 elapsed=104s eta=83s
+[1114/2000] wheels=1114 words=4561 elapsed=105s eta=83s
+[1115/2000] wheels=1115 words=4563 elapsed=105s eta=83s
+[1116/2000] wheels=1116 words=4563 elapsed=105s eta=83s
+[1117/2000] wheels=1117 words=4567 elapsed=105s eta=83s
+[1118/2000] wheels=1118 words=4567 elapsed=105s eta=83s
+[1119/2000] wheels=1119 words=4570 elapsed=106s eta=83s
+[1120/2000] wheels=1120 words=4572 elapsed=106s eta=83s
+[1121/2000] wheels=1121 words=4573 elapsed=106s eta=83s
+[1122/2000] wheels=1122 words=4576 elapsed=106s eta=83s
+[1123/2000] wheels=1123 words=4576 elapsed=106s eta=83s
+[1124/2000] wheels=1124 words=4579 elapsed=106s eta=83s
+[1125/2000] wheels=1125 words=4582 elapsed=106s eta=83s
+[1126/2000] wheels=1126 words=4583 elapsed=106s eta=82s
+[1127/2000] wheels=1127 words=4584 elapsed=106s eta=82s
+[1128/2000] wheels=1128 words=4587 elapsed=106s eta=82s
+[1129/2000] wheels=1129 words=4589 elapsed=107s eta=82s
+[1130/2000] wheels=1130 words=4590 elapsed=107s eta=82s
+[1131/2000] wheels=1131 words=4590 elapsed=107s eta=82s
+[1132/2000] wheels=1132 words=4593 elapsed=107s eta=82s
+[1133/2000] wheels=1133 words=4596 elapsed=107s eta=82s
+[1134/2000] wheels=1134 words=4599 elapsed=107s eta=82s
+[1135/2000] wheels=1135 words=4601 elapsed=107s eta=82s
+[1136/2000] wheels=1136 words=4603 elapsed=107s eta=82s
+[1137/2000] wheels=1137 words=4605 elapsed=107s eta=82s
+[1138/2000] wheels=1138 words=4608 elapsed=108s eta=81s
+[1139/2000] wheels=1139 words=4610 elapsed=108s eta=81s
+[1140/2000] wheels=1140 words=4613 elapsed=108s eta=81s
+[1141/2000] wheels=1141 words=4617 elapsed=108s eta=81s
+[1142/2000] wheels=1142 words=4621 elapsed=108s eta=81s
+[1143/2000] wheels=1143 words=4622 elapsed=108s eta=81s
+[1144/2000] wheels=1144 words=4628 elapsed=108s eta=81s
+[1145/2000] wheels=1145 words=4628 elapsed=108s eta=81s
+[1146/2000] wheels=1146 words=4630 elapsed=108s eta=81s
+[1147/2000] wheels=1147 words=4633 elapsed=108s eta=81s
+[1148/2000] wheels=1148 words=4634 elapsed=109s eta=81s
+[1149/2000] wheels=1149 words=4634 elapsed=109s eta=80s
+[1150/2000] wheels=1150 words=4637 elapsed=109s eta=80s
+[1151/2000] wheels=1151 words=4640 elapsed=109s eta=80s
+[1152/2000] wheels=1152 words=4644 elapsed=109s eta=80s
+[1153/2000] wheels=1153 words=4648 elapsed=109s eta=80s
+[1154/2000] wheels=1154 words=4649 elapsed=109s eta=80s
+[1155/2000] wheels=1155 words=4650 elapsed=109s eta=80s
+[1156/2000] wheels=1156 words=4651 elapsed=109s eta=80s
+[1157/2000] wheels=1157 words=4655 elapsed=109s eta=80s
+[1158/2000] wheels=1158 words=4659 elapsed=110s eta=80s
+[1159/2000] wheels=1159 words=4662 elapsed=110s eta=80s
+[1160/2000] wheels=1160 words=4663 elapsed=110s eta=80s
+[1161/2000] wheels=1161 words=4666 elapsed=110s eta=79s
+[1162/2000] wheels=1162 words=4669 elapsed=110s eta=79s
+[1163/2000] wheels=1163 words=4672 elapsed=110s eta=79s
+[1164/2000] wheels=1164 words=4672 elapsed=110s eta=79s
+[1165/2000] wheels=1165 words=4673 elapsed=110s eta=79s
+[1166/2000] wheels=1166 words=4677 elapsed=110s eta=79s
+[1167/2000] wheels=1167 words=4679 elapsed=111s eta=79s
+[1168/2000] wheels=1168 words=4681 elapsed=111s eta=79s
+[1169/2000] wheels=1169 words=4683 elapsed=111s eta=79s
+[1170/2000] wheels=1170 words=4683 elapsed=111s eta=79s
+[1171/2000] wheels=1171 words=4683 elapsed=111s eta=79s
+[1172/2000] wheels=1172 words=4685 elapsed=112s eta=79s
+[1173/2000] wheels=1173 words=4687 elapsed=112s eta=79s
+[1174/2000] wheels=1174 words=4695 elapsed=112s eta=79s
+[1175/2000] wheels=1175 words=4697 elapsed=112s eta=79s
+[1176/2000] wheels=1176 words=4698 elapsed=112s eta=78s
+[1177/2000] wheels=1177 words=4698 elapsed=112s eta=78s
+[1178/2000] wheels=1178 words=4702 elapsed=112s eta=78s
+[1179/2000] wheels=1179 words=4703 elapsed=112s eta=78s
+[1180/2000] wheels=1180 words=4704 elapsed=112s eta=78s
+[1181/2000] wheels=1181 words=4705 elapsed=113s eta=78s
+[1182/2000] wheels=1182 words=4705 elapsed=113s eta=78s
+[1183/2000] wheels=1183 words=4705 elapsed=113s eta=78s
+[1184/2000] wheels=1184 words=4707 elapsed=113s eta=78s
+[1185/2000] wheels=1185 words=4707 elapsed=113s eta=78s
+[1186/2000] wheels=1186 words=4712 elapsed=113s eta=78s
+[1187/2000] wheels=1187 words=4714 elapsed=113s eta=77s
+[1188/2000] wheels=1188 words=4714 elapsed=113s eta=77s
+[1189/2000] wheels=1189 words=4718 elapsed=113s eta=77s
+[1190/2000] wheels=1190 words=4721 elapsed=113s eta=77s
+[1191/2000] wheels=1191 words=4723 elapsed=114s eta=77s
+[1192/2000] wheels=1192 words=4725 elapsed=114s eta=77s
+[1193/2000] wheels=1193 words=4727 elapsed=114s eta=77s
+[1194/2000] wheels=1194 words=4728 elapsed=114s eta=77s
+[1195/2000] wheels=1195 words=4729 elapsed=114s eta=77s
+[1196/2000] wheels=1196 words=4732 elapsed=114s eta=77s
+[1197/2000] wheels=1197 words=4732 elapsed=114s eta=77s
+[1198/2000] wheels=1198 words=4733 elapsed=114s eta=76s
+[1199/2000] wheels=1199 words=4735 elapsed=114s eta=76s
+[1200/2000] wheels=1200 words=4738 elapsed=114s eta=76s
+[1201/2000] wheels=1201 words=4739 elapsed=114s eta=76s
+[1202/2000] wheels=1202 words=4742 elapsed=115s eta=76s
+[1203/2000] wheels=1203 words=4742 elapsed=115s eta=76s
+[1204/2000] wheels=1204 words=4743 elapsed=115s eta=76s
+[1205/2000] wheels=1205 words=4745 elapsed=115s eta=76s
+[1206/2000] wheels=1206 words=4747 elapsed=115s eta=76s
+[1207/2000] wheels=1207 words=4747 elapsed=115s eta=76s
+[1208/2000] wheels=1208 words=4747 elapsed=115s eta=76s
+[1209/2000] wheels=1209 words=4748 elapsed=115s eta=75s
+[1210/2000] wheels=1210 words=4753 elapsed=115s eta=75s
+[1211/2000] wheels=1211 words=4757 elapsed=115s eta=75s
+[1212/2000] wheels=1212 words=4757 elapsed=116s eta=75s
+[1213/2000] wheels=1213 words=4757 elapsed=116s eta=75s
+[1214/2000] wheels=1214 words=4758 elapsed=116s eta=75s
+[1215/2000] wheels=1215 words=4761 elapsed=116s eta=75s
+[1216/2000] wheels=1216 words=4762 elapsed=116s eta=75s
+[1217/2000] wheels=1217 words=4764 elapsed=116s eta=75s
+[1218/2000] wheels=1218 words=4767 elapsed=116s eta=75s
+[1219/2000] wheels=1219 words=4772 elapsed=116s eta=75s
+[1220/2000] wheels=1220 words=4774 elapsed=116s eta=74s
+[1221/2000] wheels=1221 words=4774 elapsed=116s eta=74s
+[1222/2000] wheels=1222 words=4774 elapsed=117s eta=74s
+[1223/2000] wheels=1223 words=4776 elapsed=117s eta=74s
+[1224/2000] wheels=1224 words=4776 elapsed=117s eta=74s
+[1225/2000] wheels=1225 words=4780 elapsed=117s eta=74s
+[1226/2000] wheels=1226 words=4783 elapsed=117s eta=74s
+[1227/2000] wheels=1227 words=4784 elapsed=117s eta=74s
+[1228/2000] wheels=1228 words=4787 elapsed=117s eta=74s
+[1229/2000] wheels=1229 words=4789 elapsed=117s eta=74s
+[1230/2000] wheels=1230 words=4793 elapsed=117s eta=73s
+[1231/2000] wheels=1231 words=4794 elapsed=117s eta=73s
+[1232/2000] wheels=1232 words=4795 elapsed=118s eta=73s
+[1233/2000] wheels=1233 words=4795 elapsed=118s eta=73s
+[1234/2000] wheels=1234 words=4796 elapsed=118s eta=73s
+[1235/2000] wheels=1235 words=4797 elapsed=118s eta=73s
+[1236/2000] wheels=1236 words=4799 elapsed=118s eta=73s
+[1237/2000] wheels=1237 words=4800 elapsed=118s eta=73s
+[1238/2000] wheels=1238 words=4804 elapsed=118s eta=73s
+[1239/2000] wheels=1239 words=4804 elapsed=118s eta=73s
+[1240/2000] wheels=1240 words=4808 elapsed=118s eta=73s
+[1241/2000] wheels=1241 words=4810 elapsed=118s eta=72s
+[1242/2000] wheels=1242 words=4813 elapsed=118s eta=72s
+[1243/2000] wheels=1243 words=4816 elapsed=119s eta=72s
+[1244/2000] wheels=1244 words=4818 elapsed=119s eta=72s
+[1245/2000] wheels=1245 words=4820 elapsed=119s eta=72s
+[1246/2000] wheels=1246 words=4820 elapsed=119s eta=72s
+[1247/2000] wheels=1247 words=4821 elapsed=119s eta=72s
+[1248/2000] wheels=1248 words=4821 elapsed=119s eta=72s
+[1249/2000] wheels=1249 words=4822 elapsed=119s eta=72s
+[1250/2000] wheels=1250 words=4826 elapsed=119s eta=72s
+[1251/2000] wheels=1251 words=4828 elapsed=119s eta=72s
+[1252/2000] wheels=1252 words=4830 elapsed=120s eta=71s
+[1253/2000] wheels=1253 words=4830 elapsed=120s eta=72s
+[1254/2000] wheels=1254 words=4832 elapsed=120s eta=72s
+[1255/2000] wheels=1255 words=4833 elapsed=120s eta=71s
+[1256/2000] wheels=1256 words=4834 elapsed=120s eta=71s
+[1257/2000] wheels=1257 words=4836 elapsed=121s eta=71s
+[1258/2000] wheels=1258 words=4838 elapsed=121s eta=71s
+[1259/2000] wheels=1259 words=4841 elapsed=121s eta=71s
+[1260/2000] wheels=1260 words=4845 elapsed=121s eta=71s
+[1261/2000] wheels=1261 words=4847 elapsed=121s eta=71s
+[1262/2000] wheels=1262 words=4850 elapsed=121s eta=71s
+[1263/2000] wheels=1263 words=4851 elapsed=121s eta=71s
+[1264/2000] wheels=1264 words=4853 elapsed=121s eta=71s
+[1265/2000] wheels=1265 words=4856 elapsed=121s eta=70s
+[1266/2000] wheels=1266 words=4858 elapsed=121s eta=70s
+[1267/2000] wheels=1267 words=4859 elapsed=122s eta=70s
+[1268/2000] wheels=1268 words=4860 elapsed=122s eta=70s
+[1269/2000] wheels=1269 words=4861 elapsed=122s eta=70s
+[1270/2000] wheels=1270 words=4863 elapsed=122s eta=70s
+[1271/2000] wheels=1271 words=4865 elapsed=122s eta=70s
+[1272/2000] wheels=1272 words=4867 elapsed=122s eta=70s
+[1273/2000] wheels=1273 words=4870 elapsed=122s eta=70s
+[1274/2000] wheels=1274 words=4874 elapsed=122s eta=70s
+[1275/2000] wheels=1275 words=4878 elapsed=122s eta=70s
+[1276/2000] wheels=1276 words=4881 elapsed=122s eta=69s
+[1277/2000] wheels=1277 words=4881 elapsed=123s eta=69s
+[1278/2000] wheels=1278 words=4884 elapsed=123s eta=69s
+[1279/2000] wheels=1279 words=4886 elapsed=123s eta=69s
+[1280/2000] wheels=1280 words=4888 elapsed=123s eta=69s
+[1281/2000] wheels=1281 words=4892 elapsed=123s eta=69s
+[1282/2000] wheels=1282 words=4892 elapsed=123s eta=69s
+[1283/2000] wheels=1283 words=4893 elapsed=123s eta=69s
+[1284/2000] wheels=1284 words=4894 elapsed=123s eta=69s
+[1285/2000] wheels=1285 words=4895 elapsed=123s eta=69s
+[1286/2000] wheels=1286 words=4896 elapsed=123s eta=69s
+[1287/2000] wheels=1287 words=4898 elapsed=124s eta=68s
+[1288/2000] wheels=1288 words=4898 elapsed=124s eta=68s
+[1289/2000] wheels=1289 words=4901 elapsed=124s eta=68s
+[1290/2000] wheels=1290 words=4904 elapsed=124s eta=68s
+[1291/2000] wheels=1291 words=4905 elapsed=124s eta=68s
+[1292/2000] wheels=1292 words=4906 elapsed=124s eta=68s
+[1293/2000] wheels=1293 words=4908 elapsed=124s eta=68s
+[1294/2000] wheels=1294 words=4911 elapsed=124s eta=68s
+[1295/2000] wheels=1295 words=4914 elapsed=124s eta=68s
+[1296/2000] wheels=1296 words=4916 elapsed=124s eta=68s
+[1297/2000] wheels=1297 words=4917 elapsed=125s eta=68s
+[1298/2000] wheels=1298 words=4922 elapsed=125s eta=67s
+[1299/2000] wheels=1299 words=4922 elapsed=125s eta=67s
+[1300/2000] wheels=1300 words=4923 elapsed=125s eta=67s
+[1301/2000] wheels=1301 words=4928 elapsed=125s eta=67s
+[1302/2000] wheels=1302 words=4932 elapsed=125s eta=67s
+[1303/2000] wheels=1303 words=4933 elapsed=125s eta=67s
+[1304/2000] wheels=1304 words=4935 elapsed=125s eta=67s
+[1305/2000] wheels=1305 words=4937 elapsed=126s eta=67s
+[1306/2000] wheels=1306 words=4940 elapsed=126s eta=67s
+[1307/2000] wheels=1307 words=4943 elapsed=126s eta=67s
+[1308/2000] wheels=1308 words=4944 elapsed=126s eta=67s
+[1309/2000] wheels=1309 words=4944 elapsed=126s eta=67s
+[1310/2000] wheels=1310 words=4945 elapsed=126s eta=66s
+[1311/2000] wheels=1311 words=4947 elapsed=126s eta=66s
+[1312/2000] wheels=1312 words=4950 elapsed=126s eta=66s
+[1313/2000] wheels=1313 words=4950 elapsed=126s eta=66s
+[1314/2000] wheels=1314 words=4952 elapsed=127s eta=66s
+[1315/2000] wheels=1315 words=4952 elapsed=127s eta=66s
+[1316/2000] wheels=1316 words=4954 elapsed=127s eta=66s
+[1317/2000] wheels=1317 words=4959 elapsed=127s eta=66s
+[1318/2000] wheels=1318 words=4966 elapsed=127s eta=66s
+[1319/2000] wheels=1319 words=4966 elapsed=127s eta=66s
+[1320/2000] wheels=1320 words=4970 elapsed=127s eta=65s
+[1321/2000] wheels=1321 words=4973 elapsed=127s eta=65s
+[1322/2000] wheels=1322 words=4973 elapsed=127s eta=65s
+[1323/2000] wheels=1323 words=4975 elapsed=127s eta=65s
+[1324/2000] wheels=1324 words=4979 elapsed=128s eta=65s
+[1325/2000] wheels=1325 words=4984 elapsed=128s eta=65s
+[1326/2000] wheels=1326 words=4986 elapsed=128s eta=65s
+[1327/2000] wheels=1327 words=4987 elapsed=128s eta=65s
+[1328/2000] wheels=1328 words=4991 elapsed=128s eta=65s
+[1329/2000] wheels=1329 words=4993 elapsed=128s eta=65s
+[1330/2000] wheels=1330 words=4994 elapsed=129s eta=65s
+[1331/2000] wheels=1331 words=4996 elapsed=129s eta=65s
+[1332/2000] wheels=1332 words=4998 elapsed=129s eta=65s
+[1333/2000] wheels=1333 words=4999 elapsed=129s eta=65s
+[1334/2000] wheels=1334 words=5000 elapsed=129s eta=65s
+[1335/2000] wheels=1335 words=5001 elapsed=129s eta=64s
+[1336/2000] wheels=1336 words=5003 elapsed=129s eta=64s
+[1337/2000] wheels=1337 words=5006 elapsed=130s eta=64s
+[1338/2000] wheels=1338 words=5006 elapsed=130s eta=64s
+[1339/2000] wheels=1339 words=5008 elapsed=130s eta=64s
+[1340/2000] wheels=1340 words=5011 elapsed=130s eta=64s
+[1341/2000] wheels=1341 words=5011 elapsed=131s eta=64s
+[1342/2000] wheels=1342 words=5014 elapsed=131s eta=64s
+[1343/2000] wheels=1343 words=5014 elapsed=131s eta=64s
+[1344/2000] wheels=1344 words=5016 elapsed=131s eta=64s
+[1345/2000] wheels=1345 words=5017 elapsed=131s eta=64s
+[1346/2000] wheels=1346 words=5018 elapsed=131s eta=64s
+[1347/2000] wheels=1347 words=5022 elapsed=131s eta=64s
+[1348/2000] wheels=1348 words=5024 elapsed=131s eta=64s
+[1349/2000] wheels=1349 words=5027 elapsed=131s eta=63s
+[1350/2000] wheels=1350 words=5028 elapsed=132s eta=63s
+[1351/2000] wheels=1351 words=5033 elapsed=132s eta=63s
+[1352/2000] wheels=1352 words=5036 elapsed=132s eta=63s
+[1353/2000] wheels=1353 words=5036 elapsed=132s eta=63s
+[1354/2000] wheels=1354 words=5037 elapsed=132s eta=63s
+[1355/2000] wheels=1355 words=5040 elapsed=132s eta=63s
+[1356/2000] wheels=1356 words=5042 elapsed=132s eta=63s
+[1357/2000] wheels=1357 words=5045 elapsed=132s eta=63s
+[1358/2000] wheels=1358 words=5046 elapsed=132s eta=63s
+[1359/2000] wheels=1359 words=5048 elapsed=133s eta=63s
+[1360/2000] wheels=1360 words=5049 elapsed=133s eta=62s
+[1361/2000] wheels=1361 words=5050 elapsed=133s eta=62s
+[1362/2000] wheels=1362 words=5051 elapsed=133s eta=62s
+[1363/2000] wheels=1363 words=5053 elapsed=133s eta=62s
+[1364/2000] wheels=1364 words=5056 elapsed=133s eta=62s
+[1365/2000] wheels=1365 words=5056 elapsed=133s eta=62s
+[1366/2000] wheels=1366 words=5056 elapsed=133s eta=62s
+[1367/2000] wheels=1367 words=5056 elapsed=133s eta=62s
+[1368/2000] wheels=1368 words=5059 elapsed=133s eta=62s
+[1369/2000] wheels=1369 words=5064 elapsed=134s eta=62s
+[1370/2000] wheels=1370 words=5064 elapsed=134s eta=61s
+[1371/2000] wheels=1371 words=5065 elapsed=134s eta=61s
+[1372/2000] wheels=1372 words=5067 elapsed=134s eta=61s
+[1373/2000] wheels=1373 words=5069 elapsed=134s eta=61s
+[1374/2000] wheels=1374 words=5070 elapsed=134s eta=61s
+[1375/2000] wheels=1375 words=5072 elapsed=134s eta=61s
+[1376/2000] wheels=1376 words=5076 elapsed=134s eta=61s
+[1377/2000] wheels=1377 words=5080 elapsed=134s eta=61s
+[1378/2000] wheels=1378 words=5082 elapsed=134s eta=61s
+[1379/2000] wheels=1379 words=5084 elapsed=135s eta=61s
+[1380/2000] wheels=1380 words=5084 elapsed=135s eta=61s
+[1381/2000] wheels=1381 words=5086 elapsed=135s eta=61s
+[1382/2000] wheels=1382 words=5088 elapsed=135s eta=61s
+[1383/2000] wheels=1383 words=5090 elapsed=136s eta=60s
+[1384/2000] wheels=1384 words=5090 elapsed=136s eta=60s
+[1385/2000] wheels=1385 words=5092 elapsed=136s eta=60s
+[1386/2000] wheels=1386 words=5092 elapsed=136s eta=60s
+[1387/2000] wheels=1387 words=5095 elapsed=136s eta=60s
+[1388/2000] wheels=1388 words=5096 elapsed=136s eta=60s
+[1389/2000] wheels=1389 words=5099 elapsed=136s eta=60s
+[1390/2000] wheels=1390 words=5102 elapsed=136s eta=60s
+[1391/2000] wheels=1391 words=5104 elapsed=136s eta=60s
+[1392/2000] wheels=1392 words=5105 elapsed=136s eta=60s
+[1393/2000] wheels=1393 words=5106 elapsed=137s eta=60s
+[1394/2000] wheels=1394 words=5107 elapsed=137s eta=59s
+[1395/2000] wheels=1395 words=5110 elapsed=137s eta=59s
+[1396/2000] wheels=1396 words=5112 elapsed=137s eta=59s
+[1397/2000] wheels=1397 words=5112 elapsed=137s eta=59s
+[1398/2000] wheels=1398 words=5115 elapsed=137s eta=59s
+[1399/2000] wheels=1399 words=5118 elapsed=137s eta=59s
+[1400/2000] wheels=1400 words=5125 elapsed=137s eta=59s
+[1401/2000] wheels=1401 words=5126 elapsed=137s eta=59s
+[1402/2000] wheels=1402 words=5129 elapsed=138s eta=59s
+[1403/2000] wheels=1403 words=5132 elapsed=138s eta=59s
+[1404/2000] wheels=1404 words=5138 elapsed=138s eta=58s
+[1405/2000] wheels=1405 words=5139 elapsed=138s eta=58s
+[1406/2000] wheels=1406 words=5144 elapsed=138s eta=58s
+[1407/2000] wheels=1407 words=5147 elapsed=138s eta=58s
+[1408/2000] wheels=1408 words=5148 elapsed=138s eta=58s
+[1409/2000] wheels=1409 words=5152 elapsed=138s eta=58s
+[1410/2000] wheels=1410 words=5153 elapsed=138s eta=58s
+[1411/2000] wheels=1411 words=5155 elapsed=139s eta=58s
+[1412/2000] wheels=1412 words=5160 elapsed=139s eta=58s
+[1413/2000] wheels=1413 words=5165 elapsed=139s eta=58s
+[1414/2000] wheels=1414 words=5170 elapsed=139s eta=57s
+[1415/2000] wheels=1415 words=5175 elapsed=139s eta=57s
+[1416/2000] wheels=1416 words=5179 elapsed=139s eta=57s
+[1417/2000] wheels=1417 words=5181 elapsed=139s eta=57s
+[1418/2000] wheels=1418 words=5184 elapsed=139s eta=57s
+[1419/2000] wheels=1419 words=5189 elapsed=140s eta=57s
+[1420/2000] wheels=1420 words=5194 elapsed=140s eta=57s
+[1421/2000] wheels=1421 words=5197 elapsed=140s eta=57s
+[1422/2000] wheels=1422 words=5201 elapsed=140s eta=57s
+[1423/2000] wheels=1423 words=5205 elapsed=140s eta=57s
+[1424/2000] wheels=1424 words=5211 elapsed=140s eta=57s
+[1425/2000] wheels=1425 words=5213 elapsed=140s eta=56s
+[1426/2000] wheels=1426 words=5217 elapsed=140s eta=56s
+[1427/2000] wheels=1427 words=5220 elapsed=140s eta=56s
+[1428/2000] wheels=1428 words=5224 elapsed=140s eta=56s
+[1429/2000] wheels=1429 words=5227 elapsed=140s eta=56s
+[1430/2000] wheels=1430 words=5229 elapsed=140s eta=56s
+[1431/2000] wheels=1431 words=5234 elapsed=140s eta=56s
+[1432/2000] wheels=1432 words=5234 elapsed=140s eta=56s
+[1433/2000] wheels=1433 words=5236 elapsed=141s eta=56s
+[1434/2000] wheels=1434 words=5242 elapsed=141s eta=56s
+[1435/2000] wheels=1435 words=5244 elapsed=141s eta=55s
+[1436/2000] wheels=1436 words=5248 elapsed=141s eta=55s
+[1437/2000] wheels=1437 words=5248 elapsed=141s eta=55s
+[1438/2000] wheels=1438 words=5256 elapsed=141s eta=55s
+[1439/2000] wheels=1439 words=5261 elapsed=141s eta=55s
+[1440/2000] wheels=1440 words=5263 elapsed=141s eta=55s
+[1441/2000] wheels=1441 words=5266 elapsed=141s eta=55s
+[1442/2000] wheels=1442 words=5272 elapsed=141s eta=55s
+[1443/2000] wheels=1443 words=5276 elapsed=141s eta=55s
+[1444/2000] wheels=1444 words=5279 elapsed=141s eta=54s
+[1445/2000] wheels=1445 words=5280 elapsed=141s eta=54s
+[1446/2000] wheels=1446 words=5285 elapsed=141s eta=54s
+[1447/2000] wheels=1447 words=5289 elapsed=141s eta=54s
+[1448/2000] wheels=1448 words=5293 elapsed=142s eta=54s
+[1449/2000] wheels=1449 words=5298 elapsed=142s eta=54s
+[1450/2000] wheels=1450 words=5303 elapsed=142s eta=54s
+[1451/2000] wheels=1451 words=5304 elapsed=142s eta=54s
+[1452/2000] wheels=1452 words=5306 elapsed=142s eta=54s
+[1453/2000] wheels=1453 words=5310 elapsed=142s eta=53s
+[1454/2000] wheels=1454 words=5313 elapsed=142s eta=53s
+[1455/2000] wheels=1455 words=5315 elapsed=142s eta=53s
+[1456/2000] wheels=1456 words=5319 elapsed=142s eta=53s
+[1457/2000] wheels=1457 words=5320 elapsed=142s eta=53s
+[1458/2000] wheels=1458 words=5322 elapsed=142s eta=53s
+[1459/2000] wheels=1459 words=5327 elapsed=142s eta=53s
+[1460/2000] wheels=1460 words=5330 elapsed=142s eta=53s
+[1461/2000] wheels=1461 words=5336 elapsed=142s eta=52s
+[1462/2000] wheels=1462 words=5342 elapsed=142s eta=52s
+[1463/2000] wheels=1463 words=5342 elapsed=142s eta=52s
+[1464/2000] wheels=1464 words=5347 elapsed=142s eta=52s
+[1465/2000] wheels=1465 words=5352 elapsed=142s eta=52s
+[1466/2000] wheels=1466 words=5355 elapsed=142s eta=52s
+[1467/2000] wheels=1467 words=5358 elapsed=143s eta=52s
+[1468/2000] wheels=1468 words=5360 elapsed=143s eta=52s
+[1469/2000] wheels=1469 words=5365 elapsed=143s eta=52s
+[1470/2000] wheels=1470 words=5367 elapsed=143s eta=51s
+[1471/2000] wheels=1471 words=5367 elapsed=143s eta=51s
+[1472/2000] wheels=1472 words=5372 elapsed=143s eta=51s
+[1473/2000] wheels=1473 words=5376 elapsed=143s eta=51s
+[1474/2000] wheels=1474 words=5376 elapsed=143s eta=51s
+[1475/2000] wheels=1475 words=5379 elapsed=143s eta=51s
+[1476/2000] wheels=1476 words=5383 elapsed=143s eta=51s
+[1477/2000] wheels=1477 words=5387 elapsed=143s eta=51s
+[1478/2000] wheels=1478 words=5392 elapsed=143s eta=51s
+[1479/2000] wheels=1479 words=5396 elapsed=143s eta=50s
+[1480/2000] wheels=1480 words=5400 elapsed=143s eta=50s
+[1481/2000] wheels=1481 words=5401 elapsed=143s eta=50s
+[1482/2000] wheels=1482 words=5401 elapsed=143s eta=50s
+[1483/2000] wheels=1483 words=5402 elapsed=143s eta=50s
+[1484/2000] wheels=1484 words=5406 elapsed=143s eta=50s
+[1485/2000] wheels=1485 words=5410 elapsed=143s eta=50s
+[1486/2000] wheels=1486 words=5414 elapsed=144s eta=50s
+[1487/2000] wheels=1487 words=5420 elapsed=144s eta=50s
+[1488/2000] wheels=1488 words=5423 elapsed=144s eta=49s
+[1489/2000] wheels=1489 words=5425 elapsed=144s eta=49s
+[1490/2000] wheels=1490 words=5427 elapsed=144s eta=49s
+[1491/2000] wheels=1491 words=5431 elapsed=144s eta=49s
+[1492/2000] wheels=1492 words=5434 elapsed=144s eta=49s
+[1493/2000] wheels=1493 words=5437 elapsed=144s eta=49s
+[1494/2000] wheels=1494 words=5439 elapsed=144s eta=49s
+[1495/2000] wheels=1495 words=5440 elapsed=144s eta=49s
+[1496/2000] wheels=1496 words=5442 elapsed=144s eta=49s
+[1497/2000] wheels=1497 words=5445 elapsed=144s eta=48s
+[1498/2000] wheels=1498 words=5448 elapsed=144s eta=48s
+[1499/2000] wheels=1499 words=5450 elapsed=144s eta=48s
+[1500/2000] wheels=1500 words=5450 elapsed=144s eta=48s
+[1501/2000] wheels=1501 words=5453 elapsed=144s eta=48s
+[1502/2000] wheels=1502 words=5456 elapsed=144s eta=48s
+[1503/2000] wheels=1503 words=5459 elapsed=144s eta=48s
+[1504/2000] wheels=1504 words=5460 elapsed=145s eta=48s
+[1505/2000] wheels=1505 words=5464 elapsed=145s eta=48s
+[1506/2000] wheels=1506 words=5464 elapsed=145s eta=47s
+[1507/2000] wheels=1507 words=5467 elapsed=145s eta=47s
+[1508/2000] wheels=1508 words=5471 elapsed=145s eta=47s
+[1509/2000] wheels=1509 words=5472 elapsed=145s eta=47s
+[1510/2000] wheels=1510 words=5475 elapsed=145s eta=47s
+[1511/2000] wheels=1511 words=5477 elapsed=145s eta=47s
+[1512/2000] wheels=1512 words=5477 elapsed=145s eta=47s
+[1513/2000] wheels=1513 words=5483 elapsed=145s eta=47s
+[1514/2000] wheels=1514 words=5485 elapsed=145s eta=47s
+[1515/2000] wheels=1515 words=5490 elapsed=145s eta=46s
+[1516/2000] wheels=1516 words=5494 elapsed=145s eta=46s
+[1517/2000] wheels=1517 words=5496 elapsed=145s eta=46s
+[1518/2000] wheels=1518 words=5501 elapsed=145s eta=46s
+[1519/2000] wheels=1519 words=5506 elapsed=145s eta=46s
+[1520/2000] wheels=1520 words=5509 elapsed=145s eta=46s
+[1521/2000] wheels=1521 words=5510 elapsed=145s eta=46s
+[1522/2000] wheels=1522 words=5512 elapsed=145s eta=46s
+[1523/2000] wheels=1523 words=5514 elapsed=145s eta=46s
+[1524/2000] wheels=1524 words=5514 elapsed=146s eta=45s
+[1525/2000] wheels=1525 words=5519 elapsed=146s eta=45s
+[1526/2000] wheels=1526 words=5521 elapsed=146s eta=45s
+[1527/2000] wheels=1527 words=5523 elapsed=146s eta=45s
+[1528/2000] wheels=1528 words=5523 elapsed=146s eta=45s
+[1529/2000] wheels=1529 words=5524 elapsed=146s eta=45s
+[1530/2000] wheels=1530 words=5527 elapsed=146s eta=45s
+[1531/2000] wheels=1531 words=5529 elapsed=146s eta=45s
+[1532/2000] wheels=1532 words=5530 elapsed=146s eta=45s
+[1533/2000] wheels=1533 words=5536 elapsed=146s eta=44s
+[1534/2000] wheels=1534 words=5538 elapsed=146s eta=44s
+[1535/2000] wheels=1535 words=5543 elapsed=146s eta=44s
+[1536/2000] wheels=1536 words=5546 elapsed=146s eta=44s
+[1537/2000] wheels=1537 words=5551 elapsed=146s eta=44s
+[1538/2000] wheels=1538 words=5551 elapsed=146s eta=44s
+[1539/2000] wheels=1539 words=5557 elapsed=146s eta=44s
+[1540/2000] wheels=1540 words=5564 elapsed=146s eta=44s
+[1541/2000] wheels=1541 words=5565 elapsed=146s eta=44s
+[1542/2000] wheels=1542 words=5567 elapsed=146s eta=43s
+[1543/2000] wheels=1543 words=5572 elapsed=146s eta=43s
+[1544/2000] wheels=1544 words=5576 elapsed=147s eta=43s
+[1545/2000] wheels=1545 words=5582 elapsed=147s eta=43s
+[1546/2000] wheels=1546 words=5586 elapsed=147s eta=43s
+[1547/2000] wheels=1547 words=5587 elapsed=147s eta=43s
+[1548/2000] wheels=1548 words=5590 elapsed=147s eta=43s
+[1549/2000] wheels=1549 words=5591 elapsed=147s eta=43s
+[1550/2000] wheels=1550 words=5597 elapsed=147s eta=43s
+[1551/2000] wheels=1551 words=5598 elapsed=147s eta=43s
+[1552/2000] wheels=1552 words=5600 elapsed=147s eta=42s
+[1553/2000] wheels=1553 words=5603 elapsed=147s eta=42s
+[1554/2000] wheels=1554 words=5605 elapsed=147s eta=42s
+[1555/2000] wheels=1555 words=5605 elapsed=147s eta=42s
+[1556/2000] wheels=1556 words=5612 elapsed=147s eta=42s
+[1557/2000] wheels=1557 words=5612 elapsed=147s eta=42s
+[1558/2000] wheels=1558 words=5615 elapsed=147s eta=42s
+[1559/2000] wheels=1559 words=5618 elapsed=147s eta=42s
+[1560/2000] wheels=1560 words=5621 elapsed=147s eta=42s
+[1561/2000] wheels=1561 words=5624 elapsed=148s eta=41s
+[1562/2000] wheels=1562 words=5625 elapsed=148s eta=41s
+[1563/2000] wheels=1563 words=5627 elapsed=148s eta=41s
+[1564/2000] wheels=1564 words=5627 elapsed=148s eta=41s
+[1565/2000] wheels=1565 words=5629 elapsed=148s eta=41s
+[1566/2000] wheels=1566 words=5631 elapsed=148s eta=41s
+[1567/2000] wheels=1567 words=5635 elapsed=148s eta=41s
+[1568/2000] wheels=1568 words=5638 elapsed=148s eta=41s
+[1569/2000] wheels=1569 words=5640 elapsed=148s eta=41s
+[1570/2000] wheels=1570 words=5644 elapsed=148s eta=41s
+[1571/2000] wheels=1571 words=5648 elapsed=148s eta=40s
+[1572/2000] wheels=1572 words=5648 elapsed=148s eta=40s
+[1573/2000] wheels=1573 words=5651 elapsed=148s eta=40s
+[1574/2000] wheels=1574 words=5653 elapsed=148s eta=40s
+[1575/2000] wheels=1575 words=5654 elapsed=148s eta=40s
+[1576/2000] wheels=1576 words=5654 elapsed=148s eta=40s
+[1577/2000] wheels=1577 words=5657 elapsed=148s eta=40s
+[1578/2000] wheels=1578 words=5658 elapsed=148s eta=40s
+[1579/2000] wheels=1579 words=5659 elapsed=148s eta=40s
+[1580/2000] wheels=1580 words=5662 elapsed=148s eta=39s
+[1581/2000] wheels=1581 words=5666 elapsed=148s eta=39s
+[1582/2000] wheels=1582 words=5667 elapsed=149s eta=39s
+[1583/2000] wheels=1583 words=5668 elapsed=149s eta=39s
+[1584/2000] wheels=1584 words=5668 elapsed=149s eta=39s
+[1585/2000] wheels=1585 words=5671 elapsed=149s eta=39s
+[1586/2000] wheels=1586 words=5675 elapsed=149s eta=39s
+[1587/2000] wheels=1587 words=5678 elapsed=149s eta=39s
+[1588/2000] wheels=1588 words=5680 elapsed=149s eta=39s
+[1589/2000] wheels=1589 words=5683 elapsed=149s eta=39s
+[1590/2000] wheels=1590 words=5686 elapsed=149s eta=38s
+[1591/2000] wheels=1591 words=5689 elapsed=149s eta=38s
+[1592/2000] wheels=1592 words=5693 elapsed=149s eta=38s
+[1593/2000] wheels=1593 words=5693 elapsed=149s eta=38s
+[1594/2000] wheels=1594 words=5696 elapsed=149s eta=38s
+[1595/2000] wheels=1595 words=5700 elapsed=149s eta=38s
+[1596/2000] wheels=1596 words=5700 elapsed=149s eta=38s
+[1597/2000] wheels=1597 words=5702 elapsed=149s eta=38s
+[1598/2000] wheels=1598 words=5706 elapsed=149s eta=38s
+[1599/2000] wheels=1599 words=5709 elapsed=150s eta=37s
+[1600/2000] wheels=1600 words=5715 elapsed=150s eta=37s
+[1601/2000] wheels=1601 words=5717 elapsed=150s eta=37s
+[1602/2000] wheels=1602 words=5721 elapsed=150s eta=37s
+[1603/2000] wheels=1603 words=5724 elapsed=150s eta=37s
+[1604/2000] wheels=1604 words=5724 elapsed=150s eta=37s
+[1605/2000] wheels=1605 words=5725 elapsed=150s eta=37s
+[1606/2000] wheels=1606 words=5727 elapsed=150s eta=37s
+[1607/2000] wheels=1607 words=5731 elapsed=150s eta=37s
+[1608/2000] wheels=1608 words=5735 elapsed=150s eta=37s
+[1609/2000] wheels=1609 words=5739 elapsed=150s eta=36s
+[1610/2000] wheels=1610 words=5740 elapsed=150s eta=36s
+[1611/2000] wheels=1611 words=5743 elapsed=150s eta=36s
+[1612/2000] wheels=1612 words=5746 elapsed=150s eta=36s
+[1613/2000] wheels=1613 words=5749 elapsed=150s eta=36s
+[1614/2000] wheels=1614 words=5751 elapsed=150s eta=36s
+[1615/2000] wheels=1615 words=5753 elapsed=151s eta=36s
+[1616/2000] wheels=1616 words=5754 elapsed=151s eta=36s
+[1617/2000] wheels=1617 words=5756 elapsed=151s eta=36s
+[1618/2000] wheels=1618 words=5756 elapsed=151s eta=36s
+[1619/2000] wheels=1619 words=5759 elapsed=151s eta=36s
+[1620/2000] wheels=1620 words=5761 elapsed=151s eta=35s
+[1621/2000] wheels=1621 words=5763 elapsed=151s eta=35s
+[1622/2000] wheels=1622 words=5765 elapsed=151s eta=35s
+[1623/2000] wheels=1623 words=5769 elapsed=151s eta=35s
+[1624/2000] wheels=1624 words=5772 elapsed=151s eta=35s
+[1625/2000] wheels=1625 words=5776 elapsed=151s eta=35s
+[1626/2000] wheels=1626 words=5777 elapsed=151s eta=35s
+[1627/2000] wheels=1627 words=5779 elapsed=151s eta=35s
+[1628/2000] wheels=1628 words=5780 elapsed=151s eta=35s
+[1629/2000] wheels=1629 words=5782 elapsed=152s eta=35s
+[1630/2000] wheels=1630 words=5784 elapsed=152s eta=34s
+[1631/2000] wheels=1631 words=5786 elapsed=152s eta=34s
+[1632/2000] wheels=1632 words=5789 elapsed=152s eta=34s
+[1633/2000] wheels=1633 words=5789 elapsed=152s eta=34s
+[1634/2000] wheels=1634 words=5789 elapsed=152s eta=34s
+[1635/2000] wheels=1635 words=5791 elapsed=152s eta=34s
+[1636/2000] wheels=1636 words=5793 elapsed=152s eta=34s
+[1637/2000] wheels=1637 words=5793 elapsed=152s eta=34s
+[1638/2000] wheels=1638 words=5795 elapsed=152s eta=34s
+[1639/2000] wheels=1639 words=5797 elapsed=152s eta=34s
+[1640/2000] wheels=1640 words=5800 elapsed=152s eta=33s
+[1641/2000] wheels=1641 words=5802 elapsed=152s eta=33s
+[1642/2000] wheels=1642 words=5805 elapsed=152s eta=33s
+[1643/2000] wheels=1643 words=5806 elapsed=152s eta=33s
+[1644/2000] wheels=1644 words=5808 elapsed=153s eta=33s
+[1645/2000] wheels=1645 words=5809 elapsed=153s eta=33s
+[1646/2000] wheels=1646 words=5814 elapsed=153s eta=33s
+[1647/2000] wheels=1647 words=5815 elapsed=153s eta=33s
+[1648/2000] wheels=1648 words=5818 elapsed=153s eta=33s
+[1649/2000] wheels=1649 words=5819 elapsed=153s eta=33s
+[1650/2000] wheels=1650 words=5823 elapsed=153s eta=32s
+[1651/2000] wheels=1651 words=5827 elapsed=153s eta=32s
+[1652/2000] wheels=1652 words=5829 elapsed=153s eta=32s
+[1653/2000] wheels=1653 words=5831 elapsed=153s eta=32s
+[1654/2000] wheels=1654 words=5833 elapsed=154s eta=32s
+[1655/2000] wheels=1655 words=5837 elapsed=154s eta=32s
+[1656/2000] wheels=1656 words=5840 elapsed=154s eta=32s
+[1657/2000] wheels=1657 words=5841 elapsed=154s eta=32s
+[1658/2000] wheels=1658 words=5841 elapsed=154s eta=32s
+[1659/2000] wheels=1659 words=5844 elapsed=154s eta=32s
+[1660/2000] wheels=1660 words=5848 elapsed=154s eta=32s
+[1661/2000] wheels=1661 words=5848 elapsed=154s eta=31s
+[1662/2000] wheels=1662 words=5852 elapsed=154s eta=31s
+[1663/2000] wheels=1663 words=5855 elapsed=154s eta=31s
+[1664/2000] wheels=1664 words=5858 elapsed=154s eta=31s
+[1665/2000] wheels=1665 words=5859 elapsed=154s eta=31s
+[1666/2000] wheels=1666 words=5861 elapsed=154s eta=31s
+[1667/2000] wheels=1667 words=5862 elapsed=154s eta=31s
+[1668/2000] wheels=1668 words=5865 elapsed=154s eta=31s
+[1669/2000] wheels=1669 words=5867 elapsed=154s eta=31s
+[1670/2000] wheels=1670 words=5870 elapsed=155s eta=31s
+[1671/2000] wheels=1671 words=5872 elapsed=155s eta=30s
+[1672/2000] wheels=1672 words=5875 elapsed=155s eta=30s
+[1673/2000] wheels=1673 words=5878 elapsed=155s eta=30s
+[1674/2000] wheels=1674 words=5882 elapsed=155s eta=30s
+[1675/2000] wheels=1675 words=5883 elapsed=155s eta=30s
+[1676/2000] wheels=1676 words=5885 elapsed=155s eta=30s
+[1677/2000] wheels=1677 words=5889 elapsed=155s eta=30s
+[1678/2000] wheels=1678 words=5890 elapsed=155s eta=30s
+[1679/2000] wheels=1679 words=5891 elapsed=155s eta=30s
+[1680/2000] wheels=1680 words=5891 elapsed=155s eta=30s
+[1681/2000] wheels=1681 words=5892 elapsed=155s eta=29s
+[1682/2000] wheels=1682 words=5896 elapsed=155s eta=29s
+[1683/2000] wheels=1683 words=5896 elapsed=155s eta=29s
+[1684/2000] wheels=1684 words=5898 elapsed=155s eta=29s
+[1685/2000] wheels=1685 words=5900 elapsed=155s eta=29s
+[1686/2000] wheels=1686 words=5900 elapsed=156s eta=29s
+[1687/2000] wheels=1687 words=5900 elapsed=156s eta=29s
+[1688/2000] wheels=1688 words=5901 elapsed=156s eta=29s
+[1689/2000] wheels=1689 words=5902 elapsed=156s eta=29s
+[1690/2000] wheels=1690 words=5906 elapsed=156s eta=29s
+[1691/2000] wheels=1691 words=5906 elapsed=156s eta=28s
+[1692/2000] wheels=1692 words=5909 elapsed=156s eta=28s
+[1693/2000] wheels=1693 words=5912 elapsed=156s eta=28s
+[1694/2000] wheels=1694 words=5912 elapsed=156s eta=28s
+[1695/2000] wheels=1695 words=5914 elapsed=156s eta=28s
+[1696/2000] wheels=1696 words=5916 elapsed=156s eta=28s
+[1697/2000] wheels=1697 words=5916 elapsed=156s eta=28s
+[1698/2000] wheels=1698 words=5916 elapsed=156s eta=28s
+[1699/2000] wheels=1699 words=5918 elapsed=156s eta=28s
+[1700/2000] wheels=1700 words=5921 elapsed=156s eta=28s
+[1701/2000] wheels=1701 words=5922 elapsed=156s eta=27s
+[1702/2000] wheels=1702 words=5924 elapsed=156s eta=27s
+[1703/2000] wheels=1703 words=5927 elapsed=156s eta=27s
+[1704/2000] wheels=1704 words=5930 elapsed=157s eta=27s
+[1705/2000] wheels=1705 words=5932 elapsed=157s eta=27s
+[1706/2000] wheels=1706 words=5934 elapsed=157s eta=27s
+[1707/2000] wheels=1707 words=5936 elapsed=157s eta=27s
+[1708/2000] wheels=1708 words=5938 elapsed=157s eta=27s
+[1709/2000] wheels=1709 words=5938 elapsed=157s eta=27s
+[1710/2000] wheels=1710 words=5939 elapsed=157s eta=27s
+[1711/2000] wheels=1711 words=5941 elapsed=157s eta=26s
+[1712/2000] wheels=1712 words=5942 elapsed=157s eta=26s
+[1713/2000] wheels=1713 words=5944 elapsed=157s eta=26s
+[1714/2000] wheels=1714 words=5947 elapsed=157s eta=26s
+[1715/2000] wheels=1715 words=5951 elapsed=157s eta=26s
+[1716/2000] wheels=1716 words=5953 elapsed=157s eta=26s
+[1717/2000] wheels=1717 words=5953 elapsed=157s eta=26s
+[1718/2000] wheels=1718 words=5955 elapsed=157s eta=26s
+[1719/2000] wheels=1719 words=5958 elapsed=157s eta=26s
+[1720/2000] wheels=1720 words=5959 elapsed=157s eta=26s
+[1721/2000] wheels=1721 words=5960 elapsed=157s eta=26s
+[1722/2000] wheels=1722 words=5963 elapsed=158s eta=25s
+[1723/2000] wheels=1723 words=5964 elapsed=158s eta=25s
+[1724/2000] wheels=1724 words=5965 elapsed=158s eta=25s
+[1725/2000] wheels=1725 words=5966 elapsed=158s eta=25s
+[1726/2000] wheels=1726 words=5967 elapsed=158s eta=25s
+[1727/2000] wheels=1727 words=5972 elapsed=158s eta=25s
+[1728/2000] wheels=1728 words=5974 elapsed=158s eta=25s
+[1729/2000] wheels=1729 words=5976 elapsed=158s eta=25s
+[1730/2000] wheels=1730 words=5978 elapsed=158s eta=25s
+[1731/2000] wheels=1731 words=5980 elapsed=158s eta=25s
+[1732/2000] wheels=1732 words=5982 elapsed=159s eta=25s
+[1733/2000] wheels=1733 words=5987 elapsed=159s eta=24s
+[1734/2000] wheels=1734 words=5988 elapsed=159s eta=24s
+[1735/2000] wheels=1735 words=5992 elapsed=159s eta=24s
+[1736/2000] wheels=1736 words=5992 elapsed=159s eta=24s
+[1737/2000] wheels=1737 words=5994 elapsed=159s eta=24s
+[1738/2000] wheels=1738 words=5995 elapsed=159s eta=24s
+[1739/2000] wheels=1739 words=5998 elapsed=159s eta=24s
+[1740/2000] wheels=1740 words=6000 elapsed=159s eta=24s
+[1741/2000] wheels=1741 words=6001 elapsed=159s eta=24s
+[1742/2000] wheels=1742 words=6003 elapsed=159s eta=24s
+[1743/2000] wheels=1743 words=6006 elapsed=159s eta=23s
+[1744/2000] wheels=1744 words=6011 elapsed=159s eta=23s
+[1745/2000] wheels=1745 words=6015 elapsed=159s eta=23s
+[1746/2000] wheels=1746 words=6017 elapsed=159s eta=23s
+[1747/2000] wheels=1747 words=6017 elapsed=160s eta=23s
+[1748/2000] wheels=1748 words=6021 elapsed=160s eta=23s
+[1749/2000] wheels=1749 words=6024 elapsed=160s eta=23s
+[1750/2000] wheels=1750 words=6026 elapsed=160s eta=23s
+[1751/2000] wheels=1751 words=6028 elapsed=160s eta=23s
+[1752/2000] wheels=1752 words=6028 elapsed=160s eta=23s
+[1753/2000] wheels=1753 words=6028 elapsed=160s eta=23s
+[1754/2000] wheels=1754 words=6031 elapsed=160s eta=22s
+[1755/2000] wheels=1755 words=6035 elapsed=160s eta=22s
+[1756/2000] wheels=1756 words=6036 elapsed=160s eta=22s
+[1757/2000] wheels=1757 words=6037 elapsed=160s eta=22s
+[1758/2000] wheels=1758 words=6039 elapsed=160s eta=22s
+[1759/2000] wheels=1759 words=6039 elapsed=160s eta=22s
+[1760/2000] wheels=1760 words=6040 elapsed=160s eta=22s
+[1761/2000] wheels=1761 words=6043 elapsed=160s eta=22s
+[1762/2000] wheels=1762 words=6048 elapsed=160s eta=22s
+[1763/2000] wheels=1763 words=6048 elapsed=161s eta=22s
+[1764/2000] wheels=1764 words=6048 elapsed=161s eta=21s
+[1765/2000] wheels=1765 words=6051 elapsed=161s eta=21s
+[1766/2000] wheels=1766 words=6054 elapsed=161s eta=21s
+[1767/2000] wheels=1767 words=6057 elapsed=161s eta=21s
+[1768/2000] wheels=1768 words=6058 elapsed=162s eta=21s
+[1769/2000] wheels=1769 words=6058 elapsed=163s eta=21s
+[1770/2000] wheels=1770 words=6060 elapsed=167s eta=22s
+[1771/2000] wheels=1771 words=6061 elapsed=167s eta=22s
+[1772/2000] wheels=1772 words=6061 elapsed=167s eta=22s
+[1773/2000] wheels=1773 words=6063 elapsed=168s eta=21s
+[1774/2000] wheels=1774 words=6065 elapsed=168s eta=21s
+[1775/2000] wheels=1775 words=6067 elapsed=168s eta=21s
+[1776/2000] wheels=1776 words=6067 elapsed=168s eta=21s
+[1777/2000] wheels=1777 words=6068 elapsed=168s eta=21s
+[1778/2000] wheels=1778 words=6070 elapsed=168s eta=21s
+[1779/2000] wheels=1779 words=6072 elapsed=168s eta=21s
+[1780/2000] wheels=1780 words=6076 elapsed=168s eta=21s
+[1781/2000] wheels=1781 words=6078 elapsed=168s eta=21s
+[1782/2000] wheels=1782 words=6079 elapsed=168s eta=21s
+[1783/2000] wheels=1783 words=6081 elapsed=168s eta=20s
+[1784/2000] wheels=1784 words=6082 elapsed=168s eta=20s
+[1785/2000] wheels=1785 words=6082 elapsed=168s eta=20s
+[1786/2000] wheels=1786 words=6082 elapsed=168s eta=20s
+[1787/2000] wheels=1787 words=6086 elapsed=168s eta=20s
+[1788/2000] wheels=1788 words=6087 elapsed=168s eta=20s
+[1789/2000] wheels=1789 words=6090 elapsed=169s eta=20s
+[1790/2000] wheels=1790 words=6092 elapsed=169s eta=20s
+[1791/2000] wheels=1791 words=6093 elapsed=169s eta=20s
+[1792/2000] wheels=1792 words=6093 elapsed=169s eta=20s
+[1793/2000] wheels=1793 words=6094 elapsed=169s eta=20s
+[1794/2000] wheels=1794 words=6096 elapsed=169s eta=19s
+[1795/2000] wheels=1795 words=6098 elapsed=169s eta=19s
+[1796/2000] wheels=1796 words=6098 elapsed=169s eta=19s
+[1797/2000] wheels=1797 words=6100 elapsed=169s eta=19s
+[1798/2000] wheels=1798 words=6104 elapsed=170s eta=19s
+[1799/2000] wheels=1799 words=6106 elapsed=170s eta=19s
+[1800/2000] wheels=1800 words=6109 elapsed=170s eta=19s
+[1801/2000] wheels=1801 words=6110 elapsed=170s eta=19s
+[1802/2000] wheels=1802 words=6111 elapsed=170s eta=19s
+[1803/2000] wheels=1803 words=6114 elapsed=170s eta=19s
+[1804/2000] wheels=1804 words=6114 elapsed=170s eta=18s
+[1805/2000] wheels=1805 words=6115 elapsed=170s eta=18s
+[1806/2000] wheels=1806 words=6117 elapsed=170s eta=18s
+[1807/2000] wheels=1807 words=6117 elapsed=170s eta=18s
+[1808/2000] wheels=1808 words=6117 elapsed=170s eta=18s
+[1809/2000] wheels=1809 words=6118 elapsed=170s eta=18s
+[1810/2000] wheels=1810 words=6119 elapsed=170s eta=18s
+[1811/2000] wheels=1811 words=6122 elapsed=170s eta=18s
+[1812/2000] wheels=1812 words=6122 elapsed=171s eta=18s
+[1813/2000] wheels=1813 words=6125 elapsed=171s eta=18s
+[1814/2000] wheels=1814 words=6129 elapsed=171s eta=18s
+[1815/2000] wheels=1815 words=6132 elapsed=171s eta=17s
+[1816/2000] wheels=1816 words=6132 elapsed=171s eta=17s
+[1817/2000] wheels=1817 words=6134 elapsed=171s eta=17s
+[1818/2000] wheels=1818 words=6137 elapsed=171s eta=17s
+[1819/2000] wheels=1819 words=6140 elapsed=171s eta=17s
+[1820/2000] wheels=1820 words=6142 elapsed=171s eta=17s
+[1821/2000] wheels=1821 words=6143 elapsed=171s eta=17s
+[1822/2000] wheels=1822 words=6146 elapsed=171s eta=17s
+[1823/2000] wheels=1823 words=6146 elapsed=171s eta=17s
+[1824/2000] wheels=1824 words=6148 elapsed=171s eta=17s
+[1825/2000] wheels=1825 words=6148 elapsed=172s eta=16s
+[1826/2000] wheels=1826 words=6151 elapsed=172s eta=16s
+[1827/2000] wheels=1827 words=6153 elapsed=172s eta=16s
+[1828/2000] wheels=1828 words=6154 elapsed=172s eta=16s
+[1829/2000] wheels=1829 words=6157 elapsed=172s eta=16s
+[1830/2000] wheels=1830 words=6159 elapsed=172s eta=16s
+[1831/2000] wheels=1831 words=6159 elapsed=172s eta=16s
+[1832/2000] wheels=1832 words=6161 elapsed=173s eta=16s
+[1833/2000] wheels=1833 words=6164 elapsed=173s eta=16s
+[1834/2000] wheels=1834 words=6167 elapsed=173s eta=16s
+[1835/2000] wheels=1835 words=6169 elapsed=173s eta=16s
+[1836/2000] wheels=1836 words=6170 elapsed=173s eta=15s
+[1837/2000] wheels=1837 words=6172 elapsed=173s eta=15s
+[1838/2000] wheels=1838 words=6173 elapsed=173s eta=15s
+[1839/2000] wheels=1839 words=6174 elapsed=173s eta=15s
+[1840/2000] wheels=1840 words=6176 elapsed=173s eta=15s
+[1841/2000] wheels=1841 words=6176 elapsed=173s eta=15s
+[1842/2000] wheels=1842 words=6179 elapsed=173s eta=15s
+[1843/2000] wheels=1843 words=6179 elapsed=173s eta=15s
+[1844/2000] wheels=1844 words=6180 elapsed=173s eta=15s
+[1845/2000] wheels=1845 words=6182 elapsed=174s eta=15s
+[1846/2000] wheels=1846 words=6182 elapsed=174s eta=14s
+[1847/2000] wheels=1847 words=6183 elapsed=174s eta=14s
+[1848/2000] wheels=1848 words=6184 elapsed=174s eta=14s
+[1849/2000] wheels=1849 words=6188 elapsed=174s eta=14s
+[1850/2000] wheels=1850 words=6190 elapsed=174s eta=14s
+[1851/2000] wheels=1851 words=6191 elapsed=174s eta=14s
+[1852/2000] wheels=1852 words=6196 elapsed=174s eta=14s
+[1853/2000] wheels=1853 words=6196 elapsed=174s eta=14s
+[1854/2000] wheels=1854 words=6197 elapsed=174s eta=14s
+[1855/2000] wheels=1855 words=6198 elapsed=174s eta=14s
+[1856/2000] wheels=1856 words=6198 elapsed=174s eta=14s
+[1857/2000] wheels=1857 words=6198 elapsed=174s eta=13s
+[1858/2000] wheels=1858 words=6206 elapsed=174s eta=13s
+[1859/2000] wheels=1859 words=6207 elapsed=174s eta=13s
+[1860/2000] wheels=1860 words=6209 elapsed=175s eta=13s
+[1861/2000] wheels=1861 words=6209 elapsed=175s eta=13s
+[1862/2000] wheels=1862 words=6212 elapsed=175s eta=13s
+[1863/2000] wheels=1863 words=6212 elapsed=175s eta=13s
+[1864/2000] wheels=1864 words=6213 elapsed=175s eta=13s
+[1865/2000] wheels=1865 words=6213 elapsed=175s eta=13s
+[1866/2000] wheels=1866 words=6215 elapsed=175s eta=13s
+[1867/2000] wheels=1867 words=6217 elapsed=175s eta=12s
+[1868/2000] wheels=1868 words=6220 elapsed=175s eta=12s
+[1869/2000] wheels=1869 words=6220 elapsed=175s eta=12s
+[1870/2000] wheels=1870 words=6221 elapsed=175s eta=12s
+[1871/2000] wheels=1871 words=6223 elapsed=175s eta=12s
+[1872/2000] wheels=1872 words=6224 elapsed=175s eta=12s
+[1873/2000] wheels=1873 words=6225 elapsed=175s eta=12s
+[1874/2000] wheels=1874 words=6226 elapsed=175s eta=12s
+[1875/2000] wheels=1875 words=6226 elapsed=175s eta=12s
+[1876/2000] wheels=1876 words=6229 elapsed=175s eta=12s
+[1877/2000] wheels=1877 words=6231 elapsed=175s eta=11s
+[1878/2000] wheels=1878 words=6233 elapsed=176s eta=11s
+[1879/2000] wheels=1879 words=6233 elapsed=176s eta=11s
+[1880/2000] wheels=1880 words=6235 elapsed=176s eta=11s
+[1881/2000] wheels=1881 words=6238 elapsed=176s eta=11s
+[1882/2000] wheels=1882 words=6241 elapsed=176s eta=11s
+[1883/2000] wheels=1883 words=6241 elapsed=176s eta=11s
+[1884/2000] wheels=1884 words=6242 elapsed=176s eta=11s
+[1885/2000] wheels=1885 words=6244 elapsed=176s eta=11s
+[1886/2000] wheels=1886 words=6247 elapsed=176s eta=11s
+[1887/2000] wheels=1887 words=6249 elapsed=176s eta=11s
+[1888/2000] wheels=1888 words=6251 elapsed=176s eta=10s
+[1889/2000] wheels=1889 words=6251 elapsed=176s eta=10s
+[1890/2000] wheels=1890 words=6252 elapsed=176s eta=10s
+[1891/2000] wheels=1891 words=6252 elapsed=176s eta=10s
+[1892/2000] wheels=1892 words=6254 elapsed=176s eta=10s
+[1893/2000] wheels=1893 words=6257 elapsed=176s eta=10s
+[1894/2000] wheels=1894 words=6260 elapsed=176s eta=10s
+[1895/2000] wheels=1895 words=6262 elapsed=177s eta=10s
+[1896/2000] wheels=1896 words=6263 elapsed=177s eta=10s
+[1897/2000] wheels=1897 words=6264 elapsed=177s eta=10s
+[1898/2000] wheels=1898 words=6265 elapsed=177s eta=9s
+[1899/2000] wheels=1899 words=6265 elapsed=177s eta=9s
+[1900/2000] wheels=1900 words=6265 elapsed=177s eta=9s
+[1901/2000] wheels=1901 words=6268 elapsed=177s eta=9s
+[1902/2000] wheels=1902 words=6268 elapsed=177s eta=9s
+[1903/2000] wheels=1903 words=6268 elapsed=177s eta=9s
+[1904/2000] wheels=1904 words=6270 elapsed=177s eta=9s
+[1905/2000] wheels=1905 words=6271 elapsed=177s eta=9s
+[1906/2000] wheels=1906 words=6274 elapsed=177s eta=9s
+[1907/2000] wheels=1907 words=6275 elapsed=177s eta=9s
+[1908/2000] wheels=1908 words=6279 elapsed=177s eta=9s
+[1909/2000] wheels=1909 words=6284 elapsed=177s eta=8s
+[1910/2000] wheels=1910 words=6284 elapsed=177s eta=8s
+[1911/2000] wheels=1911 words=6284 elapsed=177s eta=8s
+[1912/2000] wheels=1912 words=6284 elapsed=177s eta=8s
+[1913/2000] wheels=1913 words=6286 elapsed=177s eta=8s
+[1914/2000] wheels=1914 words=6286 elapsed=177s eta=8s
+[1915/2000] wheels=1915 words=6288 elapsed=178s eta=8s
+[1916/2000] wheels=1916 words=6290 elapsed=178s eta=8s
+[1917/2000] wheels=1917 words=6290 elapsed=178s eta=8s
+[1918/2000] wheels=1918 words=6293 elapsed=178s eta=8s
+[1919/2000] wheels=1919 words=6294 elapsed=178s eta=8s
+[1920/2000] wheels=1920 words=6294 elapsed=178s eta=7s
+[1921/2000] wheels=1921 words=6295 elapsed=178s eta=7s
+[1922/2000] wheels=1922 words=6298 elapsed=178s eta=7s
+[1923/2000] wheels=1923 words=6302 elapsed=178s eta=7s
+[1924/2000] wheels=1924 words=6305 elapsed=178s eta=7s
+[1925/2000] wheels=1925 words=6305 elapsed=178s eta=7s
+[1926/2000] wheels=1926 words=6311 elapsed=178s eta=7s
+[1927/2000] wheels=1927 words=6312 elapsed=178s eta=7s
+[1928/2000] wheels=1928 words=6314 elapsed=178s eta=7s
+[1929/2000] wheels=1929 words=6314 elapsed=178s eta=7s
+[1930/2000] wheels=1930 words=6315 elapsed=178s eta=6s
+[1931/2000] wheels=1931 words=6316 elapsed=178s eta=6s
+[1932/2000] wheels=1932 words=6316 elapsed=178s eta=6s
+[1933/2000] wheels=1933 words=6316 elapsed=179s eta=6s
+[1934/2000] wheels=1934 words=6318 elapsed=179s eta=6s
+[1935/2000] wheels=1935 words=6320 elapsed=179s eta=6s
+[1936/2000] wheels=1936 words=6325 elapsed=179s eta=6s
+[1937/2000] wheels=1937 words=6326 elapsed=179s eta=6s
+[1938/2000] wheels=1938 words=6326 elapsed=179s eta=6s
+[1939/2000] wheels=1939 words=6330 elapsed=179s eta=6s
+[1940/2000] wheels=1940 words=6330 elapsed=179s eta=6s
+[1941/2000] wheels=1941 words=6334 elapsed=179s eta=5s
+[1942/2000] wheels=1942 words=6335 elapsed=179s eta=5s
+[1943/2000] wheels=1943 words=6339 elapsed=179s eta=5s
+[1944/2000] wheels=1944 words=6341 elapsed=180s eta=5s
+[1945/2000] wheels=1945 words=6346 elapsed=181s eta=5s
+[1946/2000] wheels=1946 words=6349 elapsed=181s eta=5s
+[1947/2000] wheels=1947 words=6354 elapsed=181s eta=5s
+[1948/2000] wheels=1948 words=6357 elapsed=181s eta=5s
+[1949/2000] wheels=1949 words=6360 elapsed=181s eta=5s
+[1950/2000] wheels=1950 words=6361 elapsed=181s eta=5s
+[1951/2000] wheels=1951 words=6361 elapsed=181s eta=5s
+[1952/2000] wheels=1952 words=6361 elapsed=181s eta=4s
+[1953/2000] wheels=1953 words=6366 elapsed=181s eta=4s
+[1954/2000] wheels=1954 words=6366 elapsed=181s eta=4s
+[1955/2000] wheels=1955 words=6367 elapsed=181s eta=4s
+[1956/2000] wheels=1956 words=6367 elapsed=181s eta=4s
+[1957/2000] wheels=1957 words=6369 elapsed=182s eta=4s
+[1958/2000] wheels=1958 words=6371 elapsed=182s eta=4s
+[1959/2000] wheels=1959 words=6372 elapsed=182s eta=4s
+[1960/2000] wheels=1960 words=6373 elapsed=182s eta=4s
+[1961/2000] wheels=1961 words=6375 elapsed=182s eta=4s
+[1962/2000] wheels=1962 words=6376 elapsed=182s eta=4s
+[1963/2000] wheels=1963 words=6377 elapsed=182s eta=3s
+[1964/2000] wheels=1964 words=6379 elapsed=182s eta=3s
+[1965/2000] wheels=1965 words=6379 elapsed=182s eta=3s
+[1966/2000] wheels=1966 words=6381 elapsed=182s eta=3s
+[1967/2000] wheels=1967 words=6381 elapsed=182s eta=3s
+[1968/2000] wheels=1968 words=6383 elapsed=182s eta=3s
+[1969/2000] wheels=1969 words=6383 elapsed=182s eta=3s
+[1970/2000] wheels=1970 words=6383 elapsed=182s eta=3s
+[1971/2000] wheels=1971 words=6387 elapsed=182s eta=3s
+[1972/2000] wheels=1972 words=6388 elapsed=182s eta=3s
+[1973/2000] wheels=1973 words=6388 elapsed=182s eta=2s
+[1974/2000] wheels=1974 words=6389 elapsed=182s eta=2s
+[1975/2000] wheels=1975 words=6391 elapsed=182s eta=2s
+[1976/2000] wheels=1976 words=6394 elapsed=182s eta=2s
+[1977/2000] wheels=1977 words=6396 elapsed=183s eta=2s
+[1978/2000] wheels=1978 words=6399 elapsed=183s eta=2s
+[1979/2000] wheels=1979 words=6402 elapsed=183s eta=2s
+[1980/2000] wheels=1980 words=6404 elapsed=183s eta=2s
+[1981/2000] wheels=1981 words=6405 elapsed=183s eta=2s
+[1982/2000] wheels=1982 words=6405 elapsed=183s eta=2s
+[1983/2000] wheels=1983 words=6408 elapsed=183s eta=2s
+[1984/2000] wheels=1984 words=6408 elapsed=183s eta=1s
+[1985/2000] wheels=1985 words=6410 elapsed=183s eta=1s
+[1986/2000] wheels=1986 words=6410 elapsed=183s eta=1s
+[1987/2000] wheels=1987 words=6410 elapsed=183s eta=1s
+[1988/2000] wheels=1988 words=6410 elapsed=183s eta=1s
+[1989/2000] wheels=1989 words=6412 elapsed=183s eta=1s
+[1990/2000] wheels=1990 words=6413 elapsed=183s eta=1s
+[1991/2000] wheels=1991 words=6414 elapsed=184s eta=1s
+[1992/2000] wheels=1992 words=6416 elapsed=184s eta=1s
+[1993/2000] wheels=1993 words=6418 elapsed=184s eta=1s
+[1994/2000] wheels=1994 words=6421 elapsed=184s eta=1s
+[1995/2000] wheels=1995 words=6423 elapsed=184s eta=0s
+[1996/2000] wheels=1996 words=6425 elapsed=184s eta=0s
+[1997/2000] wheels=1997 words=6428 elapsed=184s eta=0s
+[1998/2000] wheels=1998 words=6428 elapsed=184s eta=0s
+[1999/2000] wheels=1999 words=6429 elapsed=184s eta=0s
+[2000/2000] wheels=2000 words=6430 elapsed=184s eta=0s
+Done in 184.0s — wrote 2000 levels (v10)
+Unique wheels: 2000, unique puzzle sets: 2000
+Level 1 words: stinker, sinker, insert, strike, tinker

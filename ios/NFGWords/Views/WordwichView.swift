@@ -51,6 +51,7 @@ final class WordwichSession: ObservableObject {
     @Published private(set) var wonBy: WordwichAPI.Winner?
     @Published private(set) var solvedAnswer: String?
     @Published private(set) var isOnline = false
+    @Published private(set) var isReconnecting = false
     @Published var playMode: WordwichPlayMode = WordwichSession.loadPlayMode()
     @Published private(set) var feedback: String?
     @Published private(set) var roundScore = 0
@@ -111,7 +112,8 @@ final class WordwichSession: ObservableObject {
         pollTask = Task { [weak self] in
             await self?.bootstrap()
             while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                let interval: UInt64 = (self?.isReconnecting == true) ? 1_000_000_000 : 2_000_000_000
+                try? await Task.sleep(nanoseconds: interval)
                 guard self?.playMode == .online else { return }
                 await self?.syncFromServer()
             }
@@ -144,15 +146,17 @@ final class WordwichSession: ObservableObject {
     }
 
     private func bootstrap() async {
+        isReconnecting = true
         do {
             try await LeaderboardAPI.checkHealth()
             let round = try await WordwichAPI.fetchState()
             apply(round: round)
             consecutivePollFailures = 0
             isOnline = true
+            isReconnecting = false
         } catch {
             isOnline = false
-            startLocalRoundIfNeeded()
+            isReconnecting = true
         }
     }
 
@@ -162,11 +166,13 @@ final class WordwichSession: ObservableObject {
             apply(round: round)
             consecutivePollFailures = 0
             isOnline = true
+            isReconnecting = false
         } catch {
             consecutivePollFailures += 1
-            // Stay in Live mode through brief network blips so guesses keep syncing to the shared round.
-            if consecutivePollFailures >= 4 {
-                isOnline = false
+            isOnline = false
+            isReconnecting = true
+            if consecutivePollFailures >= 12 {
+                feedback = "Having trouble connecting — still retrying…"
             }
         }
     }
@@ -223,6 +229,45 @@ final class WordwichSession: ObservableObject {
 
     var isRoundSolved: Bool { status == "won" }
 
+    /// Static in-progress round for App Store screenshots.
+    func applyScreenshotDemo() {
+        pollTask?.cancel()
+        pollTask = nil
+        soloAdvanceTask?.cancel()
+        soloAdvanceTask = nil
+        playMode = .online
+        isOnline = true
+        isReconnecting = false
+        roundId = "screenshot-round"
+        revealedPrefix = "SAND"
+        before = ["butter", "cream", "honey"]
+        after = ["toast", "wheat", "grain"]
+        status = "active"
+        wonBy = nil
+        solvedAnswer = nil
+        roundScore = 145
+        draft = ""
+        feedback = nil
+        guesses = [
+            WordwichAPI.Guess(
+                id: "g1", playerId: "p1", username: "GridMaster",
+                word: "butter", at: nil, matches: [true, true, true, true, true, false]
+            ),
+            WordwichAPI.Guess(
+                id: "g2", playerId: AppStoreScreenshotSupport.demoPlayerId,
+                username: AppStoreScreenshotSupport.demoUsername,
+                word: "sand", at: nil, matches: [true, true, true, false]
+            ),
+        ]
+        guessMatchLookup = Dictionary(
+            uniqueKeysWithValues: guesses.compactMap { g in
+                guard let m = g.matches else { return nil }
+                return (g.word, m)
+            }
+        )
+        guessUserLookup = Dictionary(uniqueKeysWithValues: guesses.map { ($0.word, $0.username) })
+    }
+
     func submit() async {
         let word = draft.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard word.count >= 3 else {
@@ -252,8 +297,10 @@ final class WordwichSession: ObservableObject {
         let oldPrefixLen = revealedPrefix.count
 
         if playMode == .online {
-            guard isOnline else {
-                feedback = "Can't reach the server. Switch to Solo mode to keep playing."
+            if !isOnline {
+                feedback = isReconnecting
+                    ? "Reconnecting to live round…"
+                    : "Can't reach the server. Switch to Solo mode to keep playing."
                 return
             }
             do {
@@ -265,7 +312,24 @@ final class WordwichSession: ObservableObject {
                     creditGuess(word: word, oldPrefixLen: oldPrefixLen, won: won)
                 }
             } catch {
-                feedback = UserFacingMessages.friendly(error)
+                // One automatic retry on brief connection blips.
+                do {
+                    try await Task.sleep(nanoseconds: 400_000_000)
+                    let response = try await WordwichAPI.submitGuess(word: word, playerId: playerId, username: username)
+                    if let round = response.round {
+                        let won = response.correct == true
+                        apply(round: round)
+                        consecutivePollFailures = 0
+                        isOnline = true
+                        isReconnecting = false
+                        onValidGuess?()
+                        creditGuess(word: word, oldPrefixLen: oldPrefixLen, won: won)
+                    }
+                } catch {
+                    isOnline = false
+                    isReconnecting = true
+                    feedback = UserFacingMessages.friendly(error)
+                }
             }
             return
         }
@@ -483,7 +547,11 @@ struct WordwichView: View {
                 award: { points in scores.addWordwichPoints(points) },
                 onValidGuess: { scores.recordDailyWordwichGuess() }
             )
-            session.start()
+            if AppStoreScreenshotMode.isActive {
+                session.applyScreenshotDemo()
+            } else {
+                session.start()
+            }
         }
         .onDisappear { session.stop() }
     }

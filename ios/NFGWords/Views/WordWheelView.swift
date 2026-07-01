@@ -1,13 +1,22 @@
 import SwiftUI
 
 struct WordWheelView: View {
+    let playLevelId: Int?
+    private let initialFoundWords: Set<String>?
+    private let initialRoundScore: Int
+
     @EnvironmentObject private var scores: ScoreStore
+    @EnvironmentObject private var levelProgress: LevelProgressStore
+    @EnvironmentObject private var achievements: AchievementStore
+    @EnvironmentObject private var cosmetics: CosmeticStore
     @Environment(\.dismiss) private var dismiss
 
     @State private var found: Set<String> = []
     @State private var bonusFound: Set<String> = []
     @State private var hintedCells: Set<String> = []
+    @State private var hintsUsed = 0
     @State private var roundScore = 0
+    @State private var starsEarned = 0
     @State private var hintFeedback: String?
     @State private var shake = false
     @State private var activeToast: WordToast?
@@ -17,8 +26,42 @@ struct WordWheelView: View {
     @State private var activeBonusPack: BonusRoundPack?
     /// Locked for the whole round so the crossword grid does not swap after each guess.
     @State private var activeLevel: WordwheelLevel?
+    @State private var showRestartConfirm = false
+    @State private var starsAtRoundStart = 0
 
-    private var levelId: Int { scores.state.wordwheelLevel }
+    init(
+        playLevelId: Int? = nil,
+        initialFoundWords: Set<String>? = nil,
+        initialRoundScore: Int = 0
+    ) {
+        self.playLevelId = playLevelId
+        self.initialFoundWords = initialFoundWords
+        self.initialRoundScore = initialRoundScore
+    }
+
+    private enum JourneyPlayMode {
+        case standard
+        case replay
+        case preview
+    }
+
+    private var earnedLevel: Int { scores.state.wordwheelLevel }
+
+    private var journeyMode: JourneyPlayMode {
+        guard let playLevelId else { return .standard }
+        if playLevelId == earnedLevel { return .standard }
+        if playLevelId < earnedLevel { return .replay }
+        if AdminConfig.canPreviewAllLevels(playerId: scores.state.player?.playerId) {
+            return .preview
+        }
+        return .standard
+    }
+
+    private var isFromMap: Bool { playLevelId != nil }
+
+    private var chapterForLevel: Int { ChapterMap.chapterIndex(for: levelId) }
+
+    private var levelId: Int { playLevelId ?? scores.state.wordwheelLevel }
     private var level: WordwheelLevel {
         activeLevel ?? LevelStore.level(id: 1) ?? WordwheelLevel(
             id: 1,
@@ -66,7 +109,8 @@ struct WordWheelView: View {
             let puzzleH = max(100, geo.size.height - topH - foundH - wheelH - 24)
 
             ZStack {
-                NFGAnimatedBackground(style: .game)
+                JourneyBiomeBackground(levelId: levelId, style: .gameplay)
+                    .ignoresSafeArea()
 
                 VStack(spacing: 10) {
                     topBar
@@ -82,7 +126,11 @@ struct WordWheelView: View {
                     )
                     .frame(height: foundH)
 
-                    LetterWheelView(center: level.centerLetter, wheel: level.wheelLetters) { word in
+                    LetterWheelView(
+                        center: level.centerLetter,
+                        wheel: level.wheelLetters,
+                        wheelSkin: cosmetics.equippedWheelSkin
+                    ) { word in
                         submitWord(word)
                     }
                     .frame(height: wheelH)
@@ -104,7 +152,10 @@ struct WordWheelView: View {
                         levelId: levelId,
                         score: roundScore,
                         bonusCount: bonusFound.count,
-                        hasNextLevel: LevelStore.hasPlayableLevel(after: levelId),
+                        starsEarned: starsEarned,
+                        previousBestStars: starsAtRoundStart,
+                        hasNextLevel: !isFromMap && journeyMode == .standard && LevelStore.hasPlayableLevel(after: levelId),
+                        isReplay: isFromMap || journeyMode != .standard,
                         onContinue: handleRoundClearedContinue
                     )
                     .transition(.scale(scale: 0.9).combined(with: .opacity))
@@ -129,10 +180,15 @@ struct WordWheelView: View {
             if let pack = activeBonusPack {
                 WordWheelBonusView(
                     pack: pack,
+                    sourceLevelId: levelId,
                     onComplete: { coins in
+                        scores.markBonusPackPlayed(pack.id)
                         scores.finishBonusRoundWindow()
                         scores.recordDailyBonusComplete()
                         scores.addNfgCoins(coins)
+                        achievements.recordBonusRoundComplete()
+                        let context = achievements.buildContext(scores: scores, progress: levelProgress, cosmetics: cosmetics)
+                        achievements.evaluate(context: context, scores: scores, cosmetics: cosmetics)
                         showBonusRound = false
                         activeBonusPack = nil
                         proceedToNextRound()
@@ -145,13 +201,31 @@ struct WordWheelView: View {
             }
         }
         .onAppear {
-            loadActiveLevel()
-            restoreRoundIfNeeded()
+            if let initialFoundWords {
+                found = initialFoundWords
+                roundScore = initialRoundScore
+            }
+            levelProgress.recordChapterFocus(levelId: levelId)
+            prepareRoundOnLaunch()
+            ChapterMapAssets.prefetchFullImage(chapter: chapterForLevel)
         }
         .onDisappear { persistRound() }
-        .onChange(of: levelId) { _, _ in
-            loadActiveLevel()
-            restoreRoundIfNeeded()
+        .onChange(of: levelId) { _, newLevel in
+            levelProgress.recordChapterFocus(levelId: newLevel)
+            prepareRoundOnLaunch()
+            ChapterMapAssets.prefetchFullImage(chapter: ChapterMap.chapterIndex(for: newLevel))
+        }
+        .confirmationDialog(
+            "Restart this level?",
+            isPresented: $showRestartConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Yes", role: .destructive) {
+                performRestartLevel()
+            }
+            Button("No", role: .cancel) {}
+        } message: {
+            Text("Are you sure you want to restart this level? Words you already found won't award points again.")
         }
     }
 
@@ -209,7 +283,9 @@ struct WordWheelView: View {
             }
             .frame(minWidth: 56)
 
-            Button(action: restartLevel) {
+            Button {
+                showRestartConfirm = true
+            } label: {
                 Image(systemName: "arrow.counterclockwise")
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(NFGTheme.muted)
@@ -283,10 +359,18 @@ struct WordWheelView: View {
         }
 
         if puzzleWords.contains(word) {
-            let pts = WordDictionary.score(word: word, isPuzzle: true, multiplier: level.bonusMultiplier)
             found.insert(word)
             scores.markSessionWordsUsed([word])
-            roundScore += pts
+
+            let alreadyScored = scores.hasWordwheelScoredWord(word, levelId: levelId, bonus: false)
+            let pts: Int
+            if alreadyScored {
+                pts = 0
+            } else {
+                pts = WordDictionary.score(word: word, isPuzzle: true, multiplier: level.bonusMultiplier)
+                scores.markWordwheelScoredWord(word, levelId: levelId, bonus: false)
+                roundScore += pts
+            }
             persistRound()
             if found.count == puzzleWords.count {
                 showToast(
@@ -297,11 +381,14 @@ struct WordWheelView: View {
                     isComplete: true
                 )
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    starsEarned = LevelStars.compute(hintsUsed: hintsUsed, bonusWordsFound: bonusFound.count)
                     withAnimation { showRoundCleared = true }
                 }
             } else {
                 showToast(
-                    title: WordFeedback.random(from: WordFeedback.puzzle),
+                    title: alreadyScored
+                        ? "Already found"
+                        : WordFeedback.random(from: WordFeedback.puzzle),
                     subtitle: word.uppercased(),
                     points: pts,
                     isBonus: false,
@@ -312,14 +399,24 @@ struct WordWheelView: View {
         }
 
         if word.count <= maxBonusWordLength, WordDictionary.isValidWord(word) {
-            let pts = WordDictionary.score(word: word, isPuzzle: false)
             bonusFound.insert(word)
             scores.markSessionWordsUsed([word])
-            roundScore += pts
-            scores.addNfgCoins(1)
+
+            let alreadyScored = scores.hasWordwheelScoredWord(word, levelId: levelId, bonus: true)
+            let pts: Int
+            if alreadyScored {
+                pts = 0
+            } else {
+                pts = WordDictionary.score(word: word, isPuzzle: false)
+                scores.markWordwheelScoredWord(word, levelId: levelId, bonus: true)
+                roundScore += pts
+                scores.addNfgCoins(1)
+            }
             persistRound()
             showToast(
-                title: WordFeedback.random(from: WordFeedback.bonus) + " +1 coin",
+                title: alreadyScored
+                    ? "Already found"
+                    : WordFeedback.random(from: WordFeedback.bonus) + " +1 coin",
                 subtitle: word.uppercased(),
                 points: pts,
                 isBonus: true,
@@ -349,12 +446,46 @@ struct WordWheelView: View {
     private func handleRoundClearedContinue() {
         showRoundCleared = false
         activeToast = nil
-        if scores.recordWordwheelRoundClear(), let pack = BonusRoundStore.randomPack() {
-            activeBonusPack = pack
-            showBonusOffer = true
-        } else {
-            proceedToNextRound()
+
+        if isFromMap {
+            finishMapRound()
+            return
         }
+
+        switch journeyMode {
+        case .standard:
+            recordRoundProgress()
+            if scores.recordWordwheelRoundClear(), let pack = BonusRoundStore.randomPack(excludingIds: scores.recentBonusPackIds()) {
+                activeBonusPack = pack
+                showBonusOffer = true
+            } else {
+                proceedToNextRound()
+            }
+        case .replay:
+            recordRoundProgress()
+            finishSandboxRound()
+        case .preview:
+            finishSandboxRound()
+        }
+    }
+
+    /// Journey map pick — record stars, advance frontier if needed, return to the map.
+    private func finishMapRound() {
+        recordRoundProgress()
+        scores.markWordwheelRoundCompleted(level)
+        scores.markSessionWordsUsed(puzzleWords)
+        scores.addRoundScore(roundScore, game: .wordwheel)
+        if levelId == earnedLevel {
+            let next = scores.nextWordwheelLevel(after: levelId)
+            scores.advanceWordwheelLevel(to: next)
+        }
+        finishSandboxRound()
+    }
+
+    private func finishSandboxRound() {
+        scores.markSessionWordsUsed(puzzleWords)
+        scores.clearWordwheelRound()
+        dismiss()
     }
 
     private func skipBonusRound() {
@@ -365,6 +496,12 @@ struct WordWheelView: View {
     }
 
     private func proceedToNextRound() {
+        guard journeyMode == .standard else {
+            finishSandboxRound()
+            return
+        }
+        recordRoundProgress()
+        scores.markWordwheelRoundCompleted(level)
         scores.markSessionWordsUsed(puzzleWords)
         let total = roundScore
         scores.clearWordwheelRound()
@@ -378,6 +515,14 @@ struct WordWheelView: View {
         loadActiveLevel()
     }
 
+    private func recordRoundProgress() {
+        let stars = LevelStars.compute(hintsUsed: hintsUsed, bonusWordsFound: bonusFound.count)
+        starsEarned = stars
+        levelProgress.recordStars(levelId: levelId, earned: stars)
+        let context = achievements.buildContext(scores: scores, progress: levelProgress, cosmetics: cosmetics)
+        achievements.evaluate(context: context, scores: scores, cosmetics: cosmetics)
+    }
+
     private func purchaseHint() {
         hintFeedback = nil
         guard hintsRemaining > 0 else {
@@ -388,43 +533,55 @@ struct WordWheelView: View {
             hintFeedback = "Need 1 NFG Coin for a hint."
             return
         }
-        var candidates: [String] = []
-        for entry in level.words {
-            let w = entry.word.lowercased()
-            guard !found.contains(w) else { continue }
-            for (i, _) in entry.word.enumerated() {
-                let row = entry.startRow + (entry.direction == "down" ? i : 0)
-                let col = entry.startCol + (entry.direction == "across" ? i : 0)
-                let key = "\(row),\(col)"
-                if !hintedCells.contains(key) {
-                    candidates.append(key)
-                }
-            }
-        }
+        var candidates = WordwheelHintPolicy.hintCandidates(
+            level: level,
+            found: found,
+            hintedCells: hintedCells
+        )
         guard let pick = candidates.randomElement() else {
             scores.addNfgCoins(1)
             hintFeedback = "Nothing left to hint."
             return
         }
         hintedCells.insert(pick)
+        hintsUsed += 1
         persistRound()
     }
 
-    private func restartLevel() {
+    private func performRestartLevel() {
         resetRound(clearSaved: true)
         loadActiveLevel()
         hintFeedback = "Level restarted."
     }
 
     private func loadActiveLevel() {
-        activeLevel = LevelStore.resolveLevel(
-            id: levelId,
-            excludingWords: scores.sessionUsedWords(),
-            roundsCleared: scores.state.wordwheelRoundsCleared
-        )
+        activeLevel = LevelStore.playLevel(id: levelId)
+    }
+
+    private func prepareRoundOnLaunch() {
+        starsAtRoundStart = levelProgress.stars(for: levelId)
+        loadActiveLevel()
+        if isFromMap && shouldStartReplayFresh() {
+            scores.clearWordwheelRound()
+            resetRound(clearSaved: false)
+            return
+        }
+        restoreRoundIfNeeded()
+    }
+
+    /// Cleared levels reopened from the map start a fresh run instead of showing the cleared popup.
+    private func shouldStartReplayFresh() -> Bool {
+        guard isFromMap else { return false }
+        if levelId < earnedLevel { return true }
+        if levelProgress.stars(for: levelId) > 0 { return true }
+        guard let saved = scores.wordwheelRoundProgress(), saved.levelId == levelId else { return false }
+        let validPuzzle = Set(puzzleWordList)
+        let restored = Set(saved.foundWords.map { $0.lowercased() }.filter { validPuzzle.contains($0) })
+        return !puzzleWords.isEmpty && restored.count >= puzzleWords.count
     }
 
     private func restoreRoundIfNeeded() {
+        guard initialFoundWords == nil else { return }
         guard let saved = scores.wordwheelRoundProgress(), saved.levelId == levelId else {
             resetRound(clearSaved: true)
             return
@@ -433,15 +590,33 @@ struct WordWheelView: View {
         let validPuzzle = Set(puzzleWordList)
         found = Set(saved.foundWords.map { $0.lowercased() }.filter { validPuzzle.contains($0) })
         bonusFound = Set(saved.bonusWords.map { $0.lowercased() })
-        hintedCells = Set(saved.hintedCells)
-        roundScore = recalculateRoundScore()
+        let validHintKeys = Set(validHintCellKeys(for: level))
+        hintedCells = Set(saved.hintedCells.filter { validHintKeys.contains($0) })
+        roundScore = saved.roundScore
         activeToast = nil
-        // If the round was finished before the app closed, show the cleared popup again.
-        showRoundCleared = !puzzleWords.isEmpty && found.count == puzzleWords.count
+        // Only resurrect the cleared popup when resuming an in-progress Continue run.
+        showRoundCleared = !isFromMap && !puzzleWords.isEmpty && found.count == puzzleWords.count
+    }
+
+    /// Hint keys that exist on the current grid and use letters on the wheel.
+    private func validHintCellKeys(for level: WordwheelLevel) -> [String] {
+        let wheel = Set(level.wheelLetters.map { $0.lowercased() })
+        var keys: [String] = []
+        for entry in level.words {
+            for index in 0..<entry.word.count {
+                let ch = String(entry.word[entry.word.index(entry.word.startIndex, offsetBy: index)]).lowercased()
+                guard wheel.contains(ch) else { continue }
+                let row = entry.startRow + (entry.direction == "down" ? index : 0)
+                let col = entry.startCol + (entry.direction == "across" ? index : 0)
+                keys.append("\(row),\(col)")
+            }
+        }
+        return keys
     }
 
     private func persistRound() {
         scores.saveWordwheelRound(
+            levelId: levelId,
             found: found,
             bonusFound: bonusFound,
             roundScore: roundScore,
@@ -449,21 +624,11 @@ struct WordWheelView: View {
         )
     }
 
-    private func recalculateRoundScore() -> Int {
-        var total = 0
-        for word in found where puzzleWords.contains(word) {
-            total += WordDictionary.score(word: word, isPuzzle: true, multiplier: level.bonusMultiplier)
-        }
-        for word in bonusFound {
-            total += WordDictionary.score(word: word, isPuzzle: false)
-        }
-        return total
-    }
-
     private func resetRound(clearSaved: Bool) {
         found = []
         bonusFound = []
         hintedCells = []
+        hintsUsed = 0
         roundScore = 0
         hintFeedback = nil
         activeToast = nil

@@ -56,4 +56,34 @@ enum WordwheelHintPolicy {
         }
         return "No hints left this level (2 max)."
     }
+
+    /// Cell keys eligible for a hint — skips found words and letters already visible on the grid.
+    static func hintCandidates(
+        level: WordwheelLevel,
+        found: Set<String>,
+        hintedCells: Set<String>
+    ) -> [String] {
+        var revealedKeys = Set<String>()
+        for entry in level.words {
+            guard found.contains(entry.word.lowercased()) else { continue }
+            for index in 0..<entry.word.count {
+                let row = entry.startRow + (entry.direction == "down" ? index : 0)
+                let col = entry.startCol + (entry.direction == "across" ? index : 0)
+                revealedKeys.insert("\(row),\(col)")
+            }
+        }
+
+        var candidates: [String] = []
+        for entry in level.words {
+            guard !found.contains(entry.word.lowercased()) else { continue }
+            for index in 0..<entry.word.count {
+                let row = entry.startRow + (entry.direction == "down" ? index : 0)
+                let col = entry.startCol + (entry.direction == "across" ? index : 0)
+                let key = "\(row),\(col)"
+                guard !revealedKeys.contains(key), !hintedCells.contains(key) else { continue }
+                candidates.append(key)
+            }
+        }
+        return candidates
+    }
 }

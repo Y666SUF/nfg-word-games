@@ -11,9 +11,11 @@ const MAX_COLS = 11;
 const MAX_ROWS = 9;
 const LEVEL_COUNT = 2000;
 const MAX_WHEEL_LETTERS = 10;
-/** Each puzzle word appears at most once across all generated levels. */
+/** Each puzzle word appears at most once across all 2000 levels. */
 const GLOBAL_UNIQUE_WORDS = true;
-/** Levels 1001+ reuse words only after this many levels (bundled 1–1000 stay globally unique). */
+/** Each wheel layout appears at most once across all 2000 levels. */
+const GLOBAL_UNIQUE_WHEELS = true;
+/** Legacy — unused when GLOBAL_UNIQUE_WHEELS is true. */
 const APPEND_WORD_COOLDOWN = 400;
 const WHEEL_COOLDOWN = 30;
 const VOWELS = new Set("aeiou");
@@ -57,7 +59,7 @@ function canForm(word, wheel, center) {
 }
 
 function requiredWheelSize(levelId) {
-  return Math.min(MAX_WHEEL_LETTERS, 5 + Math.floor(levelId / 150));
+  return Math.min(MAX_WHEEL_LETTERS, 5 + Math.floor((levelId - 1) / 150));
 }
 
 function discoverWords(wheel, center, maxLen) {
@@ -377,11 +379,16 @@ function wordIsAvailable(word, levelId, wordLastUsed, globalUnique = GLOBAL_UNIQ
   return levelId - last >= gap;
 }
 
-function wheelIsAvailable(pack, levelId, wheelLastUsed) {
+function wheelIsAvailable(pack, wheelLastUsed) {
   const key = wheelKey(pack.center, pack.wheel.filter((l) => l !== pack.center));
+  if (GLOBAL_UNIQUE_WHEELS) return !wheelLastUsed.has(key);
   const last = wheelLastUsed.get(key);
   if (last === undefined) return true;
-  return levelId - last >= WHEEL_COOLDOWN;
+  return false;
+}
+
+function puzzleFingerprint(words) {
+  return words.map((w) => w.word.toLowerCase()).sort().join("|");
 }
 
 function freshCandidates(candidates, levelId, wordLastUsed, globalUnique = GLOBAL_UNIQUE_WORDS) {
@@ -448,40 +455,12 @@ function buildLevel(id, pack, targetCount, bonusMultiplier, wordLastUsed, minWor
 const levels = [];
 const wordLastUsed = new Map();
 const wheelLastUsed = new Map();
+const puzzleSetsUsed = new Set();
 
-// Resume from a partial file so we do not regenerate levels 1..N on every run.
-try {
-  const existing = JSON.parse(readFileSync(OUT, "utf8"));
-  if (Array.isArray(existing.levels) && existing.levels.length > 0 && existing.levels.length < LEVEL_COUNT) {
-    for (const lvl of existing.levels) {
-      levels.push(lvl);
-      for (const entry of lvl.words) {
-        wordLastUsed.set(entry.word.toLowerCase(), lvl.id);
-      }
-      const outer = lvl.wheelLetters.filter((l) => l !== lvl.centerLetter);
-      wheelLastUsed.set(wheelKey(lvl.centerLetter, outer), lvl.id);
-    }
-    console.log(`Resuming from ${levels.length} existing levels (${wordLastUsed.size} words locked)`);
-  }
-} catch {
-  // fresh run
-}
-
-const startLevel = levels.length > 0 ? levels[levels.length - 1].id + 1 : 1;
-const appendMode = startLevel > 1;
-
-let orderedWheels = [];
-if (appendMode) {
-  console.log(`Append mode: generating levels ${startLevel}–${LEVEL_COUNT} via on-demand wheels`);
-} else {
-  console.log("Building wheel library...");
-  const wheelLibrary = buildWheelLibrary();
-  console.log(`Wheel library: ${wheelLibrary.length} wheels`);
-  orderedWheels = shuffle(wheelLibrary, 20260308);
-}
+console.log("Full regeneration: 2000 levels with globally unique wheels and puzzle words");
 
 /** Build wheels from unused dictionary seeds when the pre-built library runs dry. */
-function buildOnDemandPacks(levelId, minWheel, wordLastUsed, globalUnique = GLOBAL_UNIQUE_WORDS) {
+function buildOnDemandPacks(levelId, minWheel, wordLastUsed, wheelLastUsed, globalUnique = GLOBAL_UNIQUE_WORDS) {
   const minWords = minWordsForLevel(levelId);
   const seeds = shuffle(
     dict.filter((w) => {
@@ -508,6 +487,8 @@ function buildOnDemandPacks(levelId, minWheel, wordLastUsed, globalUnique = GLOB
         const outer = others.slice(start, start + outerCount);
         const wheel = [center, ...outer];
         if (wheel.length < minWheel || wheel.length > MAX_WHEEL_LETTERS) continue;
+        const wKey = wheelKey(center, outer);
+        if (wheelLastUsed.has(wKey)) continue;
 
         const candidates = discoverWords(wheel, center, wheel.length);
         const available = freshCandidates(candidates, levelId, wordLastUsed, globalUnique);
@@ -521,13 +502,17 @@ function buildOnDemandPacks(levelId, minWheel, wordLastUsed, globalUnique = GLOB
   return packs;
 }
 
-function tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed, minWordsOverride, globalUnique = GLOBAL_UNIQUE_WORDS) {
+function tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed, minWordsOverride) {
+  if (!wheelIsAvailable(pack, wheelLastUsed)) return null;
   const minW = minWordsOverride ?? minWordsForLevel(i);
   for (let target = targetCount; target >= minW; target--) {
-    const level = buildLevel(i, pack, target, bonusMultiplier, wordLastUsed, minWordsOverride, globalUnique);
+    const level = buildLevel(i, pack, target, bonusMultiplier, wordLastUsed, minWordsOverride, true);
     if (!level) continue;
+    const pf = puzzleFingerprint(level.words);
+    if (puzzleSetsUsed.has(pf)) continue;
     const wKey = wheelKey(pack.center, pack.wheel.filter((l) => l !== pack.center));
     wheelLastUsed.set(wKey, i);
+    puzzleSetsUsed.add(pf);
     for (const entry of level.words) {
       wordLastUsed.set(entry.word.toLowerCase(), i);
     }
@@ -536,66 +521,66 @@ function tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wh
   return null;
 }
 
+const startLevel = 1;
+console.log("Building wheel library...");
+const wheelLibrary = buildWheelLibrary();
+console.log(`Wheel library: ${wheelLibrary.length} wheels`);
+const orderedWheels = shuffle(wheelLibrary, 20260613);
+
 for (let i = startLevel; i <= LEVEL_COUNT; i++) {
   const targetCount = targetWordsForLevel(i);
   const bonusMultiplier = 1 + Math.floor(i / 200) * 0.25;
   let built = null;
 
   const minWheel = requiredWheelSize(i);
-  const useGlobalUnique = appendMode ? false : GLOBAL_UNIQUE_WORDS;
 
   const tryOnDemand = () => {
-    const onDemand = buildOnDemandPacks(i, minWheel, wordLastUsed, useGlobalUnique);
+    const onDemand = buildOnDemandPacks(i, minWheel, wordLastUsed, wheelLastUsed, true);
     for (const pack of onDemand) {
-      const level = tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed, undefined, useGlobalUnique);
+      const level = tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed);
       if (level) return level;
     }
     return null;
   };
 
-  if (appendMode) {
-    built = tryOnDemand();
-  } else {
-    const scanLimit = Math.min(orderedWheels.length, 500);
-    for (let offset = 0; offset < scanLimit; offset++) {
-      const pack = orderedWheels[(i * 17 + offset * 13) % orderedWheels.length];
+  const scanLimit = Math.min(orderedWheels.length, 800);
+  for (let offset = 0; offset < scanLimit; offset++) {
+    const pack = orderedWheels[(i * 17 + offset * 13) % orderedWheels.length];
+    if (pack.wheel.length < minWheel || pack.wheel.length > MAX_WHEEL_LETTERS) continue;
+    built = tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed);
+    if (built) break;
+  }
+
+  if (!built) {
+    console.warn(`WARNING: could not build level ${i} — scanning all wheels`);
+    for (let offset = 0; offset < orderedWheels.length && !built; offset++) {
+      const pack = orderedWheels[(i - 1 + offset) % orderedWheels.length];
       if (pack.wheel.length < minWheel || pack.wheel.length > MAX_WHEEL_LETTERS) continue;
-      if (!wheelIsAvailable(pack, i, wheelLastUsed)) continue;
-      built = tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed, undefined, useGlobalUnique);
-      if (built) break;
+      built = tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed);
     }
+  }
 
-    if (!built) {
-      console.warn(`WARNING: could not build level ${i} — scanning all wheels`);
-      for (let offset = 0; offset < orderedWheels.length && !built; offset++) {
-        const pack = orderedWheels[(i - 1 + offset) % orderedWheels.length];
-        if (pack.wheel.length < minWheel || pack.wheel.length > MAX_WHEEL_LETTERS) continue;
-        built = tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed, undefined, useGlobalUnique);
-      }
-    }
-
-    if (!built) {
-      console.warn(`WARNING: level ${i} — on-demand wheel discovery`);
-      built = tryOnDemand();
-    }
+  if (!built) {
+    console.warn(`WARNING: level ${i} — on-demand wheel discovery`);
+    built = tryOnDemand();
   }
 
   if (!built && i > 800) {
     console.warn(`WARNING: level ${i} — relaxed min-word fallback`);
     const relaxedMin = Math.max(3, minWordsForLevel(i) - 1);
-    for (const pack of buildOnDemandPacks(i, minWheel, wordLastUsed, useGlobalUnique)) {
-      built = tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed, relaxedMin, useGlobalUnique);
+    for (const pack of buildOnDemandPacks(i, minWheel, wordLastUsed, wheelLastUsed, true)) {
+      built = tryBuildForPack(i, pack, targetCount, bonusMultiplier, wordLastUsed, wheelLastUsed, relaxedMin);
       if (built) break;
     }
   }
 
   if (!built) {
-    throw new Error(`Failed to build level ${i} with globally unique words`);
+    throw new Error(`Failed to build level ${i} with globally unique wheel and words`);
   }
 
   levels.push(built);
   if (i % 100 === 0) {
-    console.log(`Progress: ${i}/${LEVEL_COUNT} (${wordLastUsed.size} unique puzzle words)`);
+    console.log(`Progress: ${i}/${LEVEL_COUNT} (${wordLastUsed.size} unique puzzle words, ${wheelLastUsed.size} unique wheels)`);
   }
 }
 
@@ -629,26 +614,30 @@ for (const lvl of levels) {
   }
 }
 console.log(`Global puzzle words: ${totalSlots} slots, ${globalWords.size} unique, ${globalDuplicates} duplicates`);
-const bundledUniqueCap = levels.findIndex((l) => l.id > 1000);
-const uniqueCheckEnd = bundledUniqueCap === -1 ? levels.length : bundledUniqueCap;
-const earlyWords = new Set();
-let earlyDupes = 0;
-for (let idx = 0; idx < uniqueCheckEnd; idx++) {
-  for (const w of levels[idx].words) {
-    const word = w.word.toLowerCase();
-    if (earlyWords.has(word)) earlyDupes++;
-    earlyWords.add(word);
-  }
-}
-if (earlyDupes > 0) {
-  throw new Error(`${earlyDupes} duplicate puzzle words in levels 1–1000 — expected 0`);
-}
-if (appendMode && globalDuplicates > 0) {
-  console.log(`Levels 1001+ allow spaced reuse (cooldown ${APPEND_WORD_COOLDOWN})`);
+if (globalDuplicates > 0) {
+  throw new Error(`${globalDuplicates} duplicate puzzle words across 2000 levels — expected 0`);
 }
 
+const wheelKeys = new Set();
+let wheelDupes = 0;
+const puzzleKeys = new Set();
+let puzzleDupes = 0;
+for (const lvl of levels) {
+  const outer = lvl.wheelLetters.filter((l) => l !== lvl.centerLetter);
+  const wk = wheelKey(lvl.centerLetter, outer);
+  if (wheelKeys.has(wk)) wheelDupes++;
+  wheelKeys.add(wk);
+  const pk = puzzleFingerprint(lvl.words);
+  if (puzzleKeys.has(pk)) puzzleDupes++;
+  puzzleKeys.add(pk);
+}
+console.log(`Unique wheels: ${wheelKeys.size}/${levels.length}, duplicate wheels: ${wheelDupes}`);
+console.log(`Unique puzzle sets: ${puzzleKeys.size}/${levels.length}, duplicate sets: ${puzzleDupes}`);
+if (wheelDupes > 0) throw new Error(`${wheelDupes} duplicate wheels — expected 0`);
+if (puzzleDupes > 0) throw new Error(`${puzzleDupes} duplicate puzzle sets — expected 0`);
+
 const payload = JSON.stringify({
-  version: 9,
+  version: 10,
   count: levels.length,
   maxWheelLetters: MAX_WHEEL_LETTERS,
   proceduralFromLevel: LEVEL_COUNT + 1,

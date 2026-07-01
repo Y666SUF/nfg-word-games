@@ -2,8 +2,11 @@ import SwiftUI
 
 struct WordWheelBonusView: View {
     let pack: BonusRoundPack
+    var sourceLevelId: Int = 1
     let onComplete: (Int) -> Void
     let onSkip: () -> Void
+
+    @EnvironmentObject private var cosmetics: CosmeticStore
 
     @State private var found: Set<String> = []
     @State private var shake = false
@@ -19,6 +22,14 @@ struct WordWheelBonusView: View {
         Set(pack.targetWords.map { $0.lowercased() })
     }
 
+    private var starterHintCells: Set<String> {
+        var hints = Set<String>()
+        for entry in bonusLevel.words {
+            hints.insert("\(entry.startRow),\(entry.startCol)")
+        }
+        return hints
+    }
+
     private var progress: Double {
         guard !targetWords.isEmpty else { return 0 }
         return Double(found.count) / Double(targetWords.count)
@@ -32,7 +43,8 @@ struct WordWheelBonusView: View {
             let listH = max(80, geo.size.height - topH - foundH - wheelH - 24)
 
             ZStack {
-                NFGAnimatedBackground(style: .game)
+                JourneyBiomeBackground(levelId: sourceLevelId, style: .gameplay)
+                .ignoresSafeArea()
 
                 VStack(spacing: 10) {
                     topBar
@@ -48,7 +60,11 @@ struct WordWheelBonusView: View {
                     )
                     .frame(height: foundH)
 
-                    LetterWheelView(center: pack.centerLetter, wheel: pack.wheelLetters) { word in
+                    LetterWheelView(
+                        center: pack.centerLetter,
+                        wheel: pack.wheelLetters,
+                        wheelSkin: cosmetics.equippedWheelSkin
+                    ) { word in
                         submitWord(word)
                     }
                     .frame(height: wheelH)
@@ -124,7 +140,7 @@ struct WordWheelBonusView: View {
     }
 
     private var puzzleGrid: some View {
-        PuzzleGridView(level: bonusLevel, found: found, maxCellSize: 34)
+        PuzzleGridView(level: bonusLevel, found: found, hintedCells: starterHintCells, maxCellSize: 34)
             .padding(12)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(

@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ScoresView: View {
     @EnvironmentObject private var scores: ScoreStore
+    @EnvironmentObject private var progress: LevelProgressStore
+    @EnvironmentObject private var achievements: AchievementStore
 
     @State private var showPrivacy = false
     @State private var showTerms = false
@@ -29,6 +31,10 @@ struct ScoresView: View {
                 }
 
                 levelPanel(title: "WordWheel progress", level: scores.state.wordwheelLevel)
+
+                journeyPanel
+
+                AchievementsWallView()
 
                 RewardUnlocksSection(totalScore: scores.state.totalScore)
 
@@ -173,7 +179,7 @@ struct ScoresView: View {
                         .font(.system(size: 16, weight: .bold, design: .rounded))
                         .foregroundStyle(NFGTheme.text)
                 }
-                Text("Earned from bonus rounds · shop coming soon")
+                Text("Earned from bonus rounds & achievements")
                     .font(.caption)
                     .foregroundStyle(NFGTheme.muted)
             }
@@ -253,6 +259,30 @@ struct ScoresView: View {
                 Text("Tap to reveal your private player code")
                     .font(.caption2)
                     .foregroundStyle(NFGTheme.muted)
+            }
+        }
+        .padding(14)
+        .background(NFGTheme.panel)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(NFGTheme.border))
+    }
+
+    private var journeyPanel: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Journey stars")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                Text("\(progress.totalStars()) earned across \(ChapterMap.chapterCount()) chapters")
+                    .font(.caption)
+                    .foregroundStyle(NFGTheme.muted)
+            }
+            Spacer()
+            HStack(spacing: 4) {
+                Image(systemName: "star.fill")
+                    .foregroundStyle(NFGTheme.gold)
+                Text("\(progress.totalStars())")
+                    .font(.system(size: 22, weight: .heavy, design: .rounded))
+                    .foregroundStyle(NFGTheme.gold)
             }
         }
         .padding(14)

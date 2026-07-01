@@ -33,9 +33,44 @@ enum LevelStore {
         levels.first { $0.id == id }
     }
 
-    /// Outer letters around the centre for the player's current progression tier.
+    /// Fixed puzzle for a level id — wheel and crossword words always match at this level's tier.
+    static func playLevel(id: Int) -> WordwheelLevel {
+        if id <= bundledLevelCount, let native = level(id: id) {
+            let tierSize = requiredOuterLetterCount(forLevelId: id) + 1
+            let minWords = minimumPuzzleWords(for: id)
+            if let built = buildPlayLevel(
+                from: native,
+                displayId: id,
+                tierSize: tierSize,
+                minWords: minWords,
+                roundsCleared: max(0, id - 1)
+            ), built.gridLettersAreOnWheel {
+                return built
+            }
+            // Tier-filtered rebuild failed — keep native only if wheel matches grid.
+            let nativePlay = CrosswordPlacer.repairIfNeeded(native)
+            if nativePlay.gridLettersAreOnWheel {
+                return nativePlay
+            }
+            if let generated = ProceduralLevelEngine.generateFixed(levelId: id) {
+                return generated
+            }
+            return fallbackLevel
+        }
+        if let generated = ProceduralLevelEngine.generateFixed(levelId: id) {
+            return generated
+        }
+        return fallbackLevel
+    }
+
+    /// Outer letters for a journey level id (4 @ L1–150, +1 every 150 levels, max 10).
+    static func requiredOuterLetterCount(forLevelId levelId: Int) -> Int {
+        min(maxOuterLetters, startingOuterLetters + max(0, levelId - 1) / lettersPerTier)
+    }
+
+    /// Outer letters around the centre for legacy callers tied to clears count.
     static func requiredOuterLetterCount(roundsCleared: Int) -> Int {
-        min(maxOuterLetters, startingOuterLetters + max(0, roundsCleared) / lettersPerTier)
+        requiredOuterLetterCount(forLevelId: roundsCleared + 1)
     }
 
     /// Total wheel letters (centre + outer ring) for the current tier.
@@ -46,38 +81,218 @@ enum LevelStore {
     /// Bundled level or procedurally generated level (infinite progression).
     static func resolveLevel(
         id: Int,
-        excludingWords: Set<String>,
+        history: WordwheelRoundHistory,
         roundsCleared: Int
     ) -> WordwheelLevel {
-        if id <= bundledLevelCount, let bundled = level(id: id) {
-            return applyProgressiveWheel(to: bundled, roundsCleared: roundsCleared)
+        playLevel(id: id)
+    }
+
+    /// Level N uses bundled level N (native wheel + crossword) when the player's tier allows.
+    private static func resolveBundledLevel(
+        displayId: Int,
+        playedRounds: Set<String>,
+        recentWheels: Set<String>,
+        roundsCleared: Int
+    ) -> WordwheelLevel {
+        let tierSize = requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
+        let minWords = minimumPuzzleWords(for: displayId)
+
+        if let native = level(id: displayId),
+           let built = buildPlayLevel(
+               from: native,
+               displayId: displayId,
+               tierSize: tierSize,
+               minWords: minWords,
+               roundsCleared: roundsCleared
+           ), !isBlockedRound(built, playedRounds: playedRounds, recentWheels: recentWheels) {
+            return built
         }
+
         if let generated = ProceduralLevelEngine.generate(
-            levelId: id,
-            excludingWords: excludingWords,
-            roundsCleared: roundsCleared
+            levelId: displayId,
+            roundsCleared: roundsCleared,
+            playedRounds: playedRounds,
+            recentWheels: recentWheels
         ) {
             return generated
         }
-        // Last resort — advance seed until a level fits remaining vocabulary.
-        for offset in 1...50 {
+
+        for offset in 1..<80 {
             if let retry = ProceduralLevelEngine.generate(
-                levelId: id &+ offset &* 10_007,
-                excludingWords: excludingWords,
-                roundsCleared: roundsCleared
+                levelId: displayId &+ offset &* 10_007,
+                roundsCleared: roundsCleared,
+                playedRounds: playedRounds,
+                recentWheels: recentWheels
             ) {
-                return WordwheelLevel(
-                    id: id,
-                    centerLetter: retry.centerLetter,
-                    wheelLetters: retry.wheelLetters,
-                    bonusMultiplier: retry.bonusMultiplier,
-                    gridRows: retry.gridRows,
-                    gridCols: retry.gridCols,
-                    words: retry.words
-                )
+                return retry
             }
         }
-        return level(id: 1) ?? fallbackLevel
+
+        return fallbackLevel
+    }
+
+    private static func isBlockedRound(
+        _ level: WordwheelLevel,
+        playedRounds: Set<String>,
+        recentWheels: Set<String>
+    ) -> Bool {
+        playedRounds.contains(WordwheelRoundFingerprint.round(for: level))
+            || recentWheels.contains(WordwheelRoundFingerprint.wheel(for: level))
+    }
+
+    static func puzzleFingerprint(for level: WordwheelLevel) -> String {
+        puzzleFingerprint(words: Set(level.words.map { $0.word.lowercased() }))
+    }
+
+    static func puzzleFingerprint(words: Set<String>) -> String {
+        words.sorted().joined(separator: "|")
+    }
+
+    private static func minimumPuzzleWords(for levelId: Int) -> Int {
+        if levelId <= 15 { return 3 }
+        if levelId <= 150 { return 4 }
+        let tier = (levelId - 1) / 100
+        return min(7, 5 + tier)
+    }
+
+    /// Filter puzzle words to the wheel tier while keeping hand-crafted bundled grid positions.
+    private static func buildPlayLevel(
+        from source: WordwheelLevel,
+        displayId: Int,
+        tierSize: Int,
+        minWords: Int,
+        roundsCleared: Int
+    ) -> WordwheelLevel? {
+        let trimmed = applyProgressiveWheel(to: source, roundsCleared: roundsCleared)
+        let center = trimmed.centerLetter.lowercased()
+        let wheel = trimmed.wheelLetters.map { $0.lowercased() }
+
+        let filteredWords = trimmed.words.filter {
+            $0.word.count <= tierSize
+                && WordDictionary.canForm(word: $0.word, wheel: wheel, center: center)
+        }
+        guard filteredWords.count >= min(minWords, 3) else { return nil }
+
+        let filteredStrings = filteredWords.map(\.word)
+        let targetCount = min(filteredStrings.count, targetPuzzleWords(for: displayId))
+        let balancedStrings = WordLengthBalance.select(
+            candidates: filteredStrings,
+            wheelSize: tierSize,
+            targetCount: max(minWords, targetCount),
+            seed: displayId
+        )
+        let balancedSet = Set(balancedStrings.map { $0.lowercased() })
+        let isNativeLayout = filteredWords.count == source.words.count
+            && wheel.count == source.wheelLetters.count
+            && Set(filteredStrings.map { $0.lowercased() }) == Set(source.words.map { $0.word.lowercased() })
+            && balancedSet == Set(filteredStrings.map { $0.lowercased() })
+            && WordLengthBalance.isBalanced(words: filteredStrings, wheelSize: tierSize)
+
+        if isNativeLayout {
+            return CrosswordPlacer.repairIfNeeded(
+                WordwheelLevel(
+                    id: displayId,
+                    centerLetter: source.centerLetter,
+                    wheelLetters: source.wheelLetters,
+                    bonusMultiplier: source.bonusMultiplier,
+                    gridRows: source.gridRows,
+                    gridCols: source.gridCols,
+                    words: source.words
+                )
+            )
+        }
+
+        // Wheel, word list, or length mix changed — rebuild crossword from balanced words.
+        let minCount = min(minWords, balancedStrings.count)
+        if let layout = CrosswordPlacer.place(
+            words: balancedStrings,
+            minWords: minCount
+        ) {
+            let built = WordwheelLevel(
+                id: displayId,
+                centerLetter: trimmed.centerLetter,
+                wheelLetters: wheel,
+                bonusMultiplier: trimmed.bonusMultiplier,
+                gridRows: layout.gridRows,
+                gridCols: layout.gridCols,
+                words: layout.words
+            )
+            if built.gridLettersAreOnWheel { return built }
+        }
+
+        let normalized = CrosswordPlacer.repairIfNeeded(
+            normalizeGridLayout(
+                id: displayId,
+                centerLetter: trimmed.centerLetter,
+                wheelLetters: wheel,
+                bonusMultiplier: trimmed.bonusMultiplier,
+                words: filteredWords.filter { balancedSet.contains($0.word.lowercased()) }
+            )
+        )
+        return normalized.gridLettersAreOnWheel ? normalized : nil
+    }
+
+    private static func targetPuzzleWords(for levelId: Int) -> Int {
+        if levelId <= 15 { return 4 }
+        if levelId <= 150 { return 5 }
+        let tier = (levelId - 1) / 100
+        let bump = levelId % 5 == 0 ? 1 : 0
+        return min(5 + tier + (levelId % 3) + bump, 8)
+    }
+
+    /// Shift word coordinates to the origin and size the grid to occupied cells only.
+    private static func normalizeGridLayout(
+        id: Int,
+        centerLetter: String,
+        wheelLetters: [String],
+        bonusMultiplier: Double,
+        words: [WordwheelWord]
+    ) -> WordwheelLevel {
+        guard !words.isEmpty else {
+            return WordwheelLevel(
+                id: id,
+                centerLetter: centerLetter,
+                wheelLetters: wheelLetters,
+                bonusMultiplier: bonusMultiplier,
+                gridRows: 5,
+                gridCols: 6,
+                words: []
+            )
+        }
+
+        var minRow = Int.max
+        var minCol = Int.max
+        var maxRow = 0
+        var maxCol = 0
+        for entry in words {
+            for i in 0..<entry.word.count {
+                let row = entry.startRow + (entry.direction == "down" ? i : 0)
+                let col = entry.startCol + (entry.direction == "across" ? i : 0)
+                minRow = min(minRow, row)
+                minCol = min(minCol, col)
+                maxRow = max(maxRow, row)
+                maxCol = max(maxCol, col)
+            }
+        }
+
+        let normalized = words.map { entry in
+            WordwheelWord(
+                word: entry.word,
+                startRow: entry.startRow - minRow,
+                startCol: entry.startCol - minCol,
+                direction: entry.direction
+            )
+        }
+
+        return WordwheelLevel(
+            id: id,
+            centerLetter: centerLetter,
+            wheelLetters: wheelLetters,
+            bonusMultiplier: bonusMultiplier,
+            gridRows: max(5, maxRow - minRow + 2),
+            gridCols: max(6, maxCol - minCol + 2),
+            words: normalized
+        )
     }
 
     private static var fallbackLevel: WordwheelLevel {
@@ -101,11 +316,18 @@ enum LevelStore {
         true
     }
 
-    /// Trim a bundled level's wheel to the player's progression tier (4 around → +1 / 150 clears, max 10 around).
-    /// The crossword grid always keeps every puzzle word — only the wheel ring shrinks.
+    /// Trim wheel to the tier allowed for this level id while keeping the bundled crossword words.
+    static func applyProgressiveWheel(to level: WordwheelLevel, forLevelId levelId: Int) -> WordwheelLevel {
+        applyProgressiveWheel(to: level, maxOuter: requiredOuterLetterCount(forLevelId: levelId))
+    }
+
+    /// Trim a bundled level's wheel to a tier (4 around → +1 / 150 levels, max 10 around).
     static func applyProgressiveWheel(to level: WordwheelLevel, roundsCleared: Int) -> WordwheelLevel {
+        applyProgressiveWheel(to: level, maxOuter: requiredOuterLetterCount(roundsCleared: roundsCleared))
+    }
+
+    private static func applyProgressiveWheel(to level: WordwheelLevel, maxOuter: Int) -> WordwheelLevel {
         let center = level.centerLetter.lowercased()
-        let maxOuter = requiredOuterLetterCount(roundsCleared: roundsCleared)
         let nativeWheel = level.wheelLetters.map { $0.lowercased() }
         let nativeOuters = nativeWheel.filter { $0 != center }
 
@@ -146,7 +368,7 @@ enum LevelStore {
             }
         }
 
-        // Tier below this level's native wheel — keep full grid, use best-effort trimmed wheel.
+        // Tier below this level's native wheel — return trimmed wheel only (caller filters words).
         return WordwheelLevel(
             id: level.id,
             centerLetter: level.centerLetter,
@@ -219,32 +441,98 @@ enum LevelStore {
         return min(currentId + 1, bundledLevelCount)
     }
 
-    /// Random bundled level for timed mode.
+    /// Random bundled level for timed mode — prefer ``TimedWordwheelQueue`` for run-local wheel order.
     static func randomTimedLevel(
         excludingLevelIds recentIds: [Int],
         roundsCleared: Int,
-        excludingWords usedWords: Set<String>
+        history: WordwheelRoundHistory
     ) -> WordwheelLevel {
-        let targetSize = requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
-        let recent = Set(recentIds)
-        var pool = levels.filter { level in
-            level.wheelLetters.count == targetSize
-                && !recent.contains(level.id)
-                && Set(level.words.map { $0.word.lowercased() }).isDisjoint(with: usedWords)
-        }
-        if pool.isEmpty {
-            pool = levels.filter { level in
-                level.wheelLetters.count == targetSize && !recent.contains(level.id)
-            }
-        }
-        if let picked = pool.randomElement() {
-            return applyProgressiveWheel(to: picked, roundsCleared: roundsCleared)
-        }
-        let proceduralId = proceduralFromLevel + Int.random(in: 0..<50_000)
-        return resolveLevel(
-            id: proceduralId,
-            excludingWords: usedWords,
+        var queue = TimedWordwheelQueue(roundsCleared: roundsCleared)
+        return queue.nextLevel()
+    }
+
+    /// Bundled level for timed mode — ignores global round history (run queue handles wheel dedup).
+    static func resolveTimedLevel(displayId: Int, roundsCleared: Int) -> WordwheelLevel? {
+        let tierSize = requiredTotalWheelLetterCount(roundsCleared: roundsCleared)
+        let minWords = minimumPuzzleWords(for: displayId)
+        guard let native = level(id: displayId) else { return nil }
+        return buildPlayLevel(
+            from: native,
+            displayId: displayId,
+            tierSize: tierSize,
+            minWords: minWords,
             roundsCleared: roundsCleared
         )
+    }
+
+    static func proceduralTimedLevel(excludingWheels: Set<String>, roundsCleared: Int) -> WordwheelLevel {
+        for offset in 0..<400 {
+            let levelId = proceduralFromLevel + offset * 10_007
+            if let generated = ProceduralLevelEngine.generate(
+                levelId: levelId,
+                roundsCleared: roundsCleared,
+                playedRounds: [],
+                recentWheels: excludingWheels
+            ) {
+                return generated
+            }
+        }
+        return fallbackLevel
+    }
+}
+
+/// Timed WordWheel run order — shuffled batches of 50 wheels, never repeating within one run.
+struct TimedWordwheelQueue {
+    static let batchSize = 50
+
+    private var pendingLevelIds: [Int] = []
+    private var usedWheels: Set<String> = []
+    private let roundsCleared: Int
+
+    init(roundsCleared: Int) {
+        self.roundsCleared = roundsCleared
+    }
+
+    mutating func nextLevel() -> WordwheelLevel {
+        while true {
+            if pendingLevelIds.isEmpty {
+                refillBatch()
+            }
+            guard !pendingLevelIds.isEmpty else {
+                let generated = LevelStore.proceduralTimedLevel(
+                    excludingWheels: usedWheels,
+                    roundsCleared: roundsCleared
+                )
+                usedWheels.insert(WordwheelRoundFingerprint.wheel(for: generated))
+                return generated
+            }
+
+            let levelId = pendingLevelIds.removeFirst()
+            guard let level = LevelStore.resolveTimedLevel(
+                displayId: levelId,
+                roundsCleared: roundsCleared
+            ) else { continue }
+
+            let wheelFP = WordwheelRoundFingerprint.wheel(for: level)
+            guard !usedWheels.contains(wheelFP) else { continue }
+
+            usedWheels.insert(wheelFP)
+            return level
+        }
+    }
+
+    private mutating func refillBatch() {
+        var pool: [Int] = []
+        pool.reserveCapacity(LevelStore.bundledLevelCount)
+
+        for id in 1...LevelStore.bundledLevelCount {
+            guard let native = LevelStore.level(id: id) else { continue }
+            let wheelFP = WordwheelRoundFingerprint.wheel(for: native)
+            guard !usedWheels.contains(wheelFP) else { continue }
+            pool.append(id)
+        }
+
+        pool.shuffle()
+        pendingLevelIds = Array(pool.prefix(Self.batchSize))
     }
 }

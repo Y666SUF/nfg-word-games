@@ -300,16 +300,16 @@ def min_zipf_for_length(length: int) -> float:
 
 
 def min_zipf_wordwich(length: int) -> float:
-    """Relaxed frequency floor for the expanded Wordwich dictionary."""
+    """Common English only — words people would expect on a phone keyboard."""
     if length <= 4:
+        return 3.5
+    if length <= 6:
         return 3.0
-    if length <= 7:
-        return 2.2
+    if length <= 8:
+        return 2.8
     if length <= 10:
-        return 1.5
-    if length <= 12:
-        return 1.2
-    return 1.0
+        return 2.5
+    return 2.0
 
 
 def is_sensitive_word(word: str) -> bool:

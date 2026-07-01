@@ -48,8 +48,99 @@ struct LeaderboardEntry: Codable, Identifiable, Equatable {
     var username: String
     var score: Int
     var wordwheelLevel: Int
+    var equippedTitleId: String?
 
     var id: String { playerId }
+
+    enum CodingKeys: String, CodingKey {
+        case rank, playerId, username, score, wordwheelLevel, equippedTitleId
+    }
+
+    init(
+        rank: Int,
+        playerId: String,
+        username: String,
+        score: Int,
+        wordwheelLevel: Int,
+        equippedTitleId: String? = nil
+    ) {
+        self.rank = rank
+        self.playerId = playerId
+        self.username = username
+        self.score = score
+        self.wordwheelLevel = wordwheelLevel
+        self.equippedTitleId = equippedTitleId
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        rank = try c.decode(Int.self, forKey: .rank)
+        playerId = try c.decode(String.self, forKey: .playerId)
+        username = try c.decode(String.self, forKey: .username)
+        score = try c.decode(Int.self, forKey: .score)
+        wordwheelLevel = try c.decode(Int.self, forKey: .wordwheelLevel)
+        equippedTitleId = try c.decodeIfPresent(String.self, forKey: .equippedTitleId)
+    }
+}
+
+struct PlayerPublicProfile: Codable, Equatable, Identifiable {
+    var playerId: String
+    var username: String
+    var totalScore: Int
+    var gameHighScores: [String: Int]
+    var wordwheelLevel: Int
+    var equippedTitleId: String?
+    var equippedWheelSkinId: String?
+    var updatedAt: String?
+    var ranks: PlayerRanks?
+
+    var id: String { playerId }
+
+    func highScore(for game: GameId) -> Int {
+        gameHighScores[game.rawValue] ?? 0
+    }
+}
+
+struct PlayerRanks: Codable, Equatable {
+    var overall: Int?
+    var wordwheel: Int?
+    var wordwheelTimed: Int?
+    var wordwich: Int?
+}
+
+/// Instant profile data from a leaderboard row while the full profile loads.
+struct ProfileSheetSeed: Equatable {
+    let username: String
+    let displayedScore: Int
+    let wordwheelLevel: Int
+    let equippedTitleId: String?
+    let listRank: Int
+
+    func placeholderProfile(playerId: String) -> PlayerPublicProfile {
+        PlayerPublicProfile(
+            playerId: playerId,
+            username: username,
+            totalScore: displayedScore,
+            gameHighScores: [:],
+            wordwheelLevel: wordwheelLevel,
+            equippedTitleId: equippedTitleId,
+            equippedWheelSkinId: nil,
+            updatedAt: nil,
+            ranks: PlayerRanks(
+                overall: listRank,
+                wordwheel: nil,
+                wordwheelTimed: nil,
+                wordwich: nil
+            )
+        )
+    }
+}
+
+/// Drives profile sheet presentation — avoids blank sheets from optional state races.
+struct ProfileSheetTarget: Identifiable, Equatable {
+    let id: String
+    let isYou: Bool
+    let seed: ProfileSheetSeed?
 }
 
 struct ScoreState: Codable, Equatable {
@@ -142,6 +233,17 @@ struct ScoreState: Codable, Equatable {
         try c.encode(bonusNextThreshold, forKey: .bonusNextThreshold)
         try c.encode(wordwheelRoundsCleared, forKey: .wordwheelRoundsCleared)
     }
+
+    /// Best estimate of lifetime clears — survives re-login when only level is restored from server.
+    var effectiveWordwheelRoundsCleared: Int {
+        max(wordwheelRoundsCleared, max(0, wordwheelLevel - 1))
+    }
+
+    /// Timed mode unlocks from lifetime progress (level or clears), not the current login session.
+    var timedModeUnlocked: Bool {
+        wordwheelLevel >= GameId.timedUnlockClears
+            || effectiveWordwheelRoundsCleared >= GameId.timedUnlockClears
+    }
 }
 
 struct WordwheelWord: Codable, Hashable {
@@ -159,6 +261,17 @@ struct WordwheelLevel: Codable, Identifiable, Hashable {
     let gridRows: Int
     let gridCols: Int
     let words: [WordwheelWord]
+
+    /// Every crossword letter must be on the wheel — otherwise hints/words are impossible.
+    var gridLettersAreOnWheel: Bool {
+        let wheel = Set(wheelLetters.map { $0.lowercased() })
+        for entry in words {
+            for ch in entry.word.lowercased() where !wheel.contains(String(ch)) {
+                return false
+            }
+        }
+        return true
+    }
 }
 
 struct WordwheelLevelFile: Codable {
@@ -179,7 +292,7 @@ struct WordwheelRoundProgress: Codable, Equatable {
     var hintedCells: [String] = []
 }
 
-/// Bigger 10-letter wheel bonus round — longer target words, awards NFG Coins.
+/// Bonus round — slightly bigger wheel, common target words, coin reward.
 struct BonusRoundPack: Codable, Identifiable, Hashable {
     let id: Int
     let centerLetter: String

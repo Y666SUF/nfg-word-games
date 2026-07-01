@@ -202,6 +202,42 @@ enum LeaderboardAPI {
         }
     }
 
+    static func syncPublicProfile(
+        playerId: String,
+        equippedTitleId: String?,
+        equippedWheelSkinId: String
+    ) async throws {
+        var body: [String: Any] = [
+            "equippedWheelSkinId": equippedWheelSkinId,
+        ]
+        if let equippedTitleId, equippedTitleId != "none" {
+            body["equippedTitleId"] = equippedTitleId
+        } else {
+            body["equippedTitleId"] = NSNull()
+        }
+        struct ProfileResponse: Decodable {
+            let ok: Bool
+            let profile: PlayerPublicProfile
+        }
+        let _: ProfileResponse = try await request(
+            "api/word-games/players/\(playerId)/profile",
+            method: "PUT",
+            body: body
+        )
+    }
+
+    static func fetchPlayerProfile(playerId: String) async throws -> PlayerPublicProfile {
+        struct ProfileResponse: Decodable {
+            let ok: Bool
+            let profile: PlayerPublicProfile
+        }
+        let response: ProfileResponse = try await request(
+            "api/word-games/players/\(playerId)/profile",
+            method: "GET"
+        )
+        return response.profile
+    }
+
     static func deleteAccount(playerId: String) async throws {
         var request = URLRequest(url: endpoint("api/word-games/players/\(playerId)"))
         request.httpMethod = "DELETE"

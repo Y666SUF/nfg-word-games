@@ -1,0 +1,238 @@
+NFG WORD GAMES — Windows full server sync (paste into Cursor Agent on Windows)
+================================================================================
+
+GitHub: https://github.com/Y666SUF/nfg-word-games
+Latest commits to deploy: **77cc2f9** (and everything back through **439b0f6**)
+Port: **19877** only — standalone from NFG Crash (:3847) and Hangman (:19876)
+
+---
+
+## PROMPT START
+
+Pull and fully deploy the latest **NFG Word Games** server on my Windows PC. My Mac pushed all changes from the past few hours — bring Windows in line with GitHub `main`.
+
+**Work only in `nfg-word-games`.** Do not modify NFG Crash or other repos unless restarting the `y666suf.com` proxy.
+
+---
+
+### Summary of what changed (server-relevant)
+
+#### Wordwich (IMPORTANT — server must update)
+- **Auto-reset after correct guess**: `wordwich_round.py` now starts a **5-second** celebration window, then automatically starts a **fresh round** for all online players on the next API poll. No client has to call `POST /rounds` anymore.
+- New API fields on round state: `newRoundIn` (countdown seconds), `solvedAnswer` (revealed word when won).
+- `wonAt` timestamp stored when someone solves the word.
+- Solo/Online mode, family-friendly filters, UK spellings, expanded dictionary (~97k words).
+- Admin reset still at `POST /api/word-games/wordwich/reset` (admin player ID only).
+
+#### WordWheel (server data + API)
+- **2000 bundled levels** in `data/wordwheel-levels.json` (v9, `proceduralFromLevel: 2001`). Levels 2001+ are **iOS-only** procedural — server just serves the bundled JSON.
+- UK-preferred dictionary ~42k words (`data/english-dictionary.json` v8).
+- `wordwheelTimed` added to `GAME_IDS` — separate timed-mode leaderboard.
+- `GET /api/word-games/wordwheel/levels` serves bundled levels.
+- `data/sensitive-word-blocklist.json`, `data/bonus-round-packs.json` added.
+- `scripts/word_filters.py` — UK spelling preference + content filters.
+
+#### Server (`server.py`)
+- Leaderboards for `wordwheel`, `wordwheelTimed`, `wordwich`, `hangman`.
+- Wordwich routes under `/api/word-games/wordwich/*`.
+- Player login, score sync, profanity filter.
+
+#### iOS-only (no Windows action needed)
+- Progressive wheel: **4 letters around centre** at start, +1 every **150 lifetime clears**, max **10 around** (+ centre).
+- NFG Coins, hints, bonus crossword rounds, Timed WordWheel UI.
+- Procedural infinite levels after 2000.
+
+---
+
+### STEP 1 — Pull latest from GitHub
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+git fetch origin main
+git pull origin main
+git log -3 --oneline
+```
+
+Expected top commits include:
+- `77cc2f9` Auto-reset Wordwich after correct guess
+- `f0886f5` Fix WordWheel progressive wheel size (iOS)
+- `439b0f6` WordWheel 2000 levels + major gameplay updates
+
+**First time on this PC?** Clone instead:
+
+```powershell
+cd $env:USERPROFILE\Documents
+git clone https://github.com/Y666SUF/nfg-word-games.git
+cd nfg-word-games
+```
+
+If pull fails:
+
+```powershell
+git remote -v
+git status
+```
+
+Remote should be `https://github.com/Y666SUF/nfg-word-games.git`
+
+---
+
+### STEP 2 — Python virtualenv + dependencies
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+if (-not (Test-Path .venv)) { py -3 -m venv .venv }
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+---
+
+### STEP 3 — Rebuild web app (bundled into server at :19877)
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games\app
+npm install
+npm run build
+```
+
+**Do NOT regenerate levels or dictionaries** unless files are missing after pull — Mac already committed:
+- `data/wordwheel-levels.json` (2000 levels, v9)
+- `data/english-dictionary.json`
+- `data/wordwich-dictionary.json`
+- `data/sensitive-word-blocklist.json`
+- `data/bonus-round-packs.json`
+
+Only if `data/wordwheel-levels.json` is missing or old (count < 2000):
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+py scripts\build_dictionary.py
+py scripts\build_wordwich_dictionary.py
+node scripts\generate-levels.mjs
+copy data\wordwheel-levels.json app\src\data\wordwheel-levels.json
+cd app
+npm run build
+```
+
+---
+
+### STEP 4 — Clear stuck Wordwich round (if online mode was stuck on "solved")
+
+If `data\wordwich-round.json` has `"status": "won"` and won't advance, delete it so the server starts fresh on restart:
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+Remove-Item data\wordwich-round.json -ErrorAction SilentlyContinue
+```
+
+The server will create a new active round on next start.
+
+---
+
+### STEP 5 — Stop old server, start fresh on port 19877
+
+Close any existing uvicorn/python window on port 19877, then:
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+.\windows\run-server.bat
+```
+
+Or manual:
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+.\.venv\Scripts\activate
+py -m uvicorn server:app --host 0.0.0.0 --port 19877
+```
+
+Keep this window open while iPhone/browser connect.
+
+---
+
+### STEP 6 — Verify correct server (CRITICAL)
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/health
+```
+
+Must return `"app":"nfg-word-games"`. If you see hangman/crash logs, you started the **wrong** server.
+
+```powershell
+curl http://127.0.0.1:19877/api/word-games/leaderboard
+curl http://127.0.0.1:19877/api/word-games/leaderboard/wordwheelTimed
+curl http://127.0.0.1:19877/api/word-games/wordwheel/levels
+curl http://127.0.0.1:19877/api/word-games/wordwich/state
+```
+
+**WordWheel levels** — should include `"count":2000` and `"proceduralFromLevel":2001`.
+
+**Wordwich state** — should return `"status":"active"` with a `roundId`. After someone solves online, state should show `"status":"won"`, `"wonBy"`, `"newRoundIn"`, `"solvedAnswer"` — then auto-reset to `"active"` with a new `roundId` within ~5 seconds.
+
+Login smoke test:
+
+```powershell
+curl -Method POST http://127.0.0.1:19877/api/word-games/players/login -ContentType "application/json" -Body '{"username":"windows_sync_test"}'
+```
+
+Run Python self-test if available:
+
+```powershell
+cd $env:USERPROFILE\Documents\nfg-word-games
+.\.venv\Scripts\activate
+py scripts\test_server.py http://127.0.0.1:19877
+```
+
+---
+
+### STEP 7 — Firewall + iPhone connectivity
+
+```powershell
+ipconfig
+```
+
+- Allow **TCP 19877** through Windows Firewall (Private network).
+- iPhone and PC must be on the same Wi‑Fi.
+- iPhone API base: `http://YOUR_WINDOWS_IPV4:19877` (or `https://y666suf.com/api/word-games` if using proxy).
+
+---
+
+### STEP 8 — nfg-crash HTTPS proxy (if iPhone uses y666suf.com)
+
+If the iPhone connects via `https://y666suf.com/api/word-games/*`, ensure **nfg-crash** on this PC proxies to `http://127.0.0.1:19877`. Restart nfg-crash after pulling if remote login/leaderboard/Wordwich fails but local curl works.
+
+---
+
+### STEP 9 — Smoke checklist
+
+- [ ] `git log -1` shows `77cc2f9` or newer
+- [ ] Health returns `nfg-word-games`
+- [ ] WordWheel levels API shows count **2000**
+- [ ] `wordwheelTimed` leaderboard returns 200 (not 404)
+- [ ] Wordwich state loads (`active` round)
+- [ ] Wordwich online: solve a word → winner overlay on phone → new round within 5s without manual reset
+- [ ] iPhone Ranks tab loads leaderboards
+- [ ] Score sync works after playing a round
+
+---
+
+### Ports reminder
+
+| App | Port |
+|-----|------|
+| NFG Word Games | **19877** |
+| NFG Crash | 3847 |
+| Hangman | 19876 |
+
+---
+
+When done, reply with:
+1. `git log -3 --oneline`
+2. Health curl JSON
+3. WordWheel levels count from API
+4. Wordwich state JSON (status + roundId)
+5. Windows IPv4 address
+6. Any errors
+
+## PROMPT END
