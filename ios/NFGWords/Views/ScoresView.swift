@@ -4,6 +4,7 @@ struct ScoresView: View {
     @EnvironmentObject private var scores: ScoreStore
     @EnvironmentObject private var progress: LevelProgressStore
     @EnvironmentObject private var achievements: AchievementStore
+    @ObservedObject private var store = StoreService.shared
 
     @State private var showPrivacy = false
     @State private var showTerms = false
@@ -19,9 +20,25 @@ struct ScoresView: View {
             VStack(spacing: 14) {
                 nfgCoinsPanel
 
+                NavigationLink {
+                    ShopView()
+                } label: {
+                    shopPreviewCard
+                }
+                .buttonStyle(NFGPressableStyle())
+
                 scorePanel(title: "Total score", subtitle: "Across all games", value: scores.state.totalScore, accent: false)
 
                 ForEach(GameId.listedGames) { game in
+                    scorePanel(
+                        title: game.displayName,
+                        subtitle: "Personal best",
+                        value: scores.state.highScore(for: game),
+                        accent: true
+                    )
+                }
+
+                ForEach(GameId.extraWordGames) { game in
                     scorePanel(
                         title: game.displayName,
                         subtitle: "Personal best",
@@ -194,6 +211,34 @@ struct ScoresView: View {
         .background(NFGTheme.panel)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(NFGTheme.gold.opacity(0.35), lineWidth: 1))
+    }
+
+    private var shopPreviewCard: some View {
+        HStack(spacing: 12) {
+            Image(systemName: store.hasRemovedInterstitialAds ? "checkmark.seal.fill" : "bag.fill")
+                .font(.system(size: 22, weight: .bold))
+                .foregroundStyle(store.hasRemovedInterstitialAds ? NFGTheme.gold : NFGTheme.lavender)
+                .frame(width: 36)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(store.hasRemovedInterstitialAds ? "No level ads — active" : "Shop")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundStyle(NFGTheme.text)
+                Text(store.hasRemovedInterstitialAds
+                     ? "Rewarded hint ads still optional"
+                     : "Remove ads between levels")
+                    .font(.caption)
+                    .foregroundStyle(NFGTheme.muted)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(NFGTheme.muted)
+        }
+        .padding(14)
+        .background(NFGTheme.panel)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(NFGTheme.border))
     }
 
     @ViewBuilder

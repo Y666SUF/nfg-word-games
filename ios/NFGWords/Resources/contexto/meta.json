@@ -1,0 +1,10 @@
+{
+  "dims": 50,
+  "vocabSize": 25000,
+  "answerCount": 2500,
+  "answerTarget": 2500,
+  "answerSource": "glove.6B.50d ∩ categorized-words nouns (common, singular)",
+  "dayEpoch": "2024-01-01",
+  "builtAt": "2026-08-10T16:31:19.317Z",
+  "source": "glove.6B.50d"
+}

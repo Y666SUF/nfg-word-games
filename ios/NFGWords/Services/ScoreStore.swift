@@ -349,6 +349,22 @@ final class ScoreStore: ObservableObject {
         enqueueServerSync()
     }
 
+    /// Merge authoritative hiscores returned from live mode guess responses.
+    func applyLivePlayerSnapshot(_ player: LiveModeAPI.PlayerSnapshot) {
+        let before = state.totalScore
+        if let total = player.totalScore {
+            state.totalScore = max(state.totalScore, total, state.lifetimePeakTotal)
+        }
+        for (gameId, score) in player.gameHighScores {
+            state.gameHighScores[gameId] = max(state.gameHighScores[gameId] ?? 0, score)
+        }
+        recordLifetimePeak()
+        notePossibleUnlock(from: before, to: state.totalScore)
+        persist()
+        setPendingSync(true)
+        enqueueServerSync()
+    }
+
     func addWordwichPoints(_ points: Int) {
         addRoundScore(points, game: .wordwich)
     }

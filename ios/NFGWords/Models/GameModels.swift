@@ -5,9 +5,19 @@ enum GameId: String, Codable, CaseIterable, Identifiable {
     case wordwheelTimed
     case wordwich
     case hangman
+    case hunt
+    case contexto
+    case fuse
+    case tenable
 
-    /// Hub, scores, and leaderboard — hide games until they ship.
+    /// Core hub games (unchanged).
     static let listedGames: [GameId] = [.wordwheel, .wordwich]
+
+    /// Extra Live word modes.
+    static let extraWordGames: [GameId] = [.hunt, .contexto, .fuse, .hangman, .tenable]
+
+    /// Single hub list order (Timed sits after Wordwich).
+    static let hubGames: [GameId] = [.wordwheel, .wordwich, .wordwheelTimed] + extraWordGames
 
     /// Shown on the hub when the player has cleared enough WordWheel rounds.
     static let timedUnlockClears = 50
@@ -20,6 +30,10 @@ enum GameId: String, Codable, CaseIterable, Identifiable {
         case .wordwheelTimed: "WordWheel Timed"
         case .hangman: "NFG Hangman"
         case .wordwich: "NFG Wordwich"
+        case .hunt: "NFG Hunt"
+        case .contexto: "NFG Contexto"
+        case .fuse: "NFG Fuse"
+        case .tenable: "NFG Tenable"
         }
     }
 
@@ -27,13 +41,32 @@ enum GameId: String, Codable, CaseIterable, Identifiable {
         switch self {
         case .wordwheel: "Wheel + centre letter + crossword grid"
         case .wordwheelTimed: "2-minute rounds — how many can you clear?"
-        case .hangman: "Classic hangman — coming soon"
+        case .hangman: "Letters or type the full word — 6 lives"
         case .wordwich: "Alphabetical sandwich — guess the hidden word"
+        case .hunt: "Unscramble the letters — type the word"
+        case .contexto: "Guess by meaning — closer words rank hotter"
+        case .fuse: "UK chain — last letter + exact length"
+        case .tenable: "Name 10 answers before the clock runs out"
+        }
+    }
+
+    var systemIcon: String {
+        switch self {
+        case .wordwheel, .wordwheelTimed: "circle.grid.cross"
+        case .wordwich: "text.word.spacing"
+        case .hangman: "person.fill"
+        case .hunt: "shuffle"
+        case .contexto: "thermometer.medium"
+        case .fuse: "flame.fill"
+        case .tenable: "building.columns.fill"
         }
     }
 
     var isAvailable: Bool {
-        self == .wordwheel || self == .wordwich || self == .wordwheelTimed
+        switch self {
+        case .wordwheel, .wordwich, .wordwheelTimed, .hunt, .contexto, .fuse, .hangman, .tenable:
+            true
+        }
     }
 }
 

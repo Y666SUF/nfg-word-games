@@ -35,6 +35,49 @@ enum GameScoring {
         }
         return total
     }
+
+    /// Online live modes pay more than Solo — race bonus scales with other players / rival guesses.
+    static func onlineCompetitivePoints(
+        base: Int,
+        playerCount: Int,
+        rivalGuessCount: Int
+    ) -> Int {
+        guard base > 0 else { return 0 }
+        // Always higher than Solo for the shared live round.
+        var multiplier = 1.55
+        let rivals = max(0, playerCount - 1)
+        multiplier += min(0.90, Double(rivals) * 0.18)
+        multiplier += min(0.60, Double(max(0, rivalGuessCount)) * 0.06)
+        return max(base + 1, Int((Double(base) * multiplier).rounded()))
+    }
+
+    /// Strip TikTok chat "!word" instructions from copy shown in the iOS app.
+    static func appFacingCopy(_ text: String) -> String {
+        var t = text
+        let removals: [String] = [
+            #"\bno\s*!\s*needed\b"#,
+            #"\b(?:type|use|send|prefix(?:\s+with)?)\s+!\s*(?:before(?:\s+a)?\s+word)?"#,
+            #"\b!\s*before(?:\s+a)?\s+word\b"#,
+            #"\btype\s+![a-z]+\b"#,
+        ]
+        for pattern in removals {
+            if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
+                let range = NSRange(t.startIndex..<t.endIndex, in: t)
+                t = regex.stringByReplacingMatches(in: t, range: range, withTemplate: "")
+            }
+        }
+        // chat "!word" → keep the word, drop the bang
+        if let regex = try? NSRegularExpression(pattern: #"(?<!\w)!([a-z]{3,})\b"#, options: .caseInsensitive) {
+            let range = NSRange(t.startIndex..<t.endIndex, in: t)
+            t = regex.stringByReplacingMatches(in: t, range: range, withTemplate: "$1")
+        }
+        t = t.replacingOccurrences(of: #"\s{2,}"#, with: " ", options: .regularExpression)
+        t = t.trimmingCharacters(in: .whitespacesAndNewlines)
+        while t.hasPrefix("·") || t.hasPrefix("-") || t.hasPrefix("—") || t.hasPrefix(",") {
+            t = String(t.dropFirst()).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return t
+    }
 }
 
 /// Per-level hint caps for WordWheel (1 NFG Coin each).

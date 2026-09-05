@@ -15,8 +15,8 @@ struct HubView: View {
         ScrollView {
             VStack(spacing: 16) {
                 NFGWordsLogo(style: .hero)
-                    .padding(.top, 8)
-                    .padding(.bottom, 4)
+                    .padding(.top, 4)
+                    .padding(.bottom, 2)
 
                 DailyMissionsCard(snapshot: scores.dailyMissions)
                     .onAppear { scores.refreshDailyMissions() }
@@ -27,24 +27,26 @@ struct HubView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 2)
 
-                ForEach(GameId.listedGames) { game in
-                    NavigationLink {
-                        destination(for: game)
-                    } label: {
-                        gameCard(game)
+                ForEach(GameId.hubGames) { game in
+                    if game == .wordwheelTimed {
+                        if scores.wordwheelTimedUnlocked {
+                            NavigationLink {
+                                TimedWordWheelView()
+                            } label: {
+                                timedGameCard
+                            }
+                            .buttonStyle(NFGPressableStyle())
+                        } else {
+                            lockedTimedCard
+                        }
+                    } else {
+                        NavigationLink {
+                            destination(for: game)
+                        } label: {
+                            gameCard(game)
+                        }
+                        .buttonStyle(NFGPressableStyle())
                     }
-                    .buttonStyle(NFGPressableStyle())
-                }
-
-                if scores.wordwheelTimedUnlocked {
-                    NavigationLink {
-                        TimedWordWheelView()
-                    } label: {
-                        timedGameCard
-                    }
-                    .buttonStyle(NFGPressableStyle())
-                } else {
-                    lockedTimedCard
                 }
             }
             .padding(16)
@@ -158,20 +160,21 @@ struct HubView: View {
         case .wordwich:
             WordwichView()
         case .hangman:
-            Text("Coming soon")
+            HangmanView()
+        case .hunt:
+            HuntView()
+        case .contexto:
+            ContextoView()
+        case .fuse:
+            FuseView()
+        case .tenable:
+            TenableView()
         }
     }
 
     private var timedGameCard: some View {
         HStack(spacing: 14) {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(LinearGradient(colors: [NFGTheme.gold, NFGTheme.gold.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                .frame(width: 52, height: 52)
-                .overlay(
-                    Image(systemName: "timer")
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(Color(red: 14 / 255, green: 8 / 255, blue: 28 / 255))
-                )
+            LiveGameBadge(game: .wordwheelTimed, size: 52)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(GameId.wordwheelTimed.displayName)
@@ -227,26 +230,7 @@ struct HubView: View {
     @ViewBuilder
     private func gameCard(_ game: GameId) -> some View {
         HStack(spacing: 14) {
-            if game == .wordwheel {
-                WordWheelBadge(size: 52)
-            } else if game == .wordwich {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(NFGTheme.heroGradient)
-                    .frame(width: 52, height: 52)
-                    .overlay(
-                        Text("W")
-                            .font(.system(size: 24, weight: .black, design: .rounded))
-                            .foregroundStyle(NFGTheme.text)
-                    )
-            } else {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(NFGTheme.panel2)
-                    .frame(width: 52, height: 52)
-                    .overlay(
-                        Image(systemName: "hourglass")
-                            .foregroundStyle(NFGTheme.muted)
-                    )
-            }
+            LiveGameBadge(game: game, size: 52)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(game.displayName)
@@ -261,6 +245,10 @@ struct HubView: View {
                         .foregroundStyle(NFGTheme.accent)
                 } else if game == .wordwich {
                     Text("\(scores.state.highScore(for: .wordwich).formatted()) pts")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(NFGTheme.accent)
+                } else if GameId.extraWordGames.contains(game) {
+                    Text("\(scores.state.highScore(for: game).formatted()) pts")
                         .font(.caption.weight(.bold))
                         .foregroundStyle(NFGTheme.accent)
                 }

@@ -16,8 +16,16 @@ struct LeaderboardView: View {
         case wordwheel
         case wordwheelTimed
         case wordwich
+        case hunt
+        case contexto
+        case fuse
+        case hangman
+        case tenable
 
-        static let allScopes: [LeaderboardScope] = [.overall, .wordwheel, .wordwheelTimed, .wordwich]
+        static let allScopes: [LeaderboardScope] = [
+            .overall, .wordwheel, .wordwheelTimed, .wordwich,
+            .hunt, .contexto, .fuse, .hangman, .tenable,
+        ]
 
         var id: String { rawValue }
 
@@ -27,6 +35,11 @@ struct LeaderboardView: View {
             case .wordwheel: "WordWheel"
             case .wordwheelTimed: "Timed"
             case .wordwich: "Wordwich"
+            case .hunt: "Hunt"
+            case .contexto: "Contexto"
+            case .fuse: "Fuse"
+            case .hangman: "Hangman"
+            case .tenable: "Tenable"
             }
         }
 
@@ -36,6 +49,11 @@ struct LeaderboardView: View {
             case .wordwheel: .wordwheel
             case .wordwheelTimed: .wordwheelTimed
             case .wordwich: .wordwich
+            case .hunt: .hunt
+            case .contexto: .contexto
+            case .fuse: .fuse
+            case .hangman: .hangman
+            case .tenable: .tenable
             }
         }
     }
@@ -52,7 +70,10 @@ struct LeaderboardView: View {
                         Text(item.title).tag(item)
                     }
                 }
-                .pickerStyle(.segmented)
+                .pickerStyle(.menu)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 6)
+                .background(RoundedRectangle(cornerRadius: 10).fill(NFGTheme.panel2))
 
                 if entries.isEmpty {
                     emptyState
@@ -147,6 +168,16 @@ struct LeaderboardView: View {
             return scores.state.highScore(for: .wordwheelTimed)
         case .wordwich:
             return scores.state.highScore(for: .wordwich)
+        case .hunt:
+            return scores.state.highScore(for: .hunt)
+        case .contexto:
+            return scores.state.highScore(for: .contexto)
+        case .fuse:
+            return scores.state.highScore(for: .fuse)
+        case .hangman:
+            return scores.state.highScore(for: .hangman)
+        case .tenable:
+            return scores.state.highScore(for: .tenable)
         }
     }
 

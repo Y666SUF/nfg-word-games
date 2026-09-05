@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B10000000000000000000202 /* UKWordBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000201 /* UKWordBank.swift */; };
+		B10000000000000000000204 /* HuntEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000203 /* HuntEngine.swift */; };
+		B10000000000000000000206 /* HangmanPlayEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000205 /* HangmanPlayEngine.swift */; };
+		B10000000000000000000208 /* FusePlayEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000207 /* FusePlayEngine.swift */; };
+		B10000000000000000000210 /* TenablePlayEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000209 /* TenablePlayEngine.swift */; };
+		B10000000000000000000212 /* ContextoPlayEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000211 /* ContextoPlayEngine.swift */; };
+		B10000000000000000000214 /* ExtraWordGameViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000213 /* ExtraWordGameViews.swift */; };
+		B10000000000000000000224 /* LiveModeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000223 /* LiveModeAPI.swift */; };
+		B10000000000000000000226 /* LiveExtraSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000225 /* LiveExtraSession.swift */; };
+		B10000000000000000000228 /* LiveGameBadges.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000227 /* LiveGameBadges.swift */; };
+		B10000000000000000000216 /* uk-words.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000215 /* uk-words.json */; };
+		B10000000000000000000218 /* tenable-lists.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000217 /* tenable-lists.json */; };
+		B10000000000000000000220 /* sensitive-word-blocklist.json in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000219 /* sensitive-word-blocklist.json */; };
+		B10000000000000000000222 /* contexto in Resources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000221 /* contexto */; };
 		B10000000000000000000001 /* NFGWordsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000011 /* NFGWordsApp.swift */; };
 		B10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000012 /* ContentView.swift */; };
 		B10000000000000000000003 /* NFGTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000013 /* NFGTheme.swift */; };
@@ -90,9 +104,31 @@
 		B100000000000000000000F26 /* ProfileTitleBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F27 /* ProfileTitleBadge.swift */; };
 		B100000000000000000000F28 /* LeaderboardRankBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000F29 /* LeaderboardRankBadge.swift */; };
 		B100000000000000000000EC /* CrosswordPlacer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000000ED /* CrosswordPlacer.swift */; };
+		B10000000000000000000121 /* AdMobConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000120 /* AdMobConfig.swift */; };
+		B10000000000000000000123 /* AdMobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000122 /* AdMobService.swift */; };
+		B10000000000000000000131 /* IAPConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000130 /* IAPConfig.swift */; };
+		B10000000000000000000133 /* StoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000132 /* StoreService.swift */; };
+		B10000000000000000000135 /* ShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000134 /* ShopView.swift */; };
+		B10000000000000000000139 /* FlyingLetterRevealOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000138 /* FlyingLetterRevealOverlay.swift */; };
+		B10000000000000000000141 /* ThemePackCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000140 /* ThemePackCatalog.swift */; };
+		B10000000000000000000126 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = B10000000000000000000125 /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B10000000000000000000201 /* UKWordBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UKWordBank.swift; sourceTree = "<group>"; };
+		B10000000000000000000203 /* HuntEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuntEngine.swift; sourceTree = "<group>"; };
+		B10000000000000000000205 /* HangmanPlayEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HangmanPlayEngine.swift; sourceTree = "<group>"; };
+		B10000000000000000000207 /* FusePlayEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FusePlayEngine.swift; sourceTree = "<group>"; };
+		B10000000000000000000209 /* TenablePlayEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenablePlayEngine.swift; sourceTree = "<group>"; };
+		B10000000000000000000211 /* ContextoPlayEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextoPlayEngine.swift; sourceTree = "<group>"; };
+		B10000000000000000000213 /* ExtraWordGameViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraWordGameViews.swift; sourceTree = "<group>"; };
+		B10000000000000000000223 /* LiveModeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveModeAPI.swift; sourceTree = "<group>"; };
+		B10000000000000000000225 /* LiveExtraSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveExtraSession.swift; sourceTree = "<group>"; };
+		B10000000000000000000227 /* LiveGameBadges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveGameBadges.swift; sourceTree = "<group>"; };
+		B10000000000000000000215 /* uk-words.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "uk-words.json"; sourceTree = "<group>"; };
+		B10000000000000000000217 /* tenable-lists.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "tenable-lists.json"; sourceTree = "<group>"; };
+		B10000000000000000000219 /* sensitive-word-blocklist.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "sensitive-word-blocklist.json"; sourceTree = "<group>"; };
+		B10000000000000000000221 /* contexto */ = {isa = PBXFileReference; lastKnownFileType = folder; path = contexto; sourceTree = "<group>"; };
 		B10000000000000000000010 /* NFGWords.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NFGWords.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B10000000000000000000011 /* NFGWordsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFGWordsApp.swift; sourceTree = "<group>"; };
 		B10000000000000000000012 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -178,6 +214,13 @@
 		B10000000000000000000111 /* ChapterMapAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterMapAssets.swift; sourceTree = "<group>"; };
 		B10000000000000000000115 /* ChapterMapTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterMapTheme.swift; sourceTree = "<group>"; };
 		B10000000000000000000112 /* ChapterMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ChapterMaps; sourceTree = "<group>"; };
+		B10000000000000000000120 /* AdMobConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobConfig.swift; sourceTree = "<group>"; };
+		B10000000000000000000122 /* AdMobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobService.swift; sourceTree = "<group>"; };
+		B10000000000000000000130 /* IAPConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPConfig.swift; sourceTree = "<group>"; };
+		B10000000000000000000132 /* StoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreService.swift; sourceTree = "<group>"; };
+		B10000000000000000000134 /* ShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopView.swift; sourceTree = "<group>"; };
+		B10000000000000000000138 /* FlyingLetterRevealOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlyingLetterRevealOverlay.swift; sourceTree = "<group>"; };
+		B10000000000000000000140 /* ThemePackCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemePackCatalog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +228,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B10000000000000000000126 /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +285,8 @@
 				B10000000000000000000037 /* GameServerConfig.swift */,
 				B1000000000000000000003D /* AppLegalConfig.swift */,
 				B100000000000000000000C4 /* AdminConfig.swift */,
+				B10000000000000000000120 /* AdMobConfig.swift */,
+				B10000000000000000000130 /* IAPConfig.swift */,
 				B100000000000000000000F31 /* AppStoreScreenshotMode.swift */,
 				B100000000000000000000F33 /* AppStoreScreenshotSupport.swift */,
 			);
@@ -256,6 +302,7 @@
 				B100000000000000000000BE /* RewardUnlocks.swift */,
 				B100000000000000000000D9 /* DailyMissions.swift */,
 				B100000000000000000000F5 /* ProgressionModels.swift */,
+				B10000000000000000000140 /* ThemePackCatalog.swift */,
 				B100000000000000000000F21 /* ChapterThemeCatalog.swift */,
 				B100000000000000000000F7 /* CosmeticModels.swift */,
 				B100000000000000000000F9 /* AchievementModels.swift */,
@@ -293,6 +340,16 @@
 				B100000000000000000000FB /* LevelProgressStore.swift */,
 				B100000000000000000000FD /* CosmeticStore.swift */,
 				B100000000000000000000FF /* AchievementStore.swift */,
+				B10000000000000000000122 /* AdMobService.swift */,
+				B10000000000000000000132 /* StoreService.swift */,
+				B10000000000000000000201 /* UKWordBank.swift */,
+				B10000000000000000000203 /* HuntEngine.swift */,
+				B10000000000000000000205 /* HangmanPlayEngine.swift */,
+				B10000000000000000000207 /* FusePlayEngine.swift */,
+				B10000000000000000000209 /* TenablePlayEngine.swift */,
+				B10000000000000000000211 /* ContextoPlayEngine.swift */,
+				B10000000000000000000223 /* LiveModeAPI.swift */,
+				B10000000000000000000225 /* LiveExtraSession.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -304,10 +361,12 @@
 				B100000000000000000000F1 /* NFGAnimatedBackground.swift */,
 				B10000000000000000000018 /* HubView.swift */,
 				B10000000000000000000019 /* ScoresView.swift */,
+				B10000000000000000000134 /* ShopView.swift */,
 				B1000000000000000000001A /* WordWheelView.swift */,
 				B100000000000000000000E9 /* TimedWordWheelView.swift */,
 				B1000000000000000000001B /* LetterWheelView.swift */,
 				B1000000000000000000001C /* PuzzleGridView.swift */,
+				B10000000000000000000138 /* FlyingLetterRevealOverlay.swift */,
 				B10000000000000000000024 /* WordFeedbackToast.swift */,
 				B10000000000000000000026 /* FoundWordsStrip.swift */,
 				B1000000000000000000003B /* RoundClearedView.swift */,
@@ -330,6 +389,8 @@
 				B10000000000000000000103 /* AchievementsWallView.swift */,
 				B10000000000000000000105 /* StarRatingView.swift */,
 				B1000000000000000000010D /* JourneyChapterScene.swift */,
+				B10000000000000000000213 /* ExtraWordGameViews.swift */,
+				B10000000000000000000227 /* LiveGameBadges.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -342,6 +403,10 @@
 				B100000000000000000000B7 /* wordwich-dictionary.json */,
 				B100000000000000000000C8 /* bonus-round-packs.json */,
 				B10000000000000000000112 /* ChapterMaps */,
+				B10000000000000000000215 /* uk-words.json */,
+				B10000000000000000000217 /* tenable-lists.json */,
+				B10000000000000000000219 /* sensitive-word-blocklist.json */,
+				B10000000000000000000221 /* contexto */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -362,6 +427,9 @@
 			dependencies = (
 			);
 			name = NFGWords;
+			packageProductDependencies = (
+				B10000000000000000000125 /* GoogleMobileAds */,
+			);
 			productName = NFGWords;
 			productReference = B10000000000000000000010 /* NFGWords.app */;
 			productType = "com.apple.product-type.application";
@@ -385,6 +453,9 @@
 				Base,
 			);
 			mainGroup = B10000000000000000000040;
+			packageReferences = (
+				B10000000000000000000124 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
 			productRefGroup = B10000000000000000000042 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -406,6 +477,10 @@
 				B100000000000000000000A1 /* PrivacyInfo.xcprivacy in Resources */,
 				B100000000000000000000CC /* bonus-round-packs.json in Resources */,
 				B10000000000000000000113 /* ChapterMaps in Resources */,
+				B10000000000000000000216 /* uk-words.json in Resources */,
+				B10000000000000000000218 /* tenable-lists.json in Resources */,
+				B10000000000000000000220 /* sensitive-word-blocklist.json in Resources */,
+				B10000000000000000000222 /* contexto in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,6 +567,23 @@
 				B10000000000000000000110 /* ChapterMapAssets.swift in Sources */,
 				B10000000000000000000114 /* ChapterMapTheme.swift in Sources */,
 				B1000000000000000000010C /* JourneyChapterScene.swift in Sources */,
+				B10000000000000000000121 /* AdMobConfig.swift in Sources */,
+				B10000000000000000000123 /* AdMobService.swift in Sources */,
+				B10000000000000000000131 /* IAPConfig.swift in Sources */,
+				B10000000000000000000133 /* StoreService.swift in Sources */,
+				B10000000000000000000135 /* ShopView.swift in Sources */,
+				B10000000000000000000139 /* FlyingLetterRevealOverlay.swift in Sources */,
+				B10000000000000000000141 /* ThemePackCatalog.swift in Sources */,
+				B10000000000000000000202 /* UKWordBank.swift in Sources */,
+				B10000000000000000000204 /* HuntEngine.swift in Sources */,
+				B10000000000000000000206 /* HangmanPlayEngine.swift in Sources */,
+				B10000000000000000000208 /* FusePlayEngine.swift in Sources */,
+				B10000000000000000000210 /* TenablePlayEngine.swift in Sources */,
+				B10000000000000000000212 /* ContextoPlayEngine.swift in Sources */,
+				B10000000000000000000214 /* ExtraWordGameViews.swift in Sources */,
+				B10000000000000000000224 /* LiveModeAPI.swift in Sources */,
+				B10000000000000000000226 /* LiveExtraSession.swift in Sources */,
+				B10000000000000000000228 /* LiveGameBadges.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,7 +630,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 51;
+				CURRENT_PROJECT_VERSION = 53;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -548,7 +640,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yusufali.nfgwords;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -565,7 +657,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 51;
+				CURRENT_PROJECT_VERSION = 53;
 				DEVELOPMENT_TEAM = VM34N9485F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -575,7 +667,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yusufali.nfgwords;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -608,6 +700,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B10000000000000000000124 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B10000000000000000000125 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B10000000000000000000124 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B10000000000000000000060 /* Project object */;
 }
